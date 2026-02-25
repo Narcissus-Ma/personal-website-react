@@ -9,16 +9,14 @@ import {
   StarOutlined,
   DesktopOutlined,
   PlayCircleOutlined,
-  CustomerServiceOutlined,
-  PictureOutlined,
   BulbOutlined,
   BookOutlined,
-  RocketOutlined,
-  GlobalOutlined,
   AppstoreOutlined,
 } from '@ant-design/icons';
 import { useCategories, useLanguage } from '../../hooks';
 import styles from './layout.module.less';
+import collapsedLogo from '../../assets/images/user-logo.jpg';
+import expandedLogo from '../../assets/images/personal-general-logo.png';
 
 const { Header, Sider, Content } = Layout;
 
@@ -71,9 +69,9 @@ const AppLayout: React.FC<LayoutProps> = ({ children }) => {
       >
         <div className={styles.logo}>
           {collapsed ? (
-            <img src="/assets/images/user-logo.jpg" alt="Logo" />
+            <img src={collapsedLogo} alt="Logo" />
           ) : (
-            <img src="/assets/images/personal-general-logo.png" alt="Logo" />
+            <img src={expandedLogo} alt="Logo" />
           )}
         </div>
         <Menu
