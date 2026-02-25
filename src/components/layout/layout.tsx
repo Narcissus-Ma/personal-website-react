@@ -60,12 +60,13 @@ const AppLayout: React.FC<LayoutProps> = ({ children }) => {
   ];
 
   return (
-    <Layout className={styles.layout}>
+    <Layout className={`${styles.layout} ${collapsed ? styles.layoutCollapsed : ''}`}>
       <Sider
         trigger={null}
         collapsible
         collapsed={collapsed}
         width={260}
+        collapsedWidth={80}
         className={styles.sider}
       >
         <div className={styles.logo}>
