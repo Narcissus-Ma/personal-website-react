@@ -15,8 +15,8 @@ const Footer: React.FC = () => {
         <Space className={styles.links}>
           <a
             href="https://github.com/Narcissus-Ma"
-            target="_blank"
             rel="noopener noreferrer"
+            target="_blank"
           >
             <GithubOutlined /> GitHub
           </a>

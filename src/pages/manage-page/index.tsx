@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import {
   Card,
@@ -16,7 +16,6 @@ import {
   ArrowLeftOutlined,
   PlusOutlined,
   DeleteOutlined,
-  EditOutlined,
 } from '@ant-design/icons';
 import { useSiteStore } from '../../stores';
 import { Website, Category } from '../../types';
@@ -26,14 +25,8 @@ const { Option } = Select;
 const { TextArea } = Input;
 
 const ManagePage: React.FC = () => {
-  const {
-    categories,
-    searchEngines,
-    addWebsite,
-    addCategory,
-    deleteCategory,
-    saveToServer,
-  } = useSiteStore();
+  const { categories, addWebsite, addCategory, deleteCategory, saveToServer } =
+    useSiteStore();
 
   const [websiteForm] = Form.useForm();
   const [categoryForm] = Form.useForm();
@@ -42,7 +35,9 @@ const ManagePage: React.FC = () => {
     try {
       addWebsite(0, {
         ...values,
-        logo: values.logo || 'https://img1.tucang.cc/api/image/show/e1306a391e2a2a324370bfee481f497b',
+        logo:
+          values.logo ||
+          'https://img1.tucang.cc/api/image/show/e1306a391e2a2a324370bfee481f497b',
       });
       await saveToServer();
       message.success('添加成功');
@@ -52,7 +47,11 @@ const ManagePage: React.FC = () => {
     }
   };
 
-  const handleAddCategory = async (values: { name: string; en_name: string; icon: string }) => {
+  const handleAddCategory = async (values: {
+    name: string;
+    en_name: string;
+    icon: string;
+  }) => {
     try {
       addCategory({
         ...values,
@@ -105,16 +104,16 @@ const ManagePage: React.FC = () => {
       render: (_: unknown, record: Category, index: number) => (
         <Space>
           <Popconfirm
+            cancelText="取消"
+            okText="确定"
             title="确定删除?"
             onConfirm={() => handleDeleteCategory(index)}
-            okText="确定"
-            cancelText="取消"
           >
             <Button
-              type="link"
               danger
-              icon={<DeleteOutlined />}
               disabled={categories.length <= 1}
+              icon={<DeleteOutlined />}
+              type="link"
             >
               删除
             </Button>
@@ -127,20 +126,22 @@ const ManagePage: React.FC = () => {
   return (
     <div className={styles.manage}>
       <div className={styles.header}>
-        <Link to="/" className={styles.backBtn}>
+        <Link className={styles.backBtn} to="/">
           <ArrowLeftOutlined /> 返回首页
         </Link>
         <h1>网站管理</h1>
       </div>
 
-      <Card title="添加网站" className={styles.card}>
+      <Card className={styles.card} title="添加网站">
         <Form
           form={websiteForm}
+          initialValues={{ categoryIndex: 0 }}
           layout="vertical"
           onFinish={handleAddWebsite}
-          initialValues={{ categoryIndex: 0 }}
         >
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <div
+            style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}
+          >
             <Form.Item
               label="分类"
               name="categoryIndex"
@@ -162,7 +163,9 @@ const ManagePage: React.FC = () => {
               <Input placeholder="请输入网站名称" />
             </Form.Item>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <div
+            style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}
+          >
             <Form.Item
               label="网站链接"
               name="url"
@@ -175,22 +178,22 @@ const ManagePage: React.FC = () => {
             </Form.Item>
           </div>
           <Form.Item label="描述" name="desc">
-            <TextArea rows={2} placeholder="网站描述" />
+            <TextArea placeholder="网站描述" rows={2} />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit" icon={<PlusOutlined />}>
+            <Button htmlType="submit" icon={<PlusOutlined />} type="primary">
               添加网站
             </Button>
           </Form.Item>
         </Form>
       </Card>
 
-      <Card title="分类管理" className={styles.card}>
+      <Card className={styles.card} title="分类管理">
         <Form
+          className={styles.categoryForm}
           form={categoryForm}
           layout="inline"
           onFinish={handleAddCategory}
-          className={styles.categoryForm}
         >
           <Form.Item
             name="name"
@@ -204,7 +207,7 @@ const ManagePage: React.FC = () => {
           >
             <Input placeholder="English Name" />
           </Form.Item>
-          <Form.Item name="icon" initialValue="HomeOutlined">
+          <Form.Item initialValue="HomeOutlined" name="icon">
             <Select style={{ width: 140 }}>
               <Option value="HomeOutlined">HomeOutlined</Option>
               <Option value="AppstoreOutlined">AppstoreOutlined</Option>
@@ -213,17 +216,17 @@ const ManagePage: React.FC = () => {
             </Select>
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit" icon={<PlusOutlined />}>
+            <Button htmlType="submit" icon={<PlusOutlined />} type="primary">
               添加分类
             </Button>
           </Form.Item>
         </Form>
         <Divider />
         <Table
-          dataSource={categories}
           columns={categoryColumns}
-          rowKey={(_, index) => index?.toString() || '0'}
+          dataSource={categories}
           pagination={false}
+          rowKey={(_, index) => index?.toString() || '0'}
           size="small"
         />
       </Card>

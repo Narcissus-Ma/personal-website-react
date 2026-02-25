@@ -6,9 +6,9 @@ import AboutPage from './pages/about-page';
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/manage" element={<ManagePage />} />
-      <Route path="/about" element={<AboutPage />} />
+      <Route element={<HomePage />} path="/" />
+      <Route element={<ManagePage />} path="/manage" />
+      <Route element={<AboutPage />} path="/about" />
     </Routes>
   );
 }

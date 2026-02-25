@@ -30,15 +30,19 @@ const HomePage: React.FC = () => {
         <div className={styles.toolbar}>
           <div className={styles.left}>
             <Select
-              value={language}
-              onChange={(value) => setLanguage(value as 'zh' | 'en')}
               className={styles.languageSelect}
               size="large"
+              value={language}
+              onChange={value => setLanguage(value as 'zh' | 'en')}
             >
-              {languageOptions.map((opt) => (
+              {languageOptions.map(opt => (
                 <Select.Option key={opt.key} value={opt.key}>
                   <Space>
-                    <img src={opt.flag} alt={opt.name} style={{ width: 16, height: 16 }} />
+                    <img
+                      alt={opt.name}
+                      src={opt.flag}
+                      style={{ width: 16, height: 16 }}
+                    />
                     {opt.name}
                   </Space>
                 </Select.Option>
@@ -49,19 +53,19 @@ const HomePage: React.FC = () => {
             <Space>
               <Tooltip title="管理入口">
                 <Button
-                  type="text"
-                  icon={<SettingOutlined />}
                   href="/manage"
+                  icon={<SettingOutlined />}
                   size="large"
+                  type="text"
                 />
               </Tooltip>
               <Tooltip title="GitHub">
                 <Button
-                  type="text"
-                  icon={<GithubOutlined />}
                   href="https://github.com/Narcissus-Ma"
-                  target="_blank"
+                  icon={<GithubOutlined />}
                   size="large"
+                  target="_blank"
+                  type="text"
                 >
                   GitHub
                 </Button>
@@ -75,7 +79,13 @@ const HomePage: React.FC = () => {
         <div className={styles.content}>
           {categories.map((item, idx) => (
             <div key={idx}>
-              {item.web && <WebItem item={item} transName={transName} id={`category-${idx}`} />}
+              {item.web && (
+                <WebItem
+                  id={`category-${idx}`}
+                  item={item}
+                  transName={transName}
+                />
+              )}
               {item.children?.map((subItem, subIdx) => (
                 <WebItem key={subIdx} item={subItem} transName={transName} />
               ))}

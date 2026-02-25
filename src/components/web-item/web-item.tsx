@@ -23,7 +23,7 @@ const iconMap: Record<string, React.ReactNode> = {
 
 interface WebItemProps {
   item: Category | Website;
-  transName: (item: Category) => string;
+  transName: (item: { name: string; en_name: string }) => string;
   id?: string;
 }
 
@@ -33,7 +33,11 @@ const WebItem: React.FC<WebItemProps> = ({ item, transName, id }) => {
       <div className={styles.categorySection} id={id}>
         <div className={styles.categoryHeader}>
           <h3 className={styles.categoryTitle}>
-            {item.icon && <span className={styles.icon}>{iconMap[item.icon] || <AppstoreOutlined />}</span>}
+            {item.icon && (
+              <span className={styles.icon}>
+                {iconMap[item.icon] || <AppstoreOutlined />}
+              </span>
+            )}
             {transName(item)}
           </h3>
         </div>
@@ -41,29 +45,29 @@ const WebItem: React.FC<WebItemProps> = ({ item, transName, id }) => {
           {item.web.map((web, idx) => (
             <Card
               key={idx}
-              className={styles.webCard}
-              onClick={() => window.open(web.url, '_blank')}
               hoverable
+              className={styles.webCard}
               cover={
                 <div className={styles.logoWrapper}>
                   <img
-                    src={web.logo}
                     alt={web.title}
                     className={styles.webLogo}
-                    onError={(e) => {
+                    src={web.logo}
+                    onError={e => {
                       (e.target as HTMLImageElement).src =
                         'https://img1.tucang.cc/api/image/show/e1306a391e2a2a324370bfee481f497b';
                     }}
                   />
                 </div>
               }
+              onClick={() => window.open(web.url, '_blank')}
             >
               <Card.Meta
-                title={<span className={styles.webTitle}>{web.title}</span>}
                 description={<span className={styles.webDesc}>{web.desc}</span>}
+                title={<span className={styles.webTitle}>{web.title}</span>}
               />
               {web.is_hot && (
-                <Tag color="red" className={styles.hotTag}>
+                <Tag className={styles.hotTag} color="red">
                   Hot
                 </Tag>
               )}

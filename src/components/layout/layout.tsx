@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Layout, Menu } from 'antd';
 import {
-  HomeOutlined,
   HeartOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -55,37 +54,42 @@ const AppLayout: React.FC<LayoutProps> = ({ children }) => {
   ];
 
   return (
-    <Layout className={`${styles.layout} ${collapsed ? styles.layoutCollapsed : ''}`}>
+    <Layout
+      className={`${styles.layout} ${collapsed ? styles.layoutCollapsed : ''}`}
+    >
       <Sider
-        trigger={null}
         collapsible
-        collapsed={collapsed}
-        width={260}
-        collapsedWidth={80}
         className={styles.sider}
+        collapsed={collapsed}
+        collapsedWidth={80}
+        trigger={null}
+        width={260}
       >
         <div className={styles.logo}>
           {collapsed ? (
-            <img src={collapsedLogo} alt="Logo" />
+            <img alt="Logo" src={collapsedLogo} />
           ) : (
-            <img src={expandedLogo} alt="Logo" />
+            <img alt="Logo" src={expandedLogo} />
           )}
         </div>
         <Menu
-          theme="light"
+          className={styles.menu}
+          items={menuItems}
           mode="inline"
           selectedKeys={[selectedKey]}
-          items={menuItems}
-          className={styles.menu}
+          theme="light"
         />
       </Sider>
       <Layout>
         <Header className={styles.header}>
           <div className={styles.trigger}>
-            {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
-              onClick: () => setCollapsed(!collapsed),
-              className: styles.triggerIcon,
-            })}
+            {React.createElement(
+              collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
+              {
+                onClick: () => setCollapsed(!collapsed),
+                className: styles.triggerIcon,
+              }
+            )}
           </div>
         </Header>
         <Content className={styles.content}>{children}</Content>
