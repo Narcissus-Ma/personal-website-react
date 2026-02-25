@@ -1,7 +1,25 @@
 import React from 'react';
 import { Card, Tag } from 'antd';
+import {
+  StarOutlined,
+  DesktopOutlined,
+  PlayCircleOutlined,
+  BookOutlined,
+  BulbOutlined,
+  HeartOutlined,
+  AppstoreOutlined,
+} from '@ant-design/icons';
 import { Category, Website } from '../../types';
 import styles from './web-item.module.less';
+
+const iconMap: Record<string, React.ReactNode> = {
+  'linecons-star': <StarOutlined />,
+  'linecons-cog': <DesktopOutlined />,
+  'linecons-video': <PlayCircleOutlined />,
+  'linecons-doc': <BookOutlined />,
+  'linecons-lightbulb': <BulbOutlined />,
+  'linecons-heart': <HeartOutlined />,
+};
 
 interface WebItemProps {
   item: Category | Website;
@@ -15,7 +33,7 @@ const WebItem: React.FC<WebItemProps> = ({ item, transName, id }) => {
       <div className={styles.categorySection} id={id}>
         <div className={styles.categoryHeader}>
           <h3 className={styles.categoryTitle}>
-            {item.icon && <span className={styles.icon}>{item.icon}</span>}
+            {item.icon && <span className={styles.icon}>{iconMap[item.icon] || <AppstoreOutlined />}</span>}
             {transName(item)}
           </h3>
         </div>
