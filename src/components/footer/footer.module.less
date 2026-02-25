@@ -1,0 +1,41 @@
+.footer {
+  background: #fff !important;
+  border-top: 1px solid #f0f0f0;
+  padding: 24px 0 !important;
+  margin-top: 48px;
+}
+
+.footerContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+.copyright {
+  margin: 0;
+  color: #8c8c8c;
+  font-size: 14px;
+}
+
+.links {
+  a {
+    color: #1677ff;
+    transition: color 0.3s;
+
+    &:hover {
+      color: #4096ff;
+    }
+
+    .anticon {
+      margin-right: 4px;
+    }
+  }
+}

@@ -1,0 +1,54 @@
+.about {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  h2 {
+    margin: 0;
+  }
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 16px;
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  color: #262626;
+  font-size: 14px;
+  transition: all 0.3s;
+
+  &:hover {
+    border-color: #1677ff;
+    color: #1677ff;
+  }
+}
+
+.card {
+  margin-bottom: 24px;
+  border-radius: 8px;
+
+  :global(.ant-card-head) {
+    border-bottom: 1px solid #f0f0f0;
+  }
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.featureIcon {
+  font-size: 18px;
+  color: #1677ff;
+}

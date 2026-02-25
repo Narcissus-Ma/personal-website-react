@@ -1,0 +1,85 @@
+.categorySection {
+  margin-bottom: 32px;
+}
+
+.categoryHeader {
+  margin-bottom: 16px;
+}
+
+.categoryTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #262626;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .icon {
+    font-size: 20px;
+    color: #1677ff;
+  }
+}
+
+.webGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.webCard {
+  cursor: pointer;
+  border-radius: 12px !important;
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  :global(.ant-card-body) {
+    padding: 16px;
+  }
+}
+
+.logoWrapper {
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+  padding: 16px;
+}
+
+.webLogo {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.webTitle {
+  font-size: 14px;
+  font-weight: 500;
+  color: #262626;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.webDesc {
+  font-size: 12px;
+  color: #8c8c8c;
+  margin: 4px 0 0 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hotTag {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  margin: 0;
+}
