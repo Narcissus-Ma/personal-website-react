@@ -39,12 +39,9 @@ const AppLayout: React.FC<LayoutProps> = ({ children }) => {
   const { categories } = useCategories();
   const { transName } = useLanguage();
 
+  const selectedKey = location.hash.slice(2) || location.pathname;
+
   const menuItems = [
-    {
-      key: '/',
-      icon: <HomeOutlined />,
-      label: <Link to="/">首页</Link>,
-    },
     ...categories.map((category, index) => ({
       key: `category-${index}`,
       icon: iconMap[category.icon] || <AppstoreOutlined />,
@@ -77,7 +74,7 @@ const AppLayout: React.FC<LayoutProps> = ({ children }) => {
         <Menu
           theme="light"
           mode="inline"
-          selectedKeys={[location.pathname]}
+          selectedKeys={[selectedKey]}
           items={menuItems}
           className={styles.menu}
         />
