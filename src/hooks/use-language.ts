@@ -9,8 +9,8 @@ interface LanguageOption {
 }
 
 export const languageOptions: LanguageOption[] = [
-  { key: 'zh', name: '简体中文', flag: '/assets/images/flags/flag-cn.png' },
-  { key: 'en', name: 'English', flag: '/assets/images/flags/flag-us.png' },
+  { key: 'zh', name: '简体中文', flag: 'src/assets/images/flags/flag-cn.png' },
+  { key: 'en', name: 'English', flag: 'src/assets/images/flags/flag-us.png' },
 ];
 
 export const useLanguage = () => {
