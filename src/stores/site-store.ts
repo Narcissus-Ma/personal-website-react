@@ -19,7 +19,12 @@ interface SiteStore extends SiteData {
     toCategoryIndex: number,
     siteIndex: number
   ) => void;
+  addSearchEngine: (engine: SearchEngine) => void;
+  updateSearchEngine: (index: number, engine: SearchEngine) => void;
+  deleteSearchEngine: (index: number) => void;
+  setDefaultEngine: (index: number) => void;
   saveToServer: () => Promise<void>;
+  loadFromServer: () => Promise<void>;
 }
 
 const API_BASE = 'http://localhost:3000/api';
@@ -85,6 +90,37 @@ export const useSiteStore = create<SiteStore>((set, get) => ({
       }
       return { categories: newCategories };
     }),
+  addSearchEngine: engine =>
+    set(state => ({ searchEngines: [...state.searchEngines, engine] })),
+  updateSearchEngine: (index, engine) =>
+    set(state => {
+      const newEngines = [...state.searchEngines];
+      newEngines[index] = engine;
+      return { searchEngines: newEngines };
+    }),
+  deleteSearchEngine: index =>
+    set(state => {
+      const newEngines = [...state.searchEngines];
+      newEngines.splice(index, 1);
+      return { searchEngines: newEngines };
+    }),
+  setDefaultEngine: index => {},
+  loadFromServer: async () => {
+    try {
+      const response = await fetch(`${API_BASE}/data`);
+      if (!response.ok) {
+        throw new Error('Failed to load data');
+      }
+      const data = await response.json();
+      set({
+        categories: data.categories || [],
+        searchEngines: data.searchEngines || [],
+      });
+    } catch (error) {
+      console.error('Error loading data:', error);
+      // 如果加载失败，保持当前状态或设置默认值
+    }
+  },
   saveToServer: async () => {
     const { categories, searchEngines } = get();
     const response = await fetch(`${API_BASE}/save`, {
@@ -97,3 +133,8 @@ export const useSiteStore = create<SiteStore>((set, get) => ({
     }
   },
 }));
+
+// 初始化时加载数据
+setTimeout(() => {
+  useSiteStore.getState().loadFromServer();
+}, 0);

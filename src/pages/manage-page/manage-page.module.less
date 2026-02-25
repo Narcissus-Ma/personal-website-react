@@ -54,3 +54,43 @@
 .icon {
   font-size: 18px;
 }
+
+.defaultLogos {
+  margin-top: 10px;
+
+  small {
+    color: #666;
+    margin-bottom: 5px;
+    display: block;
+  }
+}
+
+.logoSelector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.defaultLogoItem {
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+
+  &.selected {
+    border-color: #3498db !important;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+  }
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.logo-preview {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: 4px;
+  margin-top: 5px;
+  border: 1px solid #ddd;
+}
