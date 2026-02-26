@@ -13,10 +13,10 @@ const HomePage: React.FC = () => {
   const location = useLocation();
 
   useEffect(() => {
-    const hash = location.hash.slice(2);
-    if (hash && hash.startsWith('category-')) {
+    const pathname = location.pathname;
+    if (pathname && pathname.startsWith('/category-')) {
       setTimeout(() => {
-        const element = document.getElementById(hash);
+        const element = document.getElementById(pathname.slice(1));
         if (element) {
           element.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
@@ -53,7 +53,7 @@ const HomePage: React.FC = () => {
             <Space>
               <Tooltip title="管理入口">
                 <Button
-                  href="/manage"
+                  href="#/manage"
                   icon={<SettingOutlined />}
                   size="large"
                   type="text"

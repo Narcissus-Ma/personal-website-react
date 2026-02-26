@@ -38,16 +38,16 @@ const AppLayout: React.FC<LayoutProps> = ({ children }) => {
   const { categories } = useCategories();
   const { transName } = useLanguage();
 
-  const selectedKey = location.hash.slice(2) || location.pathname;
+  const selectedKey = `#${location.pathname}`;
 
   const menuItems = [
     ...categories.map((category, index) => ({
-      key: `category-${index}`,
+      key: `#/category-${index}`,
       icon: iconMap[category.icon] || <AppstoreOutlined />,
-      label: <Link to={`/#/category-${index}`}>{transName(category)}</Link>,
+      label: <Link to={`/category-${index}`}>{transName(category)}</Link>,
     })),
     {
-      key: '/about',
+      key: '#/about',
       icon: <HeartOutlined />,
       label: <Link to="/about">关于</Link>,
     },
