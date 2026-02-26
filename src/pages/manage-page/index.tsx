@@ -37,16 +37,13 @@ const ManagePage: React.FC = () => {
     updateCategory,
     updateWebsite,
     deleteWebsite,
+    moveWebsite,
+    reorderWebsites,
     addSearchEngine,
     deleteSearchEngine,
     saveToServer,
     loadFromServer,
   } = useSiteStore();
-
-  // 组件挂载时加载数据
-  useEffect(() => {
-    loadFromServer();
-  }, [loadFromServer]);
 
   const [websiteForm] = Form.useForm();
   const [categoryForm] = Form.useForm();
@@ -62,6 +59,11 @@ const ManagePage: React.FC = () => {
   const [editingWebsiteData, setEditingWebsiteData] = useState<Website | null>(
     null
   );
+
+  // 组件挂载时加载数据
+  useEffect(() => {
+    loadFromServer();
+  }, [loadFromServer]);
 
   // 默认Logo选项
   const defaultLogos = [
@@ -472,16 +474,26 @@ const ManagePage: React.FC = () => {
       key: 'move',
       render: (_: string, record: Website, siteIndex: number) => (
         <Select
+          disabled={categories.length <= 1} // 当只有一个分类时禁用
           placeholder="选择分类"
           size="small"
           style={{ width: 120 }}
-          onChange={value => {
-            // 移动网站到其他分类的逻辑
-            // 这里暂时显示操作说明
+          value={categoryIndex}
+          onChange={async value => {
+            if (value !== categoryIndex) {
+              // 防止移动到相同的分类
+              moveWebsite(categoryIndex, value, siteIndex);
+              await saveToServer();
+              message.success('移动成功');
+            }
           }}
         >
           {categories.map((cat, idx) => (
-            <Option key={idx} value={idx}>
+            <Option
+              key={idx}
+              disabled={idx === categoryIndex} // 禁用当前分类选项
+              value={idx}
+            >
               {cat.name}
             </Option>
           ))}
@@ -543,14 +555,9 @@ const ManagePage: React.FC = () => {
                 okText="确定"
                 title="确定删除?"
                 onConfirm={async () => {
-                  if (editingWebsite) {
-                    deleteWebsite(
-                      editingWebsite.categoryIndex,
-                      editingWebsite.siteIndex
-                    );
-                    await saveToServer();
-                    message.success('删除成功');
-                  }
+                  deleteWebsite(categoryIndex, siteIndex);
+                  await saveToServer();
+                  message.success('删除成功');
                 }}
               >
                 <Button danger icon={<DeleteOutlined />} type="link">
@@ -646,6 +653,89 @@ const ManagePage: React.FC = () => {
                     </Button>
                   </Form.Item>
                 </Form>
+              </Card>
+            ),
+          },
+          {
+            label: '网站列表',
+            key: '4',
+            children: (
+              <Card className={styles.card} title="网站列表">
+                {categories.map((category, categoryIndex) => (
+                  <div key={categoryIndex}>
+                    <h4 style={{ marginBottom: 16 }}>{category.name}</h4>
+                    <Table
+                      columns={websiteListColumns(categoryIndex)}
+                      dataSource={category.web || []}
+                      pagination={false}
+                      rowKey={(_, index) => `${categoryIndex}-${index}`}
+                      size="small"
+                      onRow={(record, siteIndex) => {
+                        const actualSiteIndex = siteIndex ?? 0;
+                        return {
+                          draggable: !(
+                            editingWebsite &&
+                            editingWebsite.categoryIndex === categoryIndex &&
+                            editingWebsite.siteIndex === actualSiteIndex
+                          ),
+                          onDragStart: event => {
+                            event.dataTransfer.setData(
+                              'text/plain',
+                              `${categoryIndex},${actualSiteIndex}`
+                            );
+                            event.currentTarget.style.opacity = '0.5';
+                          },
+                          onDragEnd: event => {
+                            event.currentTarget.style.opacity = '1';
+                          },
+                          onDragOver: event => {
+                            event.preventDefault();
+                          },
+                          onDrop: event => {
+                            event.preventDefault();
+                            const data =
+                              event.dataTransfer.getData('text/plain');
+                            const indices = data.split(',');
+                            const sourceCategoryIndex = Number(indices[0]);
+                            const sourceSiteIndex = Number(indices[1]);
+
+                            if (
+                              Number.isInteger(sourceCategoryIndex) &&
+                              Number.isInteger(sourceSiteIndex) &&
+                              Number.isInteger(categoryIndex) &&
+                              Number.isInteger(actualSiteIndex) &&
+                              sourceCategoryIndex === categoryIndex &&
+                              sourceSiteIndex !== actualSiteIndex
+                            ) {
+                              // 同一分类内重新排序
+                              reorderWebsites(
+                                categoryIndex,
+                                sourceSiteIndex,
+                                actualSiteIndex
+                              );
+                              saveToServer();
+                              message.success('排序已更新');
+                            } else if (
+                              Number.isInteger(sourceCategoryIndex) &&
+                              Number.isInteger(categoryIndex) &&
+                              Number.isInteger(sourceSiteIndex) &&
+                              sourceCategoryIndex !== categoryIndex
+                            ) {
+                              // 移动到不同分类，使用已有的moveWebsite功能
+                              moveWebsite(
+                                sourceCategoryIndex,
+                                categoryIndex,
+                                sourceSiteIndex
+                              );
+                              saveToServer();
+                              message.success('网站已移动');
+                            }
+                          },
+                        };
+                      }}
+                    />
+                  </div>
+                ))}
               </Card>
             ),
           },
@@ -791,26 +881,6 @@ const ManagePage: React.FC = () => {
                   rowKey={(_, index) => index?.toString() || '0'}
                   size="small"
                 />
-              </Card>
-            ),
-          },
-          {
-            label: '网站列表',
-            key: '4',
-            children: (
-              <Card className={styles.card} title="网站列表">
-                {categories.map((category, categoryIndex) => (
-                  <div key={categoryIndex}>
-                    <h4 style={{ marginBottom: 16 }}>{category.name}</h4>
-                    <Table
-                      columns={websiteListColumns(categoryIndex)}
-                      dataSource={category.web || []}
-                      pagination={false}
-                      rowKey={(_, index) => `${categoryIndex}-${index}`}
-                      size="small"
-                    />
-                  </div>
-                ))}
               </Card>
             ),
           },

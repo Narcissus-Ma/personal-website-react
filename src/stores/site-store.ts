@@ -19,6 +19,11 @@ interface SiteStore extends SiteData {
     toCategoryIndex: number,
     siteIndex: number
   ) => void;
+  reorderWebsites: (
+    categoryIndex: number,
+    oldIndex: number,
+    newIndex: number
+  ) => void;
   addSearchEngine: (engine: SearchEngine) => void;
   updateSearchEngine: (index: number, engine: SearchEngine) => void;
   deleteSearchEngine: (index: number) => void;
@@ -87,6 +92,17 @@ export const useSiteStore = create<SiteStore>((set, get) => ({
           ...(newCategories[toCategoryIndex].web || []),
           website,
         ];
+      }
+      return { categories: newCategories };
+    }),
+  reorderWebsites: (categoryIndex, oldIndex, newIndex) =>
+    set(state => {
+      const newCategories = [...state.categories];
+      if (newCategories[categoryIndex].web) {
+        const websites = [...newCategories[categoryIndex].web!];
+        const [movedItem] = websites.splice(oldIndex, 1);
+        websites.splice(newIndex, 0, movedItem);
+        newCategories[categoryIndex].web = websites;
       }
       return { categories: newCategories };
     }),
