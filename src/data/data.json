@@ -64,6 +64,12 @@
           "url": "https://www.2925.com/",
           "logo": "https://img1.tucang.cc/api/image/show/e1306a391e2a2a324370bfee481f497b",
           "desc": "无限别名邮箱，可以拿来注册网站"
+        },
+        {
+          "title": "搜码",
+          "url": "https://hantang.github.io/search-wubi/",
+          "logo": "https://img1.tucang.cc/api/image/show/e1306a391e2a2a324370bfee481f497b",
+          "desc": "五笔查询"
         }
       ]
     },
@@ -1132,6 +1138,12 @@
           "logo": "https://img1.tucang.cc/api/image/show/77451257254f3851ce36fc23f98c8c70",
           "title": "图床2",
           "desc": "个人图床，图片上传，电报接口已失效"
+        },
+        {
+          "title": "个人导航",
+          "url": "https://navigation.narcissus2ma.dpdns.org/",
+          "logo": "https://img1.tucang.cc/api/image/show/77451257254f3851ce36fc23f98c8c70",
+          "desc": "vue搭建的旧版导航网站"
         }
       ]
     },
