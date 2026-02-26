@@ -133,8 +133,3 @@ export const useSiteStore = create<SiteStore>((set, get) => ({
     }
   },
 }));
-
-// 初始化时加载数据
-setTimeout(() => {
-  useSiteStore.getState().loadFromServer();
-}, 0);

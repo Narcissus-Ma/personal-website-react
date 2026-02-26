@@ -1,6 +1,5 @@
 import { createServer } from 'http';
 import { readFile, writeFile } from 'fs/promises';
-import { parse } from 'url';
 import { fileURLToPath } from 'url';
 import path from 'path';
 
@@ -8,13 +7,25 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const server = createServer(async (req, res) => {
-  const parsedUrl = parse(req.url, true);
+  // 使用 WHATWG URL API 替代 url.parse()
+  const parsedUrl = new URL(`http://localhost:3000${req.url}`);
   const pathname = parsedUrl.pathname;
 
   // 设置CORS头部
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  );
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+  // 处理预检请求
+  if (req.method === 'OPTIONS') {
+    res.writeHead(200);
+    res.end();
+    return;
+  }
 
   if (pathname === '/api/save' && req.method === 'POST') {
     let body = '';

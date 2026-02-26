@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Card,
@@ -40,7 +40,13 @@ const ManagePage: React.FC = () => {
     addSearchEngine,
     deleteSearchEngine,
     saveToServer,
+    loadFromServer,
   } = useSiteStore();
+
+  // 组件挂载时加载数据
+  useEffect(() => {
+    loadFromServer();
+  }, [loadFromServer]);
 
   const [websiteForm] = Form.useForm();
   const [categoryForm] = Form.useForm();
