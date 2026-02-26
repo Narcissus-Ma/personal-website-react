@@ -19,6 +19,13 @@ import {
   PlusOutlined,
   DeleteOutlined,
   EditOutlined,
+  StarOutlined,
+  DesktopOutlined,
+  PlayCircleOutlined,
+  BookOutlined,
+  BulbOutlined,
+  HeartOutlined,
+  AppstoreOutlined,
 } from '@ant-design/icons';
 import { useSiteStore } from '../../stores';
 import { Website, Category, SearchEngine } from '../../types';
@@ -26,6 +33,15 @@ import styles from './manage-page.module.less';
 
 const { Option } = Select;
 const { TextArea } = Input;
+
+const iconMap: Record<string, React.ReactNode> = {
+  'linecons-star': <StarOutlined />,
+  'linecons-cog': <DesktopOutlined />,
+  'linecons-video': <PlayCircleOutlined />,
+  'linecons-doc': <BookOutlined />,
+  'linecons-lightbulb': <BulbOutlined />,
+  'linecons-heart': <HeartOutlined />,
+};
 
 const ManagePage: React.FC = () => {
   const {
@@ -68,9 +84,9 @@ const ManagePage: React.FC = () => {
   // 默认Logo选项
   const defaultLogos = [
     'https://img1.tucang.cc/api/image/show/e1306a391e2a2a324370bfee481f497b',
-    'https://infinityicon.infinitynewtab.com/user-share-icon/d8b62f4d64bda8800b1c788cd5ba3c68.png',
     'https://img1.tucang.cc/api/image/show/d49b2f40283fd12731be9e18b707d48a',
-    'https://img1.tucang.cc/api/image/show/77451257254f3851ce36fc23f98c8c70.png',
+    'https://img1.tucang.cc/api/image/show/77451257254f3851ce36fc23f98c8c70',
+    'https://img1.tucang.cc/api/image/show/9dbb66429a737edf0652a1e9000b15b8',
   ];
 
   const handleAddWebsite = async (values: any) => {
@@ -172,7 +188,11 @@ const ManagePage: React.FC = () => {
       title: '图标',
       dataIndex: 'icon',
       key: 'icon',
-      render: (icon: string) => <span className={styles.icon}>{icon}</span>,
+      render: (icon: string) => (
+        <span className={styles.icon}>
+          {iconMap[icon] || <AppstoreOutlined />}
+        </span>
+      ),
     },
     {
       title: '名称',
@@ -349,8 +369,9 @@ const ManagePage: React.FC = () => {
                   {defaultLogos.map((logoUrl, idx) => (
                     <Image
                       key={idx}
-                      className={`${styles.defaultLogoItem} ${editingWebsiteData.logo === logoUrl ? styles.selected : ''}`}
+                      className={`${styles.defaultLogoItem} ${editingWebsiteData.logo === logoUrl ? styles.selected : ''} `}
                       height={32}
+                      preview={false}
                       src={logoUrl}
                       style={{
                         margin: '5px',
@@ -840,6 +861,7 @@ const ManagePage: React.FC = () => {
                           key={index}
                           className={styles.defaultLogoItem}
                           height={40}
+                          preview={false}
                           src={logo}
                           style={{
                             margin: '5px',
