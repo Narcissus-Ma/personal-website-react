@@ -32,7 +32,11 @@ interface SiteStore extends SiteData {
   loadFromServer: () => Promise<void>;
 }
 
-const API_BASE = 'http://localhost:3000/api';
+// const API_BASE =
+//   import.meta.env.VITE_API_BASE ||
+//   'https://personal-website-api.narcissus2ma.workers.dev/api';
+
+const API_BASE = 'https://personal-website-api.narcissus2ma.workers.dev/api';
 
 export const useSiteStore = create<SiteStore>((set, get) => ({
   categories: [],

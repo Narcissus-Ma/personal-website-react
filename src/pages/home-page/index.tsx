@@ -4,11 +4,12 @@ import { Select, Button, Space, Tooltip } from 'antd';
 import { GithubOutlined, SettingOutlined } from '@ant-design/icons';
 import AppLayout from '@/components/layout';
 import { WebItem, SearchBox, Footer } from '../../components';
-import { useCategories, useLanguage } from '../../hooks';
+import { useLanguage } from '../../hooks';
 import styles from './home-page.module.less';
+import { useSiteStore } from '@/stores';
 
 const HomePage: React.FC = () => {
-  const { categories } = useCategories();
+  const { categories } = useSiteStore();
   const { language, setLanguage, transName, languageOptions } = useLanguage();
   const location = useLocation();
 

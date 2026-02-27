@@ -12,7 +12,13 @@
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
     "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
     "predeploy": "pnpm run build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist",
+    "cf:dev": "wrangler dev --config cloudflare/wrangler.toml",
+    "cf:deploy": "wrangler deploy --config cloudflare/wrangler.toml",
+    "cf:init": "node cloudflare/init-kv-data.mjs",
+    "cf:backup": "node cloudflare/backup-kv-data.mjs",
+    "cf:get": "wrangler kv key get --binding=SITE_DATA \"data\" --config cloudflare/wrangler.toml --remote",
+    "cf:put": "wrangler kv key put --binding=SITE_DATA \"data\" --path=./src/data/data.json --config cloudflare/wrangler.toml --remote"
   },
   "devDependencies": {
     "@eslint/compat": "^2.0.2",
@@ -35,7 +41,8 @@
     "globals": "^17.3.0",
     "prettier": "^3.8.1",
     "typescript": "~5.9.3",
-    "vite": "^7.3.1"
+    "vite": "^7.3.1",
+    "wrangler": "^3.0.0"
   },
   "dependencies": {
     "@ant-design/icons": "^6.1.0",

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Card,
@@ -75,11 +75,18 @@ const ManagePage: React.FC = () => {
   const [editingWebsiteData, setEditingWebsiteData] = useState<Website | null>(
     null
   );
+  const hasLoaded = useRef(false);
 
   // 组件挂载时加载数据
   useEffect(() => {
-    loadFromServer();
-  }, [loadFromServer]);
+    if (hasLoaded.current) {
+      return;
+    }
+    if (categories.length === 0) {
+      loadFromServer();
+    }
+    hasLoaded.current = true;
+  }, [loadFromServer, categories.length]);
 
   // 默认Logo选项
   const defaultLogos = [
