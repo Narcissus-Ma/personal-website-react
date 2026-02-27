@@ -36,7 +36,7 @@ interface SiteStore extends SiteData {
 //   import.meta.env.VITE_API_BASE ||
 //   'https://personal-website-api.narcissus2ma.workers.dev/api';
 
-const API_BASE = 'https://personal-website-api.narcissus2ma.workers.dev/api';
+const API_BASE = 'https://website.liyifei.dpdns.org/api';
 
 export const useSiteStore = create<SiteStore>((set, get) => ({
   categories: [],
@@ -138,7 +138,7 @@ export const useSiteStore = create<SiteStore>((set, get) => ({
       });
     } catch (error) {
       console.error('Error loading data:', error);
-      // 如果加载失败，保持当前状态或设置默认值
+      throw error;
     }
   },
   saveToServer: async () => {
