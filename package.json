@@ -17,8 +17,10 @@
     "cf:deploy": "wrangler deploy --config cloudflare/wrangler.toml",
     "cf:init": "node cloudflare/init-kv-data.mjs",
     "cf:backup": "node cloudflare/backup-kv-data.mjs",
-    "cf:get": "wrangler kv key get --binding=SITE_DATA \"data\" --config cloudflare/wrangler.toml --remote",
-    "cf:put": "wrangler kv key put --binding=SITE_DATA \"data\" --path=./src/data/data.json --config cloudflare/wrangler.toml --remote"
+    "cf:get": "wrangler kv key get --binding=SITE_DATA \"data\" --config cloudflare/wrangler.toml --remote --preview false",
+    "cf:put": "wrangler kv key put --binding=SITE_DATA \"data\" --path=./src/data/data.json --config cloudflare/wrangler.toml --remote --preview false",
+    "cf:set-password": "node cloudflare/set-password.mjs",
+    "cf:get-password": "wrangler kv key get --binding=SITE_DATA \"admin_password\" --config cloudflare/wrangler.toml --remote --preview false"
   },
   "devDependencies": {
     "@eslint/compat": "^2.0.2",

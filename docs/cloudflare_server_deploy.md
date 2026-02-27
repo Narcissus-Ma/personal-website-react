@@ -446,3 +446,674 @@ export default {
 对于个人网站来说，Cloudflare Workers 是一个理想的后端解决方案。
 
 如有问题，请参考 [故障排查](#故障排查) 部分或查阅 Cloudflare 官方文档。
+
+---
+
+## 管理页面鉴权功能实施方案
+
+### 需求概述
+
+在管理页面入口处（[home-page/index.tsx#L55-62](file:///Users/mapengfei/personal-website-react/src/pages/home-page/index.tsx#L55-62)）添加弹窗鉴权功能，通过 Cloudflare KV 存储和管理密码，确保只有授权用户才能访问管理页面。
+
+### 技术方案
+
+#### 架构设计
+
+```
+前端 (React) → 点击管理入口 → 弹出密码输入框
+                                    ↓
+                            验证密码（调用 Cloudflare Workers API）
+                                    ↓
+                            Worker 从 KV 读取密码进行比对
+                                    ↓
+                            返回验证结果（成功/失败）
+                                    ↓
+                            成功：跳转到管理页面
+                            失败：显示错误提示
+```
+
+#### 数据存储设计
+
+在 Cloudflare KV 中新增一个键值对：
+
+| 键名             | 值                     | 说明             |
+| ---------------- | ---------------------- | ---------------- |
+| `admin_password` | `your_secure_password` | 管理页面访问密码 |
+
+#### API 端点设计
+
+新增 API 端点：
+
+| 方法 | 端点               | 说明         |
+| ---- | ------------------ | ------------ |
+| POST | `/api/auth/verify` | 验证管理密码 |
+
+请求格式：
+
+```json
+{
+  "password": "用户输入的密码"
+}
+```
+
+响应格式（成功）：
+
+```json
+{
+  "success": true,
+  "message": "验证成功"
+}
+```
+
+响应格式（失败）：
+
+```json
+{
+  "success": false,
+  "message": "密码错误"
+}
+```
+
+### 实现步骤
+
+#### 步骤 1：更新 Cloudflare Worker
+
+修改 `cloudflare/worker.mjs`，添加密码验证端点：
+
+```javascript
+export default {
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+    const pathname = url.pathname;
+
+    const corsHeaders = {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Headers':
+        'Origin, X-Requested-With, Content-Type, Accept, Authorization',
+      'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+      'Access-Control-Allow-Credentials': 'true',
+    };
+
+    if (request.method === 'OPTIONS') {
+      return new Response(null, { headers: corsHeaders });
+    }
+
+    // 新增：密码验证端点
+    if (pathname === '/api/auth/verify' && request.method === 'POST') {
+      try {
+        const { password } = await request.json();
+        const storedPassword = await env.SITE_DATA.get('admin_password');
+
+        if (!storedPassword) {
+          return new Response(
+            JSON.stringify({ success: false, message: '系统未配置密码' }),
+            {
+              status: 500,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            }
+          );
+        }
+
+        if (password === storedPassword) {
+          return new Response(
+            JSON.stringify({ success: true, message: '验证成功' }),
+            {
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            }
+          );
+        } else {
+          return new Response(
+            JSON.stringify({ success: false, message: '密码错误' }),
+            {
+              status: 401,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            }
+          );
+        }
+      } catch (err) {
+        console.error(err);
+        return new Response(
+          JSON.stringify({ success: false, message: '验证失败' }),
+          {
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
+    }
+
+    if (pathname === '/api/save' && request.method === 'POST') {
+      try {
+        const data = await request.json();
+        await env.SITE_DATA.put('data', JSON.stringify(data, null, 2));
+        return new Response(JSON.stringify({ message: '保存成功' }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      } catch (err) {
+        console.error(err);
+        return new Response(JSON.stringify({ error: '保存失败' }), {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    }
+
+    if (pathname === '/api/data' && request.method === 'GET') {
+      try {
+        const data = await env.SITE_DATA.get('data');
+        if (!data) {
+          return new Response(
+            JSON.stringify({ categories: [], searchEngines: [] }),
+            {
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            }
+          );
+        }
+        return new Response(data, {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      } catch (err) {
+        console.error(err);
+        return new Response(JSON.stringify({ error: '读取失败' }), {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    }
+
+    return new Response(JSON.stringify({ error: 'Not Found' }), {
+      status: 404,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  },
+};
+```
+
+#### 步骤 2：创建鉴权 Store
+
+创建 `src/stores/auth-store.ts`，用于管理鉴权状态：
+
+```typescript
+import { create } from 'zustand';
+
+interface AuthState {
+  isAuthenticated: boolean;
+  verifyPassword: (password: string) => Promise<boolean>;
+}
+
+const API_BASE = 'https://website.liyifei.dpdns.org/api';
+
+export const useAuthStore = create<AuthState>(set => ({
+  isAuthenticated: false,
+  verifyPassword: async (password: string) => {
+    try {
+      const response = await fetch(`${API_BASE}/auth/verify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        set({ isAuthenticated: true });
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('验证失败:', error);
+      return false;
+    }
+  },
+}));
+```
+
+#### 步骤 3：创建鉴权弹窗组件
+
+创建 `src/components/auth-modal/index.tsx`：
+
+```typescript
+import React, { useState } from 'react';
+import { Modal, Input, message } from 'antd';
+import { LockOutlined } from '@ant-design/icons';
+import { useAuthStore } from '@/stores';
+import styles from './auth-modal.module.less';
+
+interface AuthModalProps {
+  visible: boolean;
+  onClose: () => void;
+  onSuccess: () => void;
+}
+
+const AuthModal: React.FC<AuthModalProps> = ({ visible, onClose, onSuccess }) => {
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { verifyPassword } = useAuthStore();
+
+  const handleOk = async () => {
+    if (!password.trim()) {
+      message.warning('请输入密码');
+      return;
+    }
+
+    setLoading(true);
+    const success = await verifyPassword(password);
+    setLoading(false);
+
+    if (success) {
+      message.success('验证成功');
+      setPassword('');
+      onClose();
+      onSuccess();
+    } else {
+      message.error('密码错误');
+    }
+  };
+
+  const handleCancel = () => {
+    setPassword('');
+    onClose();
+  };
+
+  return (
+    <Modal
+      title="管理页面鉴权"
+      open={visible}
+      onOk={handleOk}
+      onCancel={handleCancel}
+      confirmLoading={loading}
+      okText="确认"
+      cancelText="取消"
+    >
+      <div className={styles.container}>
+        <Input.Password
+          prefix={<LockOutlined />}
+          placeholder="请输入管理密码"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          onPressEnter={handleOk}
+          size="large"
+        />
+      </div>
+    </Modal>
+  );
+};
+
+export default AuthModal;
+```
+
+创建 `src/components/auth-modal/auth-modal.module.less`：
+
+```less
+.container {
+  padding: 20px 0;
+}
+```
+
+更新 `src/components/index.ts`：
+
+```typescript
+export { default as AuthModal } from './auth-modal';
+export { default as WebItem } from './web-item';
+export { default as SearchBox } from './search-box';
+export { default as Footer } from './footer';
+```
+
+#### 步骤 4：修改首页添加鉴权弹窗
+
+修改 `src/pages/home-page/index.tsx`，将管理入口按钮改为点击触发弹窗：
+
+```typescript
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Select, Button, Space, Tooltip } from 'antd';
+import { GithubOutlined, SettingOutlined } from '@ant-design/icons';
+import AppLayout from '@/components/layout';
+import { WebItem, SearchBox, Footer, AuthModal } from '../../components';
+import { useLanguage } from '../../hooks';
+import styles from './home-page.module.less';
+import { useSiteStore, useAuthStore } from '@/stores';
+
+const HomePage: React.FC = () => {
+  const { categories } = useSiteStore();
+  const { language, setLanguage, transName, languageOptions } = useLanguage();
+  const { isAuthenticated } = useAuthStore();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [authModalVisible, setAuthModalVisible] = useState(false);
+
+  useEffect(() => {
+    const pathname = location.pathname;
+    if (pathname && pathname.startsWith('/category-')) {
+      setTimeout(() => {
+        const element = document.getElementById(pathname.slice(1));
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
+  }, [location]);
+
+  const handleManageClick = () => {
+    if (isAuthenticated) {
+      navigate('/manage');
+    } else {
+      setAuthModalVisible(true);
+    }
+  };
+
+  const handleAuthSuccess = () => {
+    navigate('/manage');
+  };
+
+  return (
+    <AppLayout>
+      <div className={styles.home}>
+        <div className={styles.toolbar}>
+          <div className={styles.left}>
+            <Select
+              className={styles.languageSelect}
+              size="large"
+              value={language}
+              onChange={value => setLanguage(value as 'zh' | 'en')}
+            >
+              {languageOptions.map(opt => (
+                <Select.Option key={opt.key} value={opt.key}>
+                  <Space>
+                    <img
+                      alt={opt.name}
+                      src={opt.flag}
+                      style={{ width: 16, height: 16 }}
+                    />
+                    {opt.name}
+                  </Space>
+                </Select.Option>
+              ))}
+            </Select>
+          </div>
+          <div className={styles.right}>
+            <Space>
+              <Tooltip title="管理入口">
+                <Button
+                  onClick={handleManageClick}
+                  icon={<SettingOutlined />}
+                  size="large"
+                  type="text"
+                />
+              </Tooltip>
+              <Tooltip title="GitHub">
+                <Button
+                  href="https://github.com/Narcissus-Ma"
+                  icon={<GithubOutlined />}
+                  size="large"
+                  target="_blank"
+                  type="text"
+                >
+                  GitHub
+                </Button>
+              </Tooltip>
+            </Space>
+          </div>
+        </div>
+
+        <SearchBox />
+
+        <div className={styles.content}>
+          {categories.map((item, idx) => (
+            <div key={idx}>
+              {item.web && (
+                <WebItem
+                  id={`category-${idx}`}
+                  item={item}
+                  transName={transName}
+                />
+              )}
+              {item.children?.map((subItem, subIdx) => (
+                <WebItem key={subIdx} item={subItem} transName={transName} />
+              ))}
+            </div>
+          ))}
+        </div>
+
+        <Footer />
+
+        <AuthModal
+          visible={authModalVisible}
+          onClose={() => setAuthModalVisible(false)}
+          onSuccess={handleAuthSuccess}
+        />
+      </div>
+    </AppLayout>
+  );
+};
+
+export default HomePage;
+```
+
+#### 步骤 5：初始化管理密码
+
+在 Cloudflare KV 中设置管理密码：
+
+```bash
+# 方式 1：使用 wrangler 命令
+wrangler kv key put --binding=SITE_DATA "admin_password" "your_secure_password" --config cloudflare/wrangler.toml
+
+# 方式 2：使用 npm 脚本（需要在 package.json 中添加）
+npm run cf:set-password
+```
+
+在 `package.json` 中添加脚本：
+
+```json
+{
+  "scripts": {
+    "cf:set-password": "wrangler kv:key put --binding=SITE_DATA \"admin_password\" \"your_secure_password\" --config cloudflare/wrangler.toml",
+    "cf:get-password": "wrangler kv:key get --binding=SITE_DATA \"admin_password\" --config cloudflare/wrangler.toml"
+  }
+}
+```
+
+#### 步骤 6：部署更新
+
+```bash
+# 部署 Worker
+npm run cf:deploy
+
+# 重新构建前端
+npm run build
+```
+
+### 安全建议
+
+1. **密码强度**：使用强密码，建议至少 12 位，包含大小写字母、数字和特殊字符
+2. **定期更换**：定期更换管理密码
+3. **HTTPS**：确保前端和后端都使用 HTTPS 协议
+4. **环境变量**：可以考虑将密码存储在 Cloudflare Workers 的环境变量中，而不是 KV 中
+
+### 测试验证
+
+#### 测试步骤
+
+1. 访问首页，点击管理入口按钮
+2. 应该弹出密码输入框
+3. 输入错误密码，应该显示"密码错误"提示
+4. 输入正确密码，应该显示"验证成功"并跳转到管理页面
+5. 再次点击管理入口，应该直接跳转到管理页面（无需重新输入密码）
+
+#### 测试命令
+
+```bash
+# 测试验证 API
+curl -X POST https://website.liyifei.dpdns.org/api/auth/verify \
+  -H "Content-Type: application/json" \
+  -d '{"password": "your_secure_password"}'
+```
+
+### 故障排查
+
+#### 问题 1：验证失败但密码正确
+
+**可能原因**：
+
+- KV 中未设置密码
+- KV 中的密码与输入不一致
+
+**解决方案**：
+
+```bash
+# 检查 KV 中是否有密码
+npm run cf:get-password
+
+# 重新设置密码
+npm run cf:set-password
+```
+
+#### 问题 2：弹窗不显示
+
+**可能原因**：
+
+- 组件未正确导入
+- 状态管理有问题
+
+**解决方案**：
+
+- 检查浏览器控制台是否有错误
+- 确认 `AuthModal` 组件已正确导入和使用
+
+#### 问题 3：验证成功后不跳转
+
+**可能原因**：
+
+- `navigate` 函数未正确调用
+- 路由配置有问题
+
+**解决方案**：
+
+- 检查 `handleAuthSuccess` 函数是否正确调用 `navigate('/manage')`
+- 确认路由配置中存在 `/manage` 路径
+
+### 扩展功能（可选）
+
+#### 1. 密码修改功能
+
+可以添加一个修改密码的 API 端点，允许管理员在管理页面中修改密码：
+
+```javascript
+// 在 worker.mjs 中添加
+if (pathname === '/api/auth/change-password' && request.method === 'POST') {
+  try {
+    const { oldPassword, newPassword } = await request.json();
+    const storedPassword = await env.SITE_DATA.get('admin_password');
+
+    if (oldPassword !== storedPassword) {
+      return new Response(
+        JSON.stringify({ success: false, message: '原密码错误' }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    await env.SITE_DATA.put('admin_password', newPassword);
+    return new Response(
+      JSON.stringify({ success: true, message: '密码修改成功' }),
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
+  } catch (err) {
+    console.error(err);
+    return new Response(
+      JSON.stringify({ success: false, message: '修改失败' }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
+  }
+}
+```
+
+#### 2. 会话过期
+
+可以添加会话过期机制，一段时间后需要重新验证：
+
+```typescript
+// 在 auth-store.ts 中添加
+interface AuthState {
+  isAuthenticated: boolean;
+  authTime: number;
+  verifyPassword: (password: string) => Promise<boolean>;
+  checkAuth: () => boolean;
+}
+
+const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 分钟
+
+export const useAuthStore = create<AuthState>((set, get) => ({
+  isAuthenticated: false,
+  authTime: 0,
+  verifyPassword: async (password: string) => {
+    try {
+      const response = await fetch(`${API_BASE}/auth/verify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        set({ isAuthenticated: true, authTime: Date.now() });
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('验证失败:', error);
+      return false;
+    }
+  },
+  checkAuth: () => {
+    const { isAuthenticated, authTime } = get();
+    if (!isAuthenticated) return false;
+    const now = Date.now();
+    if (now - authTime > SESSION_TIMEOUT) {
+      set({ isAuthenticated: false, authTime: 0 });
+      return false;
+    }
+    return true;
+  },
+}));
+```
+
+#### 3. 登出功能
+
+在管理页面添加登出按钮：
+
+```typescript
+// 在 auth-store.ts 中添加
+interface AuthState {
+  isAuthenticated: boolean;
+  authTime: number;
+  verifyPassword: (password: string) => Promise<boolean>;
+  checkAuth: () => boolean;
+  logout: () => void;
+}
+
+export const useAuthStore = create<AuthState>((set, get) => ({
+  // ... 其他代码
+  logout: () => {
+    set({ isAuthenticated: false, authTime: 0 });
+  },
+}));
+```
+
+### 总结
+
+通过以上实施方案，可以实现以下功能：
+
+✅ 管理页面入口鉴权保护
+✅ 使用 Cloudflare KV 存储密码
+✅ 弹窗式密码输入体验
+✅ 验证成功后自动跳转
+✅ 会话状态管理（可选）
+✅ 密码修改功能（可选）
+✅ 会话过期机制（可选）
+
+该方案完全基于 Cloudflare Workers 和 KV，无需额外服务器，符合项目的无服务器架构理念。

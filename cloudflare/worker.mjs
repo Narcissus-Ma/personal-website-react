@@ -16,6 +16,49 @@ export default {
       return new Response(null, { headers: corsHeaders });
     }
 
+    if (pathname === '/api/auth/verify' && request.method === 'POST') {
+      try {
+        const { password } = await request.json();
+        const storedPassword = await env.SITE_DATA.get('admin_password');
+
+        if (!storedPassword) {
+          return new Response(
+            JSON.stringify({ success: false, message: '系统未配置密码' }),
+            {
+              status: 500,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            }
+          );
+        }
+
+        if (password === storedPassword) {
+          return new Response(
+            JSON.stringify({ success: true, message: '验证成功' }),
+            {
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            }
+          );
+        } else {
+          return new Response(
+            JSON.stringify({ success: false, message: '密码错误' }),
+            {
+              status: 401,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            }
+          );
+        }
+      } catch (err) {
+        console.error(err);
+        return new Response(
+          JSON.stringify({ success: false, message: '验证失败' }),
+          {
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
+    }
+
     if (pathname === '/api/save' && request.method === 'POST') {
       try {
         const data = await request.json();

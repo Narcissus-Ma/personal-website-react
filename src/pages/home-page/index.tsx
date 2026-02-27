@@ -1,17 +1,20 @@
-import React, { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Select, Button, Space, Tooltip } from 'antd';
 import { GithubOutlined, SettingOutlined } from '@ant-design/icons';
 import AppLayout from '@/components/layout';
-import { WebItem, SearchBox, Footer } from '../../components';
+import { WebItem, SearchBox, Footer, AuthModal } from '../../components';
 import { useLanguage } from '../../hooks';
 import styles from './home-page.module.less';
-import { useSiteStore } from '@/stores';
+import { useSiteStore, useAuthStore } from '@/stores';
 
 const HomePage: React.FC = () => {
   const { categories } = useSiteStore();
   const { language, setLanguage, transName, languageOptions } = useLanguage();
+  const { isAuthenticated } = useAuthStore();
   const location = useLocation();
+  const navigate = useNavigate();
+  const [authModalVisible, setAuthModalVisible] = useState(false);
 
   useEffect(() => {
     const pathname = location.pathname;
@@ -24,6 +27,18 @@ const HomePage: React.FC = () => {
       }, 100);
     }
   }, [location]);
+
+  const handleManageClick = () => {
+    if (isAuthenticated) {
+      navigate('/manage');
+    } else {
+      setAuthModalVisible(true);
+    }
+  };
+
+  const handleAuthSuccess = () => {
+    navigate('/manage');
+  };
 
   return (
     <AppLayout>
@@ -54,10 +69,10 @@ const HomePage: React.FC = () => {
             <Space>
               <Tooltip title="管理入口">
                 <Button
-                  href="#/manage"
                   icon={<SettingOutlined />}
                   size="large"
                   type="text"
+                  onClick={handleManageClick}
                 />
               </Tooltip>
               <Tooltip title="GitHub">
@@ -95,6 +110,12 @@ const HomePage: React.FC = () => {
         </div>
 
         <Footer />
+
+        <AuthModal
+          visible={authModalVisible}
+          onClose={() => setAuthModalVisible(false)}
+          onSuccess={handleAuthSuccess}
+        />
       </div>
     </AppLayout>
   );
