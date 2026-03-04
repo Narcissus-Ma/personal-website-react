@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Card,
   Form,
@@ -13,6 +13,7 @@ import {
   Divider,
   Tabs,
   Image,
+  Modal,
 } from 'antd';
 import {
   ArrowLeftOutlined,
@@ -26,8 +27,9 @@ import {
   BulbOutlined,
   HeartOutlined,
   AppstoreOutlined,
+  LockOutlined,
 } from '@ant-design/icons';
-import { useSiteStore } from '../../stores';
+import { useSiteStore, useAuthStore } from '../../stores';
 import { Website, Category, SearchEngine } from '../../types';
 import styles from './manage-page.module.less';
 
@@ -60,6 +62,8 @@ const ManagePage: React.FC = () => {
     saveToServer,
     loadFromServer,
   } = useSiteStore();
+  const { isAuthenticated, verifyPassword } = useAuthStore();
+  const navigate = useNavigate();
 
   const [websiteForm] = Form.useForm();
   const [categoryForm] = Form.useForm();
@@ -75,7 +79,32 @@ const ManagePage: React.FC = () => {
   const [editingWebsiteData, setEditingWebsiteData] = useState<Website | null>(
     null
   );
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const hasLoaded = useRef(false);
+
+  const handleVerifyPassword = async () => {
+    if (!password.trim()) {
+      message.warning('请输入密码');
+      return;
+    }
+
+    setLoading(true);
+    const success = await verifyPassword(password);
+    setLoading(false);
+
+    if (success) {
+      message.success('验证成功');
+      setPassword('');
+    } else {
+      message.error('密码错误');
+    }
+  };
+
+  const handleAuthCancel = () => {
+    setPassword('');
+    navigate('/');
+  };
 
   // 组件挂载时加载数据
   useEffect(() => {
@@ -600,322 +629,348 @@ const ManagePage: React.FC = () => {
   ];
 
   return (
-    <div className={styles.manage}>
-      <div className={styles.header}>
-        <Link className={styles.backBtn} to="/">
-          <ArrowLeftOutlined /> 返回首页
-        </Link>
-        <h1>网站管理</h1>
-      </div>
+    <>
+      {!isAuthenticated && (
+        <Modal
+          cancelText="取消"
+          closable={false}
+          confirmLoading={loading}
+          maskClosable={false}
+          okText="确认"
+          open={true}
+          title="管理页面鉴权"
+          onCancel={handleAuthCancel}
+          onOk={handleVerifyPassword}
+        >
+          <div className={styles.authContainer}>
+            <Input.Password
+              placeholder="请输入管理密码"
+              prefix={<LockOutlined />}
+              size="large"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              onPressEnter={handleVerifyPassword}
+            />
+          </div>
+        </Modal>
+      )}
+      <div className={styles.manage}>
+        <div className={styles.header}>
+          <Link className={styles.backBtn} to="/">
+            <ArrowLeftOutlined /> 返回首页
+          </Link>
+          <h1>网站管理</h1>
+        </div>
 
-      <Tabs
-        defaultActiveKey="1"
-        items={[
-          {
-            label: '添加网站',
-            key: '1',
-            children: (
-              <Card className={styles.card} title="添加网站">
-                <Form
-                  form={websiteForm}
-                  initialValues={{ categoryIndex: 0 }}
-                  layout="vertical"
-                  onFinish={handleAddWebsite}
-                >
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: '1fr 1fr',
-                      gap: 16,
-                    }}
+        <Tabs
+          defaultActiveKey="1"
+          items={[
+            {
+              label: '添加网站',
+              key: '1',
+              children: (
+                <Card className={styles.card} title="添加网站">
+                  <Form
+                    form={websiteForm}
+                    initialValues={{ categoryIndex: 0 }}
+                    layout="vertical"
+                    onFinish={handleAddWebsite}
+                  >
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gap: 16,
+                      }}
+                    >
+                      <Form.Item
+                        label="分类"
+                        name="categoryIndex"
+                        rules={[{ required: true }]}
+                      >
+                        <Select>
+                          {categories.map((cat, idx) => (
+                            <Option key={idx} value={idx}>
+                              {cat.name}
+                            </Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+                      <Form.Item
+                        label="网站名称"
+                        name="title"
+                        rules={[{ required: true, message: '请输入网站名称' }]}
+                      >
+                        <Input placeholder="请输入网站名称" />
+                      </Form.Item>
+                    </div>
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gap: 16,
+                      }}
+                    >
+                      <Form.Item
+                        label="网站链接"
+                        name="url"
+                        rules={[{ required: true, message: '请输入网站链接' }]}
+                      >
+                        <Input placeholder="https://example.com" />
+                      </Form.Item>
+                      <Form.Item label="Logo链接" name="logo">
+                        <Input placeholder="https://example.com/favicon.ico" />
+                      </Form.Item>
+                    </div>
+                    <Form.Item label="描述" name="desc">
+                      <TextArea placeholder="网站描述" rows={2} />
+                    </Form.Item>
+                    <Form.Item>
+                      <Button
+                        htmlType="submit"
+                        icon={<PlusOutlined />}
+                        type="primary"
+                      >
+                        添加网站
+                      </Button>
+                    </Form.Item>
+                  </Form>
+                </Card>
+              ),
+            },
+            {
+              label: '网站列表',
+              key: '4',
+              children: (
+                <Card className={styles.card} title="网站列表">
+                  {categories.map((category, categoryIndex) => (
+                    <div key={categoryIndex}>
+                      <h4 style={{ marginBottom: 16 }}>{category.name}</h4>
+                      <Table
+                        columns={websiteListColumns(categoryIndex)}
+                        dataSource={category.web || []}
+                        pagination={false}
+                        rowKey={(_, index) => `${categoryIndex}-${index}`}
+                        size="small"
+                        onRow={(record, siteIndex) => {
+                          const actualSiteIndex = siteIndex ?? 0;
+                          return {
+                            draggable: !(
+                              editingWebsite &&
+                              editingWebsite.categoryIndex === categoryIndex &&
+                              editingWebsite.siteIndex === actualSiteIndex
+                            ),
+                            onDragStart: event => {
+                              event.dataTransfer.setData(
+                                'text/plain',
+                                `${categoryIndex},${actualSiteIndex}`
+                              );
+                              event.currentTarget.style.opacity = '0.5';
+                            },
+                            onDragEnd: event => {
+                              event.currentTarget.style.opacity = '1';
+                            },
+                            onDragOver: event => {
+                              event.preventDefault();
+                            },
+                            onDrop: event => {
+                              event.preventDefault();
+                              const data =
+                                event.dataTransfer.getData('text/plain');
+                              const indices = data.split(',');
+                              const sourceCategoryIndex = Number(indices[0]);
+                              const sourceSiteIndex = Number(indices[1]);
+
+                              if (
+                                Number.isInteger(sourceCategoryIndex) &&
+                                Number.isInteger(sourceSiteIndex) &&
+                                Number.isInteger(categoryIndex) &&
+                                Number.isInteger(actualSiteIndex) &&
+                                sourceCategoryIndex === categoryIndex &&
+                                sourceSiteIndex !== actualSiteIndex
+                              ) {
+                                // 同一分类内重新排序
+                                reorderWebsites(
+                                  categoryIndex,
+                                  sourceSiteIndex,
+                                  actualSiteIndex
+                                );
+                                saveToServer();
+                                message.success('排序已更新');
+                              } else if (
+                                Number.isInteger(sourceCategoryIndex) &&
+                                Number.isInteger(categoryIndex) &&
+                                Number.isInteger(sourceSiteIndex) &&
+                                sourceCategoryIndex !== categoryIndex
+                              ) {
+                                // 移动到不同分类，使用已有的moveWebsite功能
+                                moveWebsite(
+                                  sourceCategoryIndex,
+                                  categoryIndex,
+                                  sourceSiteIndex
+                                );
+                                saveToServer();
+                                message.success('网站已移动');
+                              }
+                            },
+                          };
+                        }}
+                      />
+                    </div>
+                  ))}
+                </Card>
+              ),
+            },
+            {
+              label: '分类管理',
+              key: '2',
+              children: (
+                <Card className={styles.card} title="分类管理">
+                  <Form
+                    className={styles.categoryForm}
+                    form={categoryForm}
+                    layout="inline"
+                    onFinish={handleAddCategory}
                   >
                     <Form.Item
-                      label="分类"
-                      name="categoryIndex"
-                      rules={[{ required: true }]}
+                      name="name"
+                      rules={[{ required: true, message: '请输入分类名称' }]}
                     >
-                      <Select>
-                        {categories.map((cat, idx) => (
-                          <Option key={idx} value={idx}>
-                            {cat.name}
-                          </Option>
-                        ))}
+                      <Input placeholder="分类名称" />
+                    </Form.Item>
+                    <Form.Item
+                      name="en_name"
+                      rules={[{ required: true, message: '请输入英文名称' }]}
+                    >
+                      <Input placeholder="English Name" />
+                    </Form.Item>
+                    <Form.Item initialValue="linecons-star" name="icon">
+                      <Select style={{ width: 140 }}>
+                        <Option value="linecons-star">Star</Option>
+                        <Option value="linecons-cog">Cog</Option>
+                        <Option value="linecons-doc">Doc</Option>
+                        <Option value="linecons-clock">Clock</Option>
                       </Select>
                     </Form.Item>
-                    <Form.Item
-                      label="网站名称"
-                      name="title"
-                      rules={[{ required: true, message: '请输入网站名称' }]}
-                    >
-                      <Input placeholder="请输入网站名称" />
+                    <Form.Item>
+                      <Button
+                        htmlType="submit"
+                        icon={<PlusOutlined />}
+                        type="primary"
+                      >
+                        添加分类
+                      </Button>
                     </Form.Item>
-                  </div>
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: '1fr 1fr',
-                      gap: 16,
-                    }}
+                  </Form>
+                  <Divider />
+                  <Table
+                    columns={categoryColumns}
+                    dataSource={categories}
+                    pagination={false}
+                    rowKey={(_, index) => index?.toString() || '0'}
+                    size="small"
+                  />
+                </Card>
+              ),
+            },
+            {
+              label: '搜索引擎管理',
+              key: '3',
+              children: (
+                <Card className={styles.card} title="搜索引擎管理">
+                  <Form
+                    form={searchEngineForm}
+                    layout="vertical"
+                    onFinish={handleAddSearchEngine}
                   >
-                    <Form.Item
-                      label="网站链接"
-                      name="url"
-                      rules={[{ required: true, message: '请输入网站链接' }]}
-                    >
-                      <Input placeholder="https://example.com" />
-                    </Form.Item>
-                    <Form.Item label="Logo链接" name="logo">
-                      <Input placeholder="https://example.com/favicon.ico" />
-                    </Form.Item>
-                  </div>
-                  <Form.Item label="描述" name="desc">
-                    <TextArea placeholder="网站描述" rows={2} />
-                  </Form.Item>
-                  <Form.Item>
-                    <Button
-                      htmlType="submit"
-                      icon={<PlusOutlined />}
-                      type="primary"
-                    >
-                      添加网站
-                    </Button>
-                  </Form.Item>
-                </Form>
-              </Card>
-            ),
-          },
-          {
-            label: '网站列表',
-            key: '4',
-            children: (
-              <Card className={styles.card} title="网站列表">
-                {categories.map((category, categoryIndex) => (
-                  <div key={categoryIndex}>
-                    <h4 style={{ marginBottom: 16 }}>{category.name}</h4>
-                    <Table
-                      columns={websiteListColumns(categoryIndex)}
-                      dataSource={category.web || []}
-                      pagination={false}
-                      rowKey={(_, index) => `${categoryIndex}-${index}`}
-                      size="small"
-                      onRow={(record, siteIndex) => {
-                        const actualSiteIndex = siteIndex ?? 0;
-                        return {
-                          draggable: !(
-                            editingWebsite &&
-                            editingWebsite.categoryIndex === categoryIndex &&
-                            editingWebsite.siteIndex === actualSiteIndex
-                          ),
-                          onDragStart: event => {
-                            event.dataTransfer.setData(
-                              'text/plain',
-                              `${categoryIndex},${actualSiteIndex}`
-                            );
-                            event.currentTarget.style.opacity = '0.5';
-                          },
-                          onDragEnd: event => {
-                            event.currentTarget.style.opacity = '1';
-                          },
-                          onDragOver: event => {
-                            event.preventDefault();
-                          },
-                          onDrop: event => {
-                            event.preventDefault();
-                            const data =
-                              event.dataTransfer.getData('text/plain');
-                            const indices = data.split(',');
-                            const sourceCategoryIndex = Number(indices[0]);
-                            const sourceSiteIndex = Number(indices[1]);
-
-                            if (
-                              Number.isInteger(sourceCategoryIndex) &&
-                              Number.isInteger(sourceSiteIndex) &&
-                              Number.isInteger(categoryIndex) &&
-                              Number.isInteger(actualSiteIndex) &&
-                              sourceCategoryIndex === categoryIndex &&
-                              sourceSiteIndex !== actualSiteIndex
-                            ) {
-                              // 同一分类内重新排序
-                              reorderWebsites(
-                                categoryIndex,
-                                sourceSiteIndex,
-                                actualSiteIndex
-                              );
-                              saveToServer();
-                              message.success('排序已更新');
-                            } else if (
-                              Number.isInteger(sourceCategoryIndex) &&
-                              Number.isInteger(categoryIndex) &&
-                              Number.isInteger(sourceSiteIndex) &&
-                              sourceCategoryIndex !== categoryIndex
-                            ) {
-                              // 移动到不同分类，使用已有的moveWebsite功能
-                              moveWebsite(
-                                sourceCategoryIndex,
-                                categoryIndex,
-                                sourceSiteIndex
-                              );
-                              saveToServer();
-                              message.success('网站已移动');
-                            }
-                          },
-                        };
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr 1fr',
+                        gap: 16,
                       }}
-                    />
-                  </div>
-                ))}
-              </Card>
-            ),
-          },
-          {
-            label: '分类管理',
-            key: '2',
-            children: (
-              <Card className={styles.card} title="分类管理">
-                <Form
-                  className={styles.categoryForm}
-                  form={categoryForm}
-                  layout="inline"
-                  onFinish={handleAddCategory}
-                >
-                  <Form.Item
-                    name="name"
-                    rules={[{ required: true, message: '请输入分类名称' }]}
-                  >
-                    <Input placeholder="分类名称" />
-                  </Form.Item>
-                  <Form.Item
-                    name="en_name"
-                    rules={[{ required: true, message: '请输入英文名称' }]}
-                  >
-                    <Input placeholder="English Name" />
-                  </Form.Item>
-                  <Form.Item initialValue="linecons-star" name="icon">
-                    <Select style={{ width: 140 }}>
-                      <Option value="linecons-star">Star</Option>
-                      <Option value="linecons-cog">Cog</Option>
-                      <Option value="linecons-doc">Doc</Option>
-                      <Option value="linecons-clock">Clock</Option>
-                    </Select>
-                  </Form.Item>
-                  <Form.Item>
-                    <Button
-                      htmlType="submit"
-                      icon={<PlusOutlined />}
-                      type="primary"
                     >
-                      添加分类
-                    </Button>
-                  </Form.Item>
-                </Form>
-                <Divider />
-                <Table
-                  columns={categoryColumns}
-                  dataSource={categories}
-                  pagination={false}
-                  rowKey={(_, index) => index?.toString() || '0'}
-                  size="small"
-                />
-              </Card>
-            ),
-          },
-          {
-            label: '搜索引擎管理',
-            key: '3',
-            children: (
-              <Card className={styles.card} title="搜索引擎管理">
-                <Form
-                  form={searchEngineForm}
-                  layout="vertical"
-                  onFinish={handleAddSearchEngine}
-                >
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: '1fr 1fr 1fr',
-                      gap: 16,
-                    }}
-                  >
-                    <Form.Item
-                      label="引擎名称"
-                      name="name"
-                      rules={[{ required: true, message: '请输入引擎名称' }]}
-                    >
-                      <Input placeholder="Google, Bing, 百度等" />
-                    </Form.Item>
-                    <Form.Item
-                      label="图标链接"
-                      name="icon"
-                      rules={[{ required: true, message: '请输入图标链接' }]}
-                    >
-                      <Input placeholder="https://..." />
-                    </Form.Item>
-                    <Form.Item
-                      label="搜索URL"
-                      name="url"
-                      rules={[{ required: true, message: '请输入搜索URL' }]}
-                    >
-                      <Input placeholder="https://www.google.com/search?q={query}" />
-                    </Form.Item>
-                  </div>
-
-                  {/* 默认Logo选择器 */}
-                  <div className={styles.defaultLogos}>
-                    <small>选择默认图标：</small>
-                    <div className={styles.logoSelector}>
-                      {defaultLogos.map((logo, index) => (
-                        <Image
-                          key={index}
-                          className={styles.defaultLogoItem}
-                          height={40}
-                          preview={false}
-                          src={logo}
-                          style={{
-                            margin: '5px',
-                            cursor: 'pointer',
-                            border: '2px solid transparent',
-                          }}
-                          width={40}
-                          onClick={() =>
-                            searchEngineForm.setFieldsValue({ icon: logo })
-                          }
-                          onMouseEnter={e => {
-                            e.currentTarget.style.borderColor = '#3498db';
-                          }}
-                          onMouseLeave={e => {
-                            e.currentTarget.style.borderColor = 'transparent';
-                          }}
-                        />
-                      ))}
+                      <Form.Item
+                        label="引擎名称"
+                        name="name"
+                        rules={[{ required: true, message: '请输入引擎名称' }]}
+                      >
+                        <Input placeholder="Google, Bing, 百度等" />
+                      </Form.Item>
+                      <Form.Item
+                        label="图标链接"
+                        name="icon"
+                        rules={[{ required: true, message: '请输入图标链接' }]}
+                      >
+                        <Input placeholder="https://..." />
+                      </Form.Item>
+                      <Form.Item
+                        label="搜索URL"
+                        name="url"
+                        rules={[{ required: true, message: '请输入搜索URL' }]}
+                      >
+                        <Input placeholder="https://www.google.com/search?q={query}" />
+                      </Form.Item>
                     </div>
-                  </div>
 
-                  <Form.Item>
-                    <Button
-                      htmlType="submit"
-                      icon={<PlusOutlined />}
-                      type="primary"
-                    >
-                      添加搜索引擎
-                    </Button>
-                  </Form.Item>
-                </Form>
+                    {/* 默认Logo选择器 */}
+                    <div className={styles.defaultLogos}>
+                      <small>选择默认图标：</small>
+                      <div className={styles.logoSelector}>
+                        {defaultLogos.map((logo, index) => (
+                          <Image
+                            key={index}
+                            className={styles.defaultLogoItem}
+                            height={40}
+                            preview={false}
+                            src={logo}
+                            style={{
+                              margin: '5px',
+                              cursor: 'pointer',
+                              border: '2px solid transparent',
+                            }}
+                            width={40}
+                            onClick={() =>
+                              searchEngineForm.setFieldsValue({ icon: logo })
+                            }
+                            onMouseEnter={e => {
+                              e.currentTarget.style.borderColor = '#3498db';
+                            }}
+                            onMouseLeave={e => {
+                              e.currentTarget.style.borderColor = 'transparent';
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </div>
 
-                <Divider />
+                    <Form.Item>
+                      <Button
+                        htmlType="submit"
+                        icon={<PlusOutlined />}
+                        type="primary"
+                      >
+                        添加搜索引擎
+                      </Button>
+                    </Form.Item>
+                  </Form>
 
-                <Table
-                  columns={searchEngineColumns}
-                  dataSource={searchEngines}
-                  pagination={false}
-                  rowKey={(_, index) => index?.toString() || '0'}
-                  size="small"
-                />
-              </Card>
-            ),
-          },
-        ]}
-      />
-    </div>
+                  <Divider />
+
+                  <Table
+                    columns={searchEngineColumns}
+                    dataSource={searchEngines}
+                    pagination={false}
+                    rowKey={(_, index) => index?.toString() || '0'}
+                    size="small"
+                  />
+                </Card>
+              ),
+            },
+          ]}
+        />
+      </div>
+    </>
   );
 };
 
