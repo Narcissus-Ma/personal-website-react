@@ -125,6 +125,30 @@ const ManagePage: React.FC = () => {
     'https://img1.tucang.cc/api/image/show/9dbb66429a737edf0652a1e9000b15b8',
   ];
 
+  // 从URL生成favicon链接（异步检测）
+  const getFaviconUrl = (url: string): Promise<string> => {
+    return new Promise(resolve => {
+      try {
+        const domain = new URL(url).hostname;
+
+        // 优先尝试直接拼接（快速失败）
+        const direct = `https://${domain}/favicon.ico`;
+
+        // 用 Image 对象测试是否可加载
+        const img = new globalThis.Image();
+        img.onload = () => resolve(direct);
+        img.onerror = () => {
+          // 失败则用 Google 服务兜底
+          resolve(`https://www.google.com/s2/favicons?domain=${domain}&sz=64`);
+        };
+        img.src = direct;
+      } catch {
+        // URL解析失败，返回空字符串
+        resolve('');
+      }
+    });
+  };
+
   const handleAddWebsite = async (values: any) => {
     try {
       const { categoryIndex, ...websiteData } = values;
@@ -488,12 +512,27 @@ const ManagePage: React.FC = () => {
             <Input
               size="small"
               value={editingWebsiteData.url}
-              onChange={e =>
+              onChange={async e => {
+                const url = e.target.value;
                 setEditingWebsiteData({
                   ...editingWebsiteData,
-                  url: e.target.value,
-                })
-              }
+                  url: url,
+                });
+                // 自动更新favicon
+                if (url) {
+                  const faviconUrl = await getFaviconUrl(url);
+                  if (faviconUrl) {
+                    setEditingWebsiteData(prev =>
+                      prev
+                        ? {
+                            ...prev,
+                            logo: faviconUrl,
+                          }
+                        : null
+                    );
+                  }
+                }
+              }}
             />
           );
         }
@@ -716,7 +755,20 @@ const ManagePage: React.FC = () => {
                         name="url"
                         rules={[{ required: true, message: '请输入网站链接' }]}
                       >
-                        <Input placeholder="https://example.com" />
+                        <Input
+                          placeholder="https://example.com"
+                          onChange={async e => {
+                            const url = e.target.value;
+                            if (url) {
+                              const faviconUrl = await getFaviconUrl(url);
+                              if (faviconUrl) {
+                                websiteForm.setFieldsValue({
+                                  logo: faviconUrl,
+                                });
+                              }
+                            }
+                          }}
+                        />
                       </Form.Item>
                       <Form.Item label="Logo链接" name="logo">
                         <Input placeholder="https://example.com/favicon.ico" />
