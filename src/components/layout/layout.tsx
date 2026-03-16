@@ -12,7 +12,7 @@ import {
   BookOutlined,
   AppstoreOutlined,
 } from '@ant-design/icons';
-import { useCategories, useLanguage } from '../../hooks';
+import { useCategories, useLanguage, useTheme } from '../../hooks';
 import styles from './layout.module.less';
 import collapsedLogo from '../../assets/images/user-logo.jpg';
 import expandedLogo from '../../assets/images/personal-general-logo.png';
@@ -37,6 +37,7 @@ const AppLayout: React.FC<LayoutProps> = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
   const { categories } = useCategories();
   const { transName } = useLanguage();
+  const { theme } = useTheme();
 
   const selectedKey = `#${location.pathname}`;
 
@@ -77,7 +78,7 @@ const AppLayout: React.FC<LayoutProps> = ({ children }) => {
           items={menuItems}
           mode="inline"
           selectedKeys={[selectedKey]}
-          theme="light"
+          theme={theme === 'dark' ? 'dark' : 'light'}
         />
       </Sider>
       <Layout>

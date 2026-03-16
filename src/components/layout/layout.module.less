@@ -11,8 +11,8 @@
 }
 
 .sider {
-  background: #fff;
-  border-right: 1px solid #f0f0f0;
+  background: var(--app-surface);
+  border-right: 1px solid var(--app-border);
   overflow: auto;
   height: 100vh;
   position: fixed;
@@ -30,7 +30,7 @@
 .logo {
   padding: 16px;
   text-align: center;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--app-border);
   margin-bottom: 0;
   height: 64px;
   display: flex;
@@ -54,12 +54,12 @@
     border-radius: 8px;
 
     &:hover {
-      background: #f5f5f5;
+      background: var(--app-hover);
     }
 
     &.ant-menu-item-selected {
-      background: #e6f4ff;
-      color: #1677ff;
+      background: var(--app-selected-bg);
+      color: var(--app-selected-text);
 
       &::after {
         display: none;
@@ -69,9 +69,9 @@
 }
 
 .header {
-  background: #fff;
+  background: var(--app-surface);
   padding: 0 24px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--app-border);
   display: flex;
   align-items: center;
   margin-left: 260px;
@@ -88,7 +88,7 @@
   padding: 0 12px;
 
   &:hover {
-    color: #1677ff;
+    color: var(--app-primary);
   }
 }
 
@@ -101,5 +101,5 @@
   padding: 24px;
   min-height: calc(100vh - 64px);
   transition: margin-left 0.2s;
-  background: #f5f5f5;
+  background: var(--app-bg);
 }

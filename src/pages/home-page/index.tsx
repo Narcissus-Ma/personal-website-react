@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Select, Button, Space, Tooltip } from 'antd';
-import { GithubOutlined, SettingOutlined } from '@ant-design/icons';
+import {
+  GithubOutlined,
+  SettingOutlined,
+  MoonOutlined,
+  SunOutlined,
+} from '@ant-design/icons';
 import AppLayout from '@/components/layout';
 import { WebItem, SearchBox, Footer, AuthModal } from '../../components';
-import { useLanguage } from '../../hooks';
+import { useLanguage, useTheme } from '../../hooks';
 import styles from './home-page.module.less';
 import { useSiteStore, useAuthStore } from '@/stores';
 
 const HomePage: React.FC = () => {
   const { categories } = useSiteStore();
   const { language, setLanguage, transName, languageOptions } = useLanguage();
+  const { theme, toggleTheme } = useTheme();
   const { isAuthenticated } = useAuthStore();
   const location = useLocation();
   const navigate = useNavigate();
@@ -64,6 +70,17 @@ const HomePage: React.FC = () => {
                 </Select.Option>
               ))}
             </Select>
+            <Tooltip
+              title={theme === 'dark' ? '切换到日间模式' : '切换到夜间模式'}
+            >
+              <Button
+                aria-label="切换主题"
+                icon={theme === 'dark' ? <SunOutlined /> : <MoonOutlined />}
+                size="large"
+                type="text"
+                onClick={toggleTheme}
+              />
+            </Tooltip>
           </div>
           <div className={styles.right}>
             <Space>
