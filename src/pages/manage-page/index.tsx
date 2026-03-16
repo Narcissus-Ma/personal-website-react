@@ -29,6 +29,7 @@ import {
   AppstoreOutlined,
   LockOutlined,
 } from '@ant-design/icons';
+import { API_BASE } from '@/config/api-base';
 import { useSiteStore, useAuthStore } from '../../stores';
 import { Website, Category, SearchEngine } from '../../types';
 import styles from './manage-page.module.less';
@@ -126,27 +127,42 @@ const ManagePage: React.FC = () => {
   ];
 
   // 从URL生成favicon链接（异步检测）
-  const getFaviconUrl = (url: string): Promise<string> => {
-    return new Promise(resolve => {
+  const getFaviconUrl = async (inputUrl: string): Promise<string> => {
+    const normalizeUrl = (raw: string): string | null => {
+      const trimmed = raw.trim();
+      if (!trimmed) return null;
       try {
-        const domain = new URL(url).hostname;
-
-        // 优先尝试直接拼接（快速失败）
-        const direct = `https://${domain}/favicon.ico`;
-
-        // 用 Image 对象测试是否可加载
-        const img = new globalThis.Image();
-        img.onload = () => resolve(direct);
-        img.onerror = () => {
-          // 失败则用 Google 服务兜底
-          resolve(`https://www.google.com/s2/favicons?domain=${domain}&sz=64`);
-        };
-        img.src = direct;
+        return new URL(trimmed).toString();
       } catch {
-        // URL解析失败，返回空字符串
-        resolve('');
+        try {
+          return new URL(`https://${trimmed}`).toString();
+        } catch {
+          return null;
+        }
       }
-    });
+    };
+
+    const canLoadImage = (src: string): Promise<boolean> =>
+      new Promise(resolve => {
+        const img = new globalThis.Image();
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
+        img.src = src;
+      });
+
+    const normalized = normalizeUrl(inputUrl);
+    if (!normalized) return '';
+
+    const parsed = new URL(normalized);
+    const direct = new URL('/favicon.ico', parsed.origin).toString();
+    if (await canLoadImage(direct)) return direct;
+
+    // 后端爬取/代理：避免前端直接依赖第三方服务
+    const backend = `${API_BASE}/favicon?url=${encodeURIComponent(normalized)}`;
+    if (await canLoadImage(backend)) return backend;
+
+    // 保留原有的 Google 兜底（在后端不可用时仍有机会拿到图标）
+    return `https://www.google.com/s2/favicons?domain=${parsed.hostname}&sz=64`;
   };
 
   const handleAddWebsite = async (values: any) => {

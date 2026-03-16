@@ -141,6 +141,7 @@ npm run cf:put       # 更新 KV 数据
 | ---- | ----------- | ------------ |
 | GET  | `/api/data` | 获取网站数据 |
 | POST | `/api/save` | 保存网站数据 |
+| GET  | `/api/favicon?url=...` | 爬取/代理站点 favicon（返回图片） |
 
 ## 更新前端 API 地址
 

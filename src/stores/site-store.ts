@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { API_BASE } from '@/config/api-base';
 import { SiteData, Category, SearchEngine, Website } from '../types';
 
 interface SiteStore extends SiteData {
@@ -31,12 +32,6 @@ interface SiteStore extends SiteData {
   saveToServer: () => Promise<void>;
   loadFromServer: () => Promise<void>;
 }
-
-// const API_BASE =
-//   import.meta.env.VITE_API_BASE ||
-//   'https://personal-website-api.narcissus2ma.workers.dev/api';
-
-const API_BASE = 'https://website.liyifei.dpdns.org/api';
 
 export const useSiteStore = create<SiteStore>((set, get) => ({
   categories: [],

@@ -1,11 +1,10 @@
 import { create } from 'zustand';
+import { API_BASE } from '@/config/api-base';
 
 interface AuthState {
   isAuthenticated: boolean;
   verifyPassword: (password: string) => Promise<boolean>;
 }
-
-const API_BASE = 'https://website.liyifei.dpdns.org/api';
 
 export const useAuthStore = create<AuthState>(set => ({
   isAuthenticated: false,
