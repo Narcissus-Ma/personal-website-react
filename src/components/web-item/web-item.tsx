@@ -47,7 +47,9 @@ const WebItem: React.FC<WebItemProps> = ({ item, transName, id }) => {
               key={idx}
               hoverable
               className={styles.webCard}
-              cover={
+              onClick={() => window.open(web.url, '_blank')}
+            >
+              <div className={styles.cardHeader}>
                 <div className={styles.logoWrapper}>
                   <img
                     alt={web.title}
@@ -59,13 +61,11 @@ const WebItem: React.FC<WebItemProps> = ({ item, transName, id }) => {
                     }}
                   />
                 </div>
-              }
-              onClick={() => window.open(web.url, '_blank')}
-            >
-              <Card.Meta
-                description={<span className={styles.webDesc}>{web.desc}</span>}
-                title={<span className={styles.webTitle}>{web.title}</span>}
-              />
+                <span className={styles.webTitle}>{web.title}</span>
+              </div>
+              <div className={styles.descRow}>
+                <span className={styles.webDesc}>{web.desc}</span>
+              </div>
               {web.is_hot && (
                 <Tag className={styles.hotTag} color="red">
                   Hot
