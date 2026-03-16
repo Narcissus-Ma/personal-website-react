@@ -46,6 +46,8 @@ const iconMap: Record<string, React.ReactNode> = {
   'linecons-heart': <HeartOutlined />,
 };
 
+type TimeoutHandle = ReturnType<typeof globalThis.setTimeout>;
+
 const ManagePage: React.FC = () => {
   const {
     categories,
@@ -70,6 +72,8 @@ const ManagePage: React.FC = () => {
   const [categoryForm] = Form.useForm();
   const [searchEngineForm] = Form.useForm();
 
+  const FAVICON_DEBOUNCE_MS = 500;
+
   const [editingCategory, setEditingCategory] = useState<number | null>(null);
   const [editingCategoryData, setEditingCategoryData] =
     useState<Category | null>(null);
@@ -83,6 +87,29 @@ const ManagePage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const hasLoaded = useRef(false);
+
+  const editingWebsiteRef = useRef(editingWebsite);
+  const addWebsiteFaviconTimerRef = useRef<TimeoutHandle | null>(null);
+  const addWebsiteLastUrlRef = useRef<string>('');
+  const editWebsiteFaviconTimerRef = useRef<TimeoutHandle | null>(null);
+  const editWebsiteLastRequestRef = useRef<{ key: string; url: string } | null>(
+    null
+  );
+
+  useEffect(() => {
+    editingWebsiteRef.current = editingWebsite;
+  }, [editingWebsite]);
+
+  useEffect(() => {
+    return () => {
+      if (addWebsiteFaviconTimerRef.current) {
+        globalThis.clearTimeout(addWebsiteFaviconTimerRef.current);
+      }
+      if (editWebsiteFaviconTimerRef.current) {
+        globalThis.clearTimeout(editWebsiteFaviconTimerRef.current);
+      }
+    };
+  }, []);
 
   const handleVerifyPassword = async () => {
     if (!password.trim()) {
@@ -163,6 +190,77 @@ const ManagePage: React.FC = () => {
 
     // 保留原有的 Google 兜底（在后端不可用时仍有机会拿到图标）
     return `https://www.google.com/s2/favicons?domain=${parsed.hostname}&sz=64`;
+  };
+
+  const scheduleAddWebsiteFaviconUpdate = (rawUrl: string) => {
+    const nextUrl = rawUrl.trim();
+    addWebsiteLastUrlRef.current = nextUrl;
+
+    if (addWebsiteFaviconTimerRef.current) {
+      globalThis.clearTimeout(addWebsiteFaviconTimerRef.current);
+    }
+
+    if (!nextUrl) {
+      return;
+    }
+
+    addWebsiteFaviconTimerRef.current = globalThis.setTimeout(async () => {
+      const urlSnapshot = addWebsiteLastUrlRef.current;
+      if (!urlSnapshot) return;
+
+      const faviconUrl = await getFaviconUrl(urlSnapshot);
+      if (addWebsiteLastUrlRef.current !== urlSnapshot) return;
+      if (!faviconUrl) return;
+
+      websiteForm.setFieldsValue({ logo: faviconUrl });
+    }, FAVICON_DEBOUNCE_MS);
+  };
+
+  const scheduleEditWebsiteFaviconUpdate = (key: string, rawUrl: string) => {
+    const nextUrl = rawUrl.trim();
+    editWebsiteLastRequestRef.current = { key, url: nextUrl };
+
+    if (editWebsiteFaviconTimerRef.current) {
+      globalThis.clearTimeout(editWebsiteFaviconTimerRef.current);
+    }
+
+    if (!nextUrl) {
+      return;
+    }
+
+    editWebsiteFaviconTimerRef.current = globalThis.setTimeout(async () => {
+      const requestSnapshot = editWebsiteLastRequestRef.current;
+      const currentEditing = editingWebsiteRef.current;
+      if (!requestSnapshot || !currentEditing) return;
+      if (
+        `${currentEditing.categoryIndex}-${currentEditing.siteIndex}` !== key
+      ) {
+        return;
+      }
+      if (requestSnapshot.key !== key || requestSnapshot.url !== nextUrl) {
+        return;
+      }
+
+      const faviconUrl = await getFaviconUrl(requestSnapshot.url);
+      const latestRequest = editWebsiteLastRequestRef.current;
+      if (!latestRequest) return;
+      if (
+        latestRequest.key !== key ||
+        latestRequest.url !== requestSnapshot.url
+      ) {
+        return;
+      }
+      if (!faviconUrl) return;
+
+      setEditingWebsiteData(prev =>
+        prev
+          ? {
+              ...prev,
+              logo: faviconUrl,
+            }
+          : null
+      );
+    }, FAVICON_DEBOUNCE_MS);
   };
 
   const handleAddWebsite = async (values: any) => {
@@ -534,20 +632,11 @@ const ManagePage: React.FC = () => {
                   ...editingWebsiteData,
                   url: url,
                 });
-                // 自动更新favicon
-                if (url) {
-                  const faviconUrl = await getFaviconUrl(url);
-                  if (faviconUrl) {
-                    setEditingWebsiteData(prev =>
-                      prev
-                        ? {
-                            ...prev,
-                            logo: faviconUrl,
-                          }
-                        : null
-                    );
-                  }
-                }
+                // 自动更新 favicon（防抖）
+                scheduleEditWebsiteFaviconUpdate(
+                  `${categoryIndex}-${siteIndex}`,
+                  url
+                );
               }}
             />
           );
@@ -773,16 +862,9 @@ const ManagePage: React.FC = () => {
                       >
                         <Input
                           placeholder="https://example.com"
-                          onChange={async e => {
+                          onChange={e => {
                             const url = e.target.value;
-                            if (url) {
-                              const faviconUrl = await getFaviconUrl(url);
-                              if (faviconUrl) {
-                                websiteForm.setFieldsValue({
-                                  logo: faviconUrl,
-                                });
-                              }
-                            }
+                            scheduleAddWebsiteFaviconUpdate(url);
                           }}
                         />
                       </Form.Item>
