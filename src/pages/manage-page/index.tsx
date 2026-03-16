@@ -466,6 +466,7 @@ const ManagePage: React.FC = () => {
       key: 'icon',
       render: (icon: string) => (
         <Image
+          className={styles.favicon20}
           fallback="https://via.placeholder.com/20"
           height={20}
           src={icon}
@@ -531,6 +532,7 @@ const ManagePage: React.FC = () => {
                 }
               />
               <Image
+                className={styles.favicon32}
                 fallback="https://via.placeholder.com/32"
                 height={32}
                 src={editingWebsiteData.logo}
@@ -543,7 +545,7 @@ const ManagePage: React.FC = () => {
                   {defaultLogos.map((logoUrl, idx) => (
                     <Image
                       key={idx}
-                      className={`${styles.defaultLogoItem} ${editingWebsiteData.logo === logoUrl ? styles.selected : ''} `}
+                      className={`${styles.favicon32} ${styles.defaultLogoItem} ${editingWebsiteData.logo === logoUrl ? styles.selected : ''} `}
                       height={32}
                       preview={false}
                       src={logoUrl}
@@ -578,6 +580,7 @@ const ManagePage: React.FC = () => {
         }
         return (
           <Image
+            className={styles.favicon32}
             fallback="https://via.placeholder.com/32"
             height={32}
             src={logo}
