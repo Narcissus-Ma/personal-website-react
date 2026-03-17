@@ -203,3 +203,45 @@
   color: #666;
   margin-top: 24px;
 }
+
+@media (max-width: 575px) {
+  .about {
+    max-width: 100%;
+  }
+
+  .header {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .contactContainer {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .qrcodeSection {
+    padding-left: 0;
+    border-left: none;
+  }
+
+  .wechatQrcode {
+    width: 140px !important;
+    height: 140px !important;
+  }
+
+  .wechatQrcode :global(.ant-image-img) {
+    width: 140px !important;
+    height: 140px !important;
+  }
+
+  .qrcodeContainer {
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .qrcodeImg {
+    width: 180px;
+    height: 180px;
+  }
+}

@@ -2,8 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Card,
+  Col,
+  Drawer,
   Form,
   Input,
+  Row,
   Select,
   Button,
   Table,
@@ -14,6 +17,7 @@ import {
   Tabs,
   Image,
   Modal,
+  Typography,
 } from 'antd';
 import {
   ArrowLeftOutlined,
@@ -30,12 +34,14 @@ import {
   LockOutlined,
 } from '@ant-design/icons';
 import { API_BASE } from '@/config/api-base';
+import { useIsMobile } from '@/hooks';
 import { useSiteStore, useAuthStore } from '../../stores';
 import { Website, Category, SearchEngine } from '../../types';
 import styles from './manage-page.module.less';
 
 const { Option } = Select;
 const { TextArea } = Input;
+const { Text } = Typography;
 
 const iconMap: Record<string, React.ReactNode> = {
   'linecons-star': <StarOutlined />,
@@ -67,6 +73,7 @@ const ManagePage: React.FC = () => {
   } = useSiteStore();
   const { isAuthenticated, verifyPassword } = useAuthStore();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const [websiteForm] = Form.useForm();
   const [categoryForm] = Form.useForm();
@@ -87,6 +94,7 @@ const ManagePage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const hasLoaded = useRef(false);
+  const [mobileWebsiteEditorOpen, setMobileWebsiteEditorOpen] = useState(false);
 
   const editingWebsiteRef = useRef(editingWebsite);
   const addWebsiteFaviconTimerRef = useRef<TimeoutHandle | null>(null);
@@ -95,6 +103,35 @@ const ManagePage: React.FC = () => {
   const editWebsiteLastRequestRef = useRef<{ key: string; url: string } | null>(
     null
   );
+
+  const openMobileWebsiteEditor = (
+    categoryIndex: number,
+    siteIndex: number,
+    record: Website
+  ) => {
+    setEditingWebsite({ categoryIndex, siteIndex });
+    setEditingWebsiteData({ ...record });
+    setMobileWebsiteEditorOpen(true);
+  };
+
+  const closeMobileWebsiteEditor = () => {
+    setMobileWebsiteEditorOpen(false);
+    setEditingWebsite(null);
+    setEditingWebsiteData(null);
+  };
+
+  const handleSaveEditingWebsite = async () => {
+    if (!editingWebsite || !editingWebsiteData) return;
+
+    updateWebsite(
+      editingWebsite.categoryIndex,
+      editingWebsite.siteIndex,
+      editingWebsiteData
+    );
+    await saveToServer();
+    message.success('保存成功');
+    closeMobileWebsiteEditor();
+  };
 
   useEffect(() => {
     editingWebsiteRef.current = editingWebsite;
@@ -545,7 +582,7 @@ const ManagePage: React.FC = () => {
                   {defaultLogos.map((logoUrl, idx) => (
                     <Image
                       key={idx}
-                      className={`${styles.favicon32} ${styles.defaultLogoItem} ${editingWebsiteData.logo === logoUrl ? styles.selected : ''} `}
+                      className={`${styles.favicon32} ${styles.defaultLogoItem} ${editingWebsiteData.logo === logoUrl ? styles.defaultLogoItemSelected : ''} `}
                       height={32}
                       preview={false}
                       src={logoUrl}
@@ -715,30 +752,11 @@ const ManagePage: React.FC = () => {
               <Button
                 icon={<EditOutlined />}
                 type="link"
-                onClick={async () => {
-                  // 更新网站信息
-                  if (editingWebsiteData && editingWebsite) {
-                    updateWebsite(
-                      editingWebsite.categoryIndex,
-                      editingWebsite.siteIndex,
-                      editingWebsiteData
-                    );
-                    await saveToServer();
-                    message.success('保存成功');
-                    setEditingWebsite(null);
-                    setEditingWebsiteData(null);
-                  }
-                }}
+                onClick={handleSaveEditingWebsite}
               >
                 保存
               </Button>
-              <Button
-                type="link"
-                onClick={() => {
-                  setEditingWebsite(null);
-                  setEditingWebsiteData(null);
-                }}
-              >
+              <Button type="link" onClick={closeMobileWebsiteEditor}>
                 取消
               </Button>
             </>
@@ -749,7 +767,7 @@ const ManagePage: React.FC = () => {
                 type="link"
                 onClick={() => {
                   setEditingWebsite({ categoryIndex, siteIndex });
-                  setEditingWebsiteData(record);
+                  setEditingWebsiteData({ ...record });
                 }}
               >
                 编辑
@@ -823,58 +841,58 @@ const ManagePage: React.FC = () => {
                     layout="vertical"
                     onFinish={handleAddWebsite}
                   >
-                    <div
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns: '1fr 1fr',
-                        gap: 16,
-                      }}
-                    >
-                      <Form.Item
-                        label="分类"
-                        name="categoryIndex"
-                        rules={[{ required: true }]}
-                      >
-                        <Select>
-                          {categories.map((cat, idx) => (
-                            <Option key={idx} value={idx}>
-                              {cat.name}
-                            </Option>
-                          ))}
-                        </Select>
-                      </Form.Item>
-                      <Form.Item
-                        label="网站名称"
-                        name="title"
-                        rules={[{ required: true, message: '请输入网站名称' }]}
-                      >
-                        <Input placeholder="请输入网站名称" />
-                      </Form.Item>
-                    </div>
-                    <div
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns: '1fr 1fr',
-                        gap: 16,
-                      }}
-                    >
-                      <Form.Item
-                        label="网站链接"
-                        name="url"
-                        rules={[{ required: true, message: '请输入网站链接' }]}
-                      >
-                        <Input
-                          placeholder="https://example.com"
-                          onChange={e => {
-                            const url = e.target.value;
-                            scheduleAddWebsiteFaviconUpdate(url);
-                          }}
-                        />
-                      </Form.Item>
-                      <Form.Item label="Logo链接" name="logo">
-                        <Input placeholder="https://example.com/favicon.ico" />
-                      </Form.Item>
-                    </div>
+                    <Row gutter={16}>
+                      <Col sm={12} xs={24}>
+                        <Form.Item
+                          label="分类"
+                          name="categoryIndex"
+                          rules={[{ required: true }]}
+                        >
+                          <Select>
+                            {categories.map((cat, idx) => (
+                              <Option key={idx} value={idx}>
+                                {cat.name}
+                              </Option>
+                            ))}
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                      <Col sm={12} xs={24}>
+                        <Form.Item
+                          label="网站名称"
+                          name="title"
+                          rules={[
+                            { required: true, message: '请输入网站名称' },
+                          ]}
+                        >
+                          <Input placeholder="请输入网站名称" />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                    <Row gutter={16}>
+                      <Col sm={12} xs={24}>
+                        <Form.Item
+                          label="网站链接"
+                          name="url"
+                          rules={[
+                            { required: true, message: '请输入网站链接' },
+                          ]}
+                        >
+                          <Input
+                            placeholder="https://example.com"
+                            onChange={e => {
+                              const url = e.target.value;
+                              scheduleAddWebsiteFaviconUpdate(url);
+                            }}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col sm={12} xs={24}>
+                        <Form.Item label="Logo链接" name="logo">
+                          <Input placeholder="https://example.com/favicon.ico" />
+                        </Form.Item>
+                      </Col>
+                    </Row>
                     <Form.Item label="描述" name="desc">
                       <TextArea placeholder="网站描述" rows={2} />
                     </Form.Item>
@@ -896,81 +914,258 @@ const ManagePage: React.FC = () => {
               key: '4',
               children: (
                 <Card className={styles.card} title="网站列表">
-                  {categories.map((category, categoryIndex) => (
-                    <div key={categoryIndex}>
-                      <h4 style={{ marginBottom: 16 }}>{category.name}</h4>
-                      <Table
-                        columns={websiteListColumns(categoryIndex)}
-                        dataSource={category.web || []}
-                        pagination={false}
-                        rowKey={(_, index) => `${categoryIndex}-${index}`}
-                        size="small"
-                        onRow={(record, siteIndex) => {
-                          const actualSiteIndex = siteIndex ?? 0;
-                          return {
-                            draggable: !(
-                              editingWebsite &&
-                              editingWebsite.categoryIndex === categoryIndex &&
-                              editingWebsite.siteIndex === actualSiteIndex
-                            ),
-                            onDragStart: event => {
-                              event.dataTransfer.setData(
-                                'text/plain',
-                                `${categoryIndex},${actualSiteIndex}`
-                              );
-                              event.currentTarget.style.opacity = '0.5';
-                            },
-                            onDragEnd: event => {
-                              event.currentTarget.style.opacity = '1';
-                            },
-                            onDragOver: event => {
-                              event.preventDefault();
-                            },
-                            onDrop: event => {
-                              event.preventDefault();
-                              const data =
-                                event.dataTransfer.getData('text/plain');
-                              const indices = data.split(',');
-                              const sourceCategoryIndex = Number(indices[0]);
-                              const sourceSiteIndex = Number(indices[1]);
+                  {isMobile ? (
+                    <div className={styles.websiteListMobile}>
+                      {categories.map((category, categoryIndex) => {
+                        const websites = category.web || [];
+                        return (
+                          <div
+                            key={categoryIndex}
+                            className={styles.websiteCategory}
+                          >
+                            <div className={styles.websiteCategoryHeader}>
+                              <Text strong>{category.name}</Text>
+                              <Text type="secondary">{websites.length} 个</Text>
+                            </div>
 
-                              if (
-                                Number.isInteger(sourceCategoryIndex) &&
-                                Number.isInteger(sourceSiteIndex) &&
-                                Number.isInteger(categoryIndex) &&
-                                Number.isInteger(actualSiteIndex) &&
-                                sourceCategoryIndex === categoryIndex &&
-                                sourceSiteIndex !== actualSiteIndex
-                              ) {
-                                // 同一分类内重新排序
-                                reorderWebsites(
-                                  categoryIndex,
-                                  sourceSiteIndex,
-                                  actualSiteIndex
-                                );
-                                saveToServer();
-                                message.success('排序已更新');
-                              } else if (
-                                Number.isInteger(sourceCategoryIndex) &&
-                                Number.isInteger(categoryIndex) &&
-                                Number.isInteger(sourceSiteIndex) &&
-                                sourceCategoryIndex !== categoryIndex
-                              ) {
-                                // 移动到不同分类，使用已有的moveWebsite功能
-                                moveWebsite(
-                                  sourceCategoryIndex,
-                                  categoryIndex,
-                                  sourceSiteIndex
-                                );
-                                saveToServer();
-                                message.success('网站已移动');
-                              }
-                            },
-                          };
-                        }}
-                      />
+                            {websites.length === 0 ? (
+                              <div className={styles.emptyHint}>暂无网站</div>
+                            ) : (
+                              <div className={styles.websiteCards}>
+                                {websites.map((record, siteIndex) => (
+                                  <Card
+                                    key={`${categoryIndex}-${siteIndex}`}
+                                    className={styles.websiteCard}
+                                    size="small"
+                                    title={
+                                      <div className={styles.websiteCardTitle}>
+                                        <Image
+                                          className={styles.favicon20}
+                                          fallback="https://via.placeholder.com/20"
+                                          height={20}
+                                          preview={false}
+                                          src={record.logo}
+                                          width={20}
+                                        />
+                                        <span
+                                          className={styles.websiteTitleText}
+                                        >
+                                          {record.title}
+                                        </span>
+                                      </div>
+                                    }
+                                  >
+                                    {record.desc ? (
+                                      <div className={styles.websiteDesc}>
+                                        {record.desc}
+                                      </div>
+                                    ) : (
+                                      <div className={styles.websiteDescMuted}>
+                                        暂无描述
+                                      </div>
+                                    )}
+
+                                    <div className={styles.websiteMeta}>
+                                      <Text type="secondary">{record.url}</Text>
+                                    </div>
+
+                                    <div className={styles.websiteActions}>
+                                      <Select
+                                        disabled={categories.length <= 1}
+                                        placeholder="移动到分类"
+                                        size="small"
+                                        style={{ width: '100%' }}
+                                        value={categoryIndex}
+                                        onChange={async value => {
+                                          if (value !== categoryIndex) {
+                                            moveWebsite(
+                                              categoryIndex,
+                                              value,
+                                              siteIndex
+                                            );
+                                            await saveToServer();
+                                            message.success('移动成功');
+                                          }
+                                        }}
+                                      >
+                                        {categories.map((cat, idx) => (
+                                          <Option
+                                            key={idx}
+                                            disabled={idx === categoryIndex}
+                                            value={idx}
+                                          >
+                                            {cat.name}
+                                          </Option>
+                                        ))}
+                                      </Select>
+
+                                      <Space wrap>
+                                        <Button
+                                          icon={<EditOutlined />}
+                                          size="small"
+                                          type="link"
+                                          onClick={() =>
+                                            openMobileWebsiteEditor(
+                                              categoryIndex,
+                                              siteIndex,
+                                              record
+                                            )
+                                          }
+                                        >
+                                          编辑
+                                        </Button>
+                                        <Popconfirm
+                                          cancelText="取消"
+                                          okText="确定"
+                                          title="确定删除?"
+                                          onConfirm={async () => {
+                                            deleteWebsite(
+                                              categoryIndex,
+                                              siteIndex
+                                            );
+                                            await saveToServer();
+                                            message.success('删除成功');
+                                          }}
+                                        >
+                                          <Button
+                                            danger
+                                            icon={<DeleteOutlined />}
+                                            size="small"
+                                            type="link"
+                                          >
+                                            删除
+                                          </Button>
+                                        </Popconfirm>
+
+                                        <Button
+                                          disabled={siteIndex === 0}
+                                          size="small"
+                                          type="link"
+                                          onClick={async () => {
+                                            if (siteIndex === 0) return;
+                                            reorderWebsites(
+                                              categoryIndex,
+                                              siteIndex,
+                                              siteIndex - 1
+                                            );
+                                            await saveToServer();
+                                            message.success('排序已更新');
+                                          }}
+                                        >
+                                          上移
+                                        </Button>
+                                        <Button
+                                          disabled={
+                                            siteIndex === websites.length - 1
+                                          }
+                                          size="small"
+                                          type="link"
+                                          onClick={async () => {
+                                            if (
+                                              siteIndex >=
+                                              websites.length - 1
+                                            )
+                                              return;
+                                            reorderWebsites(
+                                              categoryIndex,
+                                              siteIndex,
+                                              siteIndex + 1
+                                            );
+                                            await saveToServer();
+                                            message.success('排序已更新');
+                                          }}
+                                        >
+                                          下移
+                                        </Button>
+                                      </Space>
+                                    </div>
+                                  </Card>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
-                  ))}
+                  ) : (
+                    categories.map((category, categoryIndex) => (
+                      <div key={categoryIndex}>
+                        <h4 style={{ marginBottom: 16 }}>{category.name}</h4>
+                        <Table
+                          columns={websiteListColumns(categoryIndex)}
+                          dataSource={category.web || []}
+                          pagination={false}
+                          rowKey={(_, index) => `${categoryIndex}-${index}`}
+                          scroll={{ x: 'max-content' }}
+                          size="small"
+                          onRow={(record, siteIndex) => {
+                            const actualSiteIndex = siteIndex ?? 0;
+                            return {
+                              draggable: !(
+                                editingWebsite &&
+                                editingWebsite.categoryIndex ===
+                                  categoryIndex &&
+                                editingWebsite.siteIndex === actualSiteIndex
+                              ),
+                              onDragStart: event => {
+                                event.dataTransfer.setData(
+                                  'text/plain',
+                                  `${categoryIndex},${actualSiteIndex}`
+                                );
+                                event.currentTarget.style.opacity = '0.5';
+                              },
+                              onDragEnd: event => {
+                                event.currentTarget.style.opacity = '1';
+                              },
+                              onDragOver: event => {
+                                event.preventDefault();
+                              },
+                              onDrop: event => {
+                                event.preventDefault();
+                                const data =
+                                  event.dataTransfer.getData('text/plain');
+                                const indices = data.split(',');
+                                const sourceCategoryIndex = Number(indices[0]);
+                                const sourceSiteIndex = Number(indices[1]);
+
+                                if (
+                                  Number.isInteger(sourceCategoryIndex) &&
+                                  Number.isInteger(sourceSiteIndex) &&
+                                  Number.isInteger(categoryIndex) &&
+                                  Number.isInteger(actualSiteIndex) &&
+                                  sourceCategoryIndex === categoryIndex &&
+                                  sourceSiteIndex !== actualSiteIndex
+                                ) {
+                                  // 同一分类内重新排序
+                                  reorderWebsites(
+                                    categoryIndex,
+                                    sourceSiteIndex,
+                                    actualSiteIndex
+                                  );
+                                  saveToServer();
+                                  message.success('排序已更新');
+                                } else if (
+                                  Number.isInteger(sourceCategoryIndex) &&
+                                  Number.isInteger(categoryIndex) &&
+                                  Number.isInteger(sourceSiteIndex) &&
+                                  sourceCategoryIndex !== categoryIndex
+                                ) {
+                                  // 移动到不同分类，使用已有的moveWebsite功能
+                                  moveWebsite(
+                                    sourceCategoryIndex,
+                                    categoryIndex,
+                                    sourceSiteIndex
+                                  );
+                                  saveToServer();
+                                  message.success('网站已移动');
+                                }
+                              },
+                            };
+                          }}
+                        />
+                      </div>
+                    ))
+                  )}
                 </Card>
               ),
             },
@@ -982,7 +1177,7 @@ const ManagePage: React.FC = () => {
                   <Form
                     className={styles.categoryForm}
                     form={categoryForm}
-                    layout="inline"
+                    layout={isMobile ? 'vertical' : 'inline'}
                     onFinish={handleAddCategory}
                   >
                     <Form.Item
@@ -995,10 +1190,10 @@ const ManagePage: React.FC = () => {
                       name="en_name"
                       rules={[{ required: true, message: '请输入英文名称' }]}
                     >
-                      <Input placeholder="English Name" />
+                      <Input placeholder="英文名称" />
                     </Form.Item>
                     <Form.Item initialValue="linecons-star" name="icon">
-                      <Select style={{ width: 140 }}>
+                      <Select style={{ width: isMobile ? '100%' : 140 }}>
                         <Option value="linecons-star">Star</Option>
                         <Option value="linecons-cog">Cog</Option>
                         <Option value="linecons-doc">Doc</Option>
@@ -1016,13 +1211,134 @@ const ManagePage: React.FC = () => {
                     </Form.Item>
                   </Form>
                   <Divider />
-                  <Table
-                    columns={categoryColumns}
-                    dataSource={categories}
-                    pagination={false}
-                    rowKey={(_, index) => index?.toString() || '0'}
-                    size="small"
-                  />
+                  {isMobile ? (
+                    <div className={styles.mobileCategoryList}>
+                      {categories.map((record, index) => {
+                        const isEditing =
+                          editingCategory === index && !!editingCategoryData;
+                        const websiteCount = record.web?.length || 0;
+
+                        return (
+                          <Card
+                            key={index}
+                            className={styles.mobileCategoryCard}
+                            size="small"
+                            title={
+                              <div className={styles.mobileCategoryTitle}>
+                                <span className={styles.icon}>
+                                  {iconMap[record.icon] || <AppstoreOutlined />}
+                                </span>
+                                <span
+                                  className={styles.mobileCategoryTitleText}
+                                >
+                                  {record.name}
+                                </span>
+                                <Text type="secondary">{websiteCount} 个</Text>
+                              </div>
+                            }
+                          >
+                            <div className={styles.mobileCategoryBody}>
+                              {isEditing ? (
+                                <Space
+                                  direction="vertical"
+                                  style={{ width: '100%' }}
+                                >
+                                  <Input
+                                    placeholder="分类名称"
+                                    size="middle"
+                                    value={editingCategoryData?.name}
+                                    onChange={e =>
+                                      handleUpdateCategoryField(
+                                        'name',
+                                        e.target.value
+                                      )
+                                    }
+                                  />
+                                  <Input
+                                    placeholder="英文名称"
+                                    size="middle"
+                                    value={editingCategoryData?.en_name}
+                                    onChange={e =>
+                                      handleUpdateCategoryField(
+                                        'en_name',
+                                        e.target.value
+                                      )
+                                    }
+                                  />
+                                </Space>
+                              ) : (
+                                <Space
+                                  direction="vertical"
+                                  style={{ width: '100%' }}
+                                >
+                                  <div>
+                                    <Text type="secondary">中文：</Text>
+                                    <Text>{record.name}</Text>
+                                  </div>
+                                  <div>
+                                    <Text type="secondary">英文：</Text>
+                                    <Text>{record.en_name}</Text>
+                                  </div>
+                                </Space>
+                              )}
+                            </div>
+
+                            <div className={styles.mobileCategoryActions}>
+                              {isEditing ? (
+                                <Space>
+                                  <Button
+                                    icon={<EditOutlined />}
+                                    type="primary"
+                                    onClick={handleSaveCategory}
+                                  >
+                                    保存
+                                  </Button>
+                                  <Button onClick={handleCancelEditCategory}>
+                                    取消
+                                  </Button>
+                                </Space>
+                              ) : (
+                                <Space wrap>
+                                  <Button
+                                    icon={<EditOutlined />}
+                                    type="default"
+                                    onClick={() => handleEditCategory(index)}
+                                  >
+                                    编辑
+                                  </Button>
+                                  <Popconfirm
+                                    cancelText="取消"
+                                    okText="确定"
+                                    title="确定删除?"
+                                    onConfirm={() =>
+                                      handleDeleteCategory(index)
+                                    }
+                                  >
+                                    <Button
+                                      danger
+                                      disabled={categories.length <= 1}
+                                      icon={<DeleteOutlined />}
+                                    >
+                                      删除
+                                    </Button>
+                                  </Popconfirm>
+                                </Space>
+                              )}
+                            </div>
+                          </Card>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <Table
+                      columns={categoryColumns}
+                      dataSource={categories}
+                      pagination={false}
+                      rowKey={(_, index) => index?.toString() || '0'}
+                      scroll={{ x: 'max-content' }}
+                      size="small"
+                    />
+                  )}
                 </Card>
               ),
             },
@@ -1036,35 +1352,39 @@ const ManagePage: React.FC = () => {
                     layout="vertical"
                     onFinish={handleAddSearchEngine}
                   >
-                    <div
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns: '1fr 1fr 1fr',
-                        gap: 16,
-                      }}
-                    >
-                      <Form.Item
-                        label="引擎名称"
-                        name="name"
-                        rules={[{ required: true, message: '请输入引擎名称' }]}
-                      >
-                        <Input placeholder="Google, Bing, 百度等" />
-                      </Form.Item>
-                      <Form.Item
-                        label="图标链接"
-                        name="icon"
-                        rules={[{ required: true, message: '请输入图标链接' }]}
-                      >
-                        <Input placeholder="https://..." />
-                      </Form.Item>
-                      <Form.Item
-                        label="搜索URL"
-                        name="url"
-                        rules={[{ required: true, message: '请输入搜索URL' }]}
-                      >
-                        <Input placeholder="https://www.google.com/search?q={query}" />
-                      </Form.Item>
-                    </div>
+                    <Row gutter={16}>
+                      <Col md={8} sm={12} xs={24}>
+                        <Form.Item
+                          label="引擎名称"
+                          name="name"
+                          rules={[
+                            { required: true, message: '请输入引擎名称' },
+                          ]}
+                        >
+                          <Input placeholder="Google、Bing、百度等" />
+                        </Form.Item>
+                      </Col>
+                      <Col md={8} sm={12} xs={24}>
+                        <Form.Item
+                          label="图标链接"
+                          name="icon"
+                          rules={[
+                            { required: true, message: '请输入图标链接' },
+                          ]}
+                        >
+                          <Input placeholder="https://..." />
+                        </Form.Item>
+                      </Col>
+                      <Col md={8} sm={12} xs={24}>
+                        <Form.Item
+                          label="搜索URL"
+                          name="url"
+                          rules={[{ required: true, message: '请输入搜索URL' }]}
+                        >
+                          <Input placeholder="https://example.com/search?q={query}" />
+                        </Form.Item>
+                      </Col>
+                    </Row>
 
                     {/* 默认Logo选择器 */}
                     <div className={styles.defaultLogos}>
@@ -1110,18 +1430,192 @@ const ManagePage: React.FC = () => {
 
                   <Divider />
 
-                  <Table
-                    columns={searchEngineColumns}
-                    dataSource={searchEngines}
-                    pagination={false}
-                    rowKey={(_, index) => index?.toString() || '0'}
-                    size="small"
-                  />
+                  {isMobile ? (
+                    <div className={styles.mobileSearchEngineList}>
+                      {searchEngines.map((record, index) => (
+                        <Card
+                          key={index}
+                          className={styles.mobileSearchEngineCard}
+                          size="small"
+                          title={
+                            <div className={styles.mobileSearchEngineTitle}>
+                              <Image
+                                className={styles.favicon20}
+                                fallback="https://via.placeholder.com/20"
+                                height={20}
+                                preview={false}
+                                src={record.icon}
+                                width={20}
+                              />
+                              <span
+                                className={styles.mobileSearchEngineTitleText}
+                              >
+                                {record.name}
+                              </span>
+                            </div>
+                          }
+                        >
+                          <div className={styles.mobileSearchEngineBody}>
+                            <Text type="secondary">{record.url}</Text>
+                          </div>
+                          <div className={styles.mobileSearchEngineActions}>
+                            <Popconfirm
+                              cancelText="取消"
+                              okText="确定"
+                              title="确定删除?"
+                              onConfirm={() => handleDeleteSearchEngine(index)}
+                            >
+                              <Button
+                                danger
+                                icon={<DeleteOutlined />}
+                                size="small"
+                                type="primary"
+                              >
+                                删除
+                              </Button>
+                            </Popconfirm>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+                  ) : (
+                    <Table
+                      columns={searchEngineColumns}
+                      dataSource={searchEngines}
+                      pagination={false}
+                      rowKey={(_, index) => index?.toString() || '0'}
+                      scroll={{ x: 'max-content' }}
+                      size="small"
+                    />
+                  )}
                 </Card>
               ),
             },
           ]}
         />
+
+        <Drawer
+          destroyOnClose
+          className={styles.mobileWebsiteEditorDrawer}
+          height="100vh"
+          open={isMobile && mobileWebsiteEditorOpen}
+          placement="bottom"
+          title="编辑网站"
+          onClose={closeMobileWebsiteEditor}
+        >
+          {editingWebsiteData ? (
+            <div className={styles.mobileEditorLayout}>
+              <div className={styles.mobileEditorScroll}>
+                <Form layout="vertical">
+                  <Form.Item label="网站名称">
+                    <Input
+                      placeholder="请输入网站名称"
+                      value={editingWebsiteData.title}
+                      onChange={e =>
+                        setEditingWebsiteData(prev =>
+                          prev ? { ...prev, title: e.target.value } : prev
+                        )
+                      }
+                    />
+                  </Form.Item>
+
+                  <Form.Item label="网站链接">
+                    <Input
+                      placeholder="https://example.com"
+                      value={editingWebsiteData.url}
+                      onChange={e => {
+                        const url = e.target.value;
+                        setEditingWebsiteData(prev =>
+                          prev ? { ...prev, url } : prev
+                        );
+                        if (editingWebsite) {
+                          scheduleEditWebsiteFaviconUpdate(
+                            `${editingWebsite.categoryIndex}-${editingWebsite.siteIndex}`,
+                            url
+                          );
+                        }
+                      }}
+                    />
+                  </Form.Item>
+
+                  <Form.Item label="Logo 链接">
+                    <Input
+                      placeholder="https://example.com/favicon.ico"
+                      value={editingWebsiteData.logo}
+                      onChange={e =>
+                        setEditingWebsiteData(prev =>
+                          prev ? { ...prev, logo: e.target.value } : prev
+                        )
+                      }
+                    />
+                    <div style={{ marginTop: 10 }}>
+                      <Image
+                        className={styles.favicon32}
+                        fallback="https://via.placeholder.com/32"
+                        height={32}
+                        preview={false}
+                        src={editingWebsiteData.logo}
+                        width={32}
+                      />
+                    </div>
+
+                    <div className={styles.defaultLogos}>
+                      <small>选择默认图标：</small>
+                      <div className={styles.logoSelector}>
+                        {defaultLogos.map((logoUrl, idx) => (
+                          <Image
+                            key={idx}
+                            className={`${styles.favicon32} ${styles.defaultLogoItem} ${editingWebsiteData.logo === logoUrl ? styles.defaultLogoItemSelected : ''}`}
+                            height={32}
+                            preview={false}
+                            src={logoUrl}
+                            style={{ border: '2px solid transparent' }}
+                            width={32}
+                            onClick={() =>
+                              setEditingWebsiteData(prev =>
+                                prev ? { ...prev, logo: logoUrl } : prev
+                              )
+                            }
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </Form.Item>
+
+                  <Form.Item label="描述">
+                    <TextArea
+                      placeholder="请输入网站描述"
+                      rows={3}
+                      value={editingWebsiteData.desc}
+                      onChange={e =>
+                        setEditingWebsiteData(prev =>
+                          prev ? { ...prev, desc: e.target.value } : prev
+                        )
+                      }
+                    />
+                  </Form.Item>
+                </Form>
+              </div>
+
+              <div className={styles.mobileEditorFooter}>
+                <Space direction="vertical" style={{ width: '100%' }}>
+                  <Button
+                    block
+                    type="primary"
+                    onClick={handleSaveEditingWebsite}
+                  >
+                    保存
+                  </Button>
+                  <Button block onClick={closeMobileWebsiteEditor}>
+                    取消
+                  </Button>
+                </Space>
+              </div>
+            </div>
+          ) : (
+            <div className={styles.emptyHint}>暂无可编辑内容</div>
+          )}
+        </Drawer>
       </div>
     </>
   );

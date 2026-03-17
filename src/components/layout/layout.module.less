@@ -2,6 +2,18 @@
   min-height: 100vh;
 }
 
+.layoutMobile {
+  .header {
+    margin-left: 0;
+    padding-left: calc(var(--app-content-padding) + var(--app-safe-area-left));
+    padding-right: calc(var(--app-content-padding) + var(--app-safe-area-right));
+  }
+
+  .content {
+    margin-left: 0;
+  }
+}
+
 .layoutCollapsed .header {
   margin-left: 80px;
 }
@@ -70,10 +82,12 @@
 
 .header {
   background: var(--app-surface);
-  padding: 0 24px;
+  padding: 0 var(--app-content-padding);
+  padding-top: var(--app-safe-area-top);
   border-bottom: 1px solid var(--app-border);
   display: flex;
   align-items: center;
+  height: calc(64px + var(--app-safe-area-top));
   margin-left: 260px;
   transition: margin-left 0.2s;
   position: sticky;
@@ -98,8 +112,22 @@
 
 .content {
   margin-left: 260px;
-  padding: 24px;
-  min-height: calc(100vh - 64px);
+  padding: var(--app-content-padding);
+  padding-bottom: calc(
+    var(--app-content-padding) + var(--app-safe-area-bottom)
+  );
+  min-height: calc(100vh - 64px - var(--app-safe-area-top));
   transition: margin-left 0.2s;
   background: var(--app-bg);
+}
+
+.mobileDrawer {
+  :global(.ant-drawer-body) {
+    padding: 0;
+    background: var(--app-surface);
+  }
+
+  .logo {
+    border-bottom: 1px solid var(--app-border);
+  }
 }

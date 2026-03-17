@@ -105,3 +105,31 @@
   right: 8px;
   margin: 0;
 }
+
+@media (max-width: 575px) {
+  .categorySection {
+    margin-bottom: 24px;
+  }
+
+  .webGrid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+  }
+
+  .webCard {
+    :global(.ant-card-body) {
+      padding: 12px;
+    }
+  }
+
+  .logoWrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+  }
+
+  .webLogo {
+    width: 34px;
+    height: 34px;
+  }
+}

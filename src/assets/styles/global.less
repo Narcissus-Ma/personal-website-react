@@ -10,6 +10,11 @@
   --app-primary: #1677ff;
   --app-selected-bg: #e6f4ff;
   --app-selected-text: #1677ff;
+  --app-content-padding: 24px;
+  --app-safe-area-top: env(safe-area-inset-top, 0px);
+  --app-safe-area-right: env(safe-area-inset-right, 0px);
+  --app-safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --app-safe-area-left: env(safe-area-inset-left, 0px);
 }
 
 :root[data-theme='dark'] {
@@ -35,6 +40,12 @@ body {
   background-color: var(--app-bg);
   color: var(--app-text);
   line-height: 1.6;
+}
+
+@media (max-width: 575px) {
+  :root {
+    --app-content-padding: 16px;
+  }
 }
 
 a {

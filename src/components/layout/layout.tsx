@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Layout, Menu } from 'antd';
+import { Drawer, Layout, Menu } from 'antd';
 import {
   HeartOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  MenuOutlined,
   StarOutlined,
   DesktopOutlined,
   PlayCircleOutlined,
@@ -12,7 +13,7 @@ import {
   BookOutlined,
   AppstoreOutlined,
 } from '@ant-design/icons';
-import { useCategories, useLanguage, useTheme } from '../../hooks';
+import { useCategories, useIsMobile, useLanguage, useTheme } from '../../hooks';
 import styles from './layout.module.less';
 import collapsedLogo from '../../assets/images/user-logo.jpg';
 import expandedLogo from '../../assets/images/personal-general-logo.png';
@@ -35,59 +36,83 @@ const iconMap: Record<string, React.ReactNode> = {
 const AppLayout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { categories } = useCategories();
   const { transName } = useLanguage();
   const { theme } = useTheme();
+  const isMobile = useIsMobile();
 
   const selectedKey = `#${location.pathname}`;
 
-  const menuItems = [
-    ...categories.map((category, index) => ({
-      key: `#/category-${index}`,
-      icon: iconMap[category.icon] || <AppstoreOutlined />,
-      label: <Link to={`/category-${index}`}>{transName(category)}</Link>,
-    })),
-    {
-      key: '#/about',
-      icon: <HeartOutlined />,
-      label: <Link to="/about">关于</Link>,
-    },
-  ];
+  const menuItems = useMemo(() => {
+    return [
+      ...categories.map((category, index) => ({
+        key: `#/category-${index}`,
+        icon: iconMap[category.icon] || <AppstoreOutlined />,
+        label: <Link to={`/category-${index}`}>{transName(category)}</Link>,
+      })),
+      {
+        key: '#/about',
+        icon: <HeartOutlined />,
+        label: <Link to="/about">关于</Link>,
+      },
+    ];
+  }, [categories, transName]);
+
+  const handleToggleMenu = () => {
+    if (isMobile) {
+      setMobileMenuOpen(true);
+      return;
+    }
+    setCollapsed(prev => !prev);
+  };
 
   return (
     <Layout
-      className={`${styles.layout} ${collapsed ? styles.layoutCollapsed : ''}`}
+      className={[
+        styles.layout,
+        collapsed ? styles.layoutCollapsed : '',
+        isMobile ? styles.layoutMobile : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
     >
-      <Sider
-        collapsible
-        className={styles.sider}
-        collapsed={collapsed}
-        collapsedWidth={80}
-        trigger={null}
-        width={260}
-      >
-        <div className={styles.logo}>
-          {collapsed ? (
-            <img alt="Logo" src={collapsedLogo} />
-          ) : (
-            <img alt="Logo" src={expandedLogo} />
-          )}
-        </div>
-        <Menu
-          className={styles.menu}
-          items={menuItems}
-          mode="inline"
-          selectedKeys={[selectedKey]}
-          theme={theme === 'dark' ? 'dark' : 'light'}
-        />
-      </Sider>
+      {!isMobile && (
+        <Sider
+          collapsible
+          className={styles.sider}
+          collapsed={collapsed}
+          collapsedWidth={80}
+          trigger={null}
+          width={260}
+        >
+          <div className={styles.logo}>
+            {collapsed ? (
+              <img alt="Logo" src={collapsedLogo} />
+            ) : (
+              <img alt="Logo" src={expandedLogo} />
+            )}
+          </div>
+          <Menu
+            className={styles.menu}
+            items={menuItems}
+            mode="inline"
+            selectedKeys={[selectedKey]}
+            theme={theme === 'dark' ? 'dark' : 'light'}
+          />
+        </Sider>
+      )}
       <Layout>
         <Header className={styles.header}>
           <div className={styles.trigger}>
             {React.createElement(
-              collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
+              isMobile
+                ? MenuOutlined
+                : collapsed
+                  ? MenuUnfoldOutlined
+                  : MenuFoldOutlined,
               {
-                onClick: () => setCollapsed(!collapsed),
+                onClick: handleToggleMenu,
                 className: styles.triggerIcon,
               }
             )}
@@ -95,6 +120,27 @@ const AppLayout: React.FC<LayoutProps> = ({ children }) => {
         </Header>
         <Content className={styles.content}>{children}</Content>
       </Layout>
+
+      <Drawer
+        className={styles.mobileDrawer}
+        open={mobileMenuOpen}
+        placement="left"
+        title={null}
+        width={260}
+        onClose={() => setMobileMenuOpen(false)}
+      >
+        <div className={styles.logo}>
+          <img alt="Logo" src={expandedLogo} />
+        </div>
+        <Menu
+          className={styles.menu}
+          items={menuItems}
+          mode="inline"
+          selectedKeys={[selectedKey]}
+          theme={theme === 'dark' ? 'dark' : 'light'}
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      </Drawer>
     </Layout>
   );
 };
