@@ -8,6 +8,7 @@ interface SiteStore extends SiteData {
   addCategory: (category: Category) => void;
   updateCategory: (index: number, category: Category) => void;
   deleteCategory: (index: number) => void;
+  reorderCategories: (oldIndex: number, newIndex: number) => void;
   addWebsite: (categoryIndex: number, website: Website) => void;
   updateWebsite: (
     categoryIndex: number,
@@ -28,6 +29,7 @@ interface SiteStore extends SiteData {
   addSearchEngine: (engine: SearchEngine) => void;
   updateSearchEngine: (index: number, engine: SearchEngine) => void;
   deleteSearchEngine: (index: number) => void;
+  reorderSearchEngines: (oldIndex: number, newIndex: number) => void;
   setDefaultEngine: (index: number) => void;
   saveToServer: () => Promise<void>;
   loadFromServer: () => Promise<void>;
@@ -51,6 +53,23 @@ export const useSiteStore = create<SiteStore>((set, get) => ({
       if (state.categories.length <= 1) return state;
       const newCategories = [...state.categories];
       newCategories.splice(index, 1);
+      return { categories: newCategories };
+    }),
+  reorderCategories: (oldIndex, newIndex) =>
+    set(state => {
+      if (oldIndex === newIndex) return state;
+      const newCategories = [...state.categories];
+      if (
+        oldIndex < 0 ||
+        newIndex < 0 ||
+        oldIndex >= newCategories.length ||
+        newIndex >= newCategories.length
+      ) {
+        return state;
+      }
+      const [movedItem] = newCategories.splice(oldIndex, 1);
+      if (!movedItem) return state;
+      newCategories.splice(newIndex, 0, movedItem);
       return { categories: newCategories };
     }),
   addWebsite: (categoryIndex, website) =>
@@ -117,6 +136,23 @@ export const useSiteStore = create<SiteStore>((set, get) => ({
     set(state => {
       const newEngines = [...state.searchEngines];
       newEngines.splice(index, 1);
+      return { searchEngines: newEngines };
+    }),
+  reorderSearchEngines: (oldIndex, newIndex) =>
+    set(state => {
+      if (oldIndex === newIndex) return state;
+      const newEngines = [...state.searchEngines];
+      if (
+        oldIndex < 0 ||
+        newIndex < 0 ||
+        oldIndex >= newEngines.length ||
+        newIndex >= newEngines.length
+      ) {
+        return state;
+      }
+      const [movedItem] = newEngines.splice(oldIndex, 1);
+      if (!movedItem) return state;
+      newEngines.splice(newIndex, 0, movedItem);
       return { searchEngines: newEngines };
     }),
   setDefaultEngine: index => {},

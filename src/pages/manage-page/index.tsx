@@ -62,12 +62,14 @@ const ManagePage: React.FC = () => {
     addCategory,
     deleteCategory,
     updateCategory,
+    reorderCategories,
     updateWebsite,
     deleteWebsite,
     moveWebsite,
     reorderWebsites,
     addSearchEngine,
     deleteSearchEngine,
+    reorderSearchEngines,
     saveToServer,
     loadFromServer,
   } = useSiteStore();
@@ -1337,6 +1339,51 @@ const ManagePage: React.FC = () => {
                       rowKey={(_, index) => index?.toString() || '0'}
                       scroll={{ x: 'max-content' }}
                       size="small"
+                      onRow={(_, categoryIndex) => {
+                        const actualCategoryIndex = categoryIndex ?? 0;
+                        const isRowEditing =
+                          editingCategory === actualCategoryIndex &&
+                          !!editingCategoryData;
+                        return {
+                          className: !isRowEditing ? styles.draggableRow : '',
+                          draggable: !isRowEditing,
+                          onDragStart: event => {
+                            event.dataTransfer.setData(
+                              'text/plain',
+                              `category:${actualCategoryIndex}`
+                            );
+                            event.currentTarget.style.opacity = '0.5';
+                          },
+                          onDragEnd: event => {
+                            event.currentTarget.style.opacity = '1';
+                          },
+                          onDragOver: event => {
+                            event.preventDefault();
+                          },
+                          onDrop: event => {
+                            event.preventDefault();
+                            const data =
+                              event.dataTransfer.getData('text/plain');
+                            if (!data.startsWith('category:')) return;
+                            const sourceIndex = Number(
+                              data.replace('category:', '')
+                            );
+
+                            if (
+                              Number.isInteger(sourceIndex) &&
+                              Number.isInteger(actualCategoryIndex) &&
+                              sourceIndex !== actualCategoryIndex
+                            ) {
+                              reorderCategories(
+                                sourceIndex,
+                                actualCategoryIndex
+                              );
+                              saveToServer();
+                              message.success('排序已更新');
+                            }
+                          },
+                        };
+                      }}
                     />
                   )}
                 </Card>
@@ -1486,6 +1533,48 @@ const ManagePage: React.FC = () => {
                       rowKey={(_, index) => index?.toString() || '0'}
                       scroll={{ x: 'max-content' }}
                       size="small"
+                      onRow={(_, engineIndex) => {
+                        const actualEngineIndex = engineIndex ?? 0;
+                        return {
+                          className: styles.draggableRow,
+                          draggable: true,
+                          onDragStart: event => {
+                            event.dataTransfer.setData(
+                              'text/plain',
+                              `searchEngine:${actualEngineIndex}`
+                            );
+                            event.currentTarget.style.opacity = '0.5';
+                          },
+                          onDragEnd: event => {
+                            event.currentTarget.style.opacity = '1';
+                          },
+                          onDragOver: event => {
+                            event.preventDefault();
+                          },
+                          onDrop: event => {
+                            event.preventDefault();
+                            const data =
+                              event.dataTransfer.getData('text/plain');
+                            if (!data.startsWith('searchEngine:')) return;
+                            const sourceIndex = Number(
+                              data.replace('searchEngine:', '')
+                            );
+
+                            if (
+                              Number.isInteger(sourceIndex) &&
+                              Number.isInteger(actualEngineIndex) &&
+                              sourceIndex !== actualEngineIndex
+                            ) {
+                              reorderSearchEngines(
+                                sourceIndex,
+                                actualEngineIndex
+                              );
+                              saveToServer();
+                              message.success('排序已更新');
+                            }
+                          },
+                        };
+                      }}
                     />
                   )}
                 </Card>
