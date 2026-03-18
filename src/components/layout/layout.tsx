@@ -38,7 +38,7 @@ const AppLayout: React.FC<LayoutProps> = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { categories } = useCategories();
-  const { transName } = useLanguage();
+  const { language, transName } = useLanguage();
   const { theme } = useTheme();
   const isMobile = useIsMobile();
 
@@ -54,10 +54,10 @@ const AppLayout: React.FC<LayoutProps> = ({ children }) => {
       {
         key: '#/about',
         icon: <HeartOutlined />,
-        label: <Link to="/about">关于</Link>,
+        label: <Link to="/about">{language === 'zh' ? '关于' : 'About'}</Link>,
       },
     ];
-  }, [categories, transName]);
+  }, [categories, transName, language]);
 
   const handleToggleMenu = () => {
     if (isMobile) {

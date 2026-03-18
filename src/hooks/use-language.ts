@@ -1,6 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
+import { useLanguageStore } from '@/stores';
+import type { Language } from '@/stores/language-store';
 
-export type Language = 'zh' | 'en';
+export type { Language } from '@/stores/language-store';
 
 interface LanguageOption {
   key: Language;
@@ -14,7 +16,7 @@ export const languageOptions: LanguageOption[] = [
 ];
 
 export const useLanguage = () => {
-  const [language, setLanguage] = useState<Language>('zh');
+  const { language, setLanguage } = useLanguageStore();
 
   const transName = useCallback(
     (item: { name: string; en_name: string }): string => {
