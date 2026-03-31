@@ -2,7 +2,7 @@
   "categories": [
     {
       "name": "常用站点",
-      "en_name": "Social Media & Community",
+      "en_name": "common",
       "icon": "linecons-star",
       "web": [
         {
@@ -28,18 +28,6 @@
           "logo": "http://www.bilibili.com/favicon.ico",
           "title": "哔哩哔哩 (゜-゜)つロ 干杯~-bilibili",
           "desc": "国内视频网站"
-        },
-        {
-          "title": "巴哈姆特",
-          "url": "https://www.gamer.com.tw",
-          "logo": "https://www.gamer.com.tw/favicon.ico",
-          "desc": "类似B站的台湾版"
-        },
-        {
-          "url": "http://www.9GAG.com",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=http%3A%2F%2Fwww.9gag.com%2F",
-          "title": "9GAG",
-          "desc": ""
         },
         {
           "url": "https://mail.google.com/mail/u/0/#inbox",
@@ -78,17 +66,22 @@
           "desc": "一个程序员的开源讨论社区"
         },
         {
-          "title": "菜鸟教程",
-          "url": "https://www.runoob.com/",
-          "logo": "https://www.runoob.com/favicon.ico",
-          "desc": "程序员在线教程"
+          "title": "z1k",
+          "url": "https://www.z1k.us/news",
+          "logo": "https://www.google.com/s2/favicons?domain=www.z1k.us&sz=64",
+          "desc": "免魔法访问墙外信息"
+        },
+        {
+          "title": "69云",
+          "url": "https://69yun69.com/",
+          "logo": "https://69yun69.com/favicon.ico"
         }
       ]
     },
     {
-      "name": "开发与技术",
-      "en_name": "Development & Technology",
-      "icon": "linecons-cog",
+      "name": "开发工具",
+      "en_name": "development tools",
+      "icon": "linecons-clock",
       "web": [
         {
           "url": "https://github.com/",
@@ -103,71 +96,97 @@
           "desc": "国内代码拖管平台"
         },
         {
-          "url": "https://dash.cloudflare.com/",
-          "logo": "https://dash.cloudflare.com/favicon.ico",
-          "title": "Cloudflare",
-          "desc": "赛博活佛"
-        },
-        {
           "url": "https://tucang.cc/#/",
           "logo": "https://www.google.com/s2/favicons?domain=tucang.cc&sz=64",
           "title": "图仓",
           "desc": "免费聚合图床"
         },
         {
-          "title": "Vercel",
-          "url": "https://vercel.com/",
-          "logo": "https://vercel.com/favicon.ico",
-          "desc": "静态资源拖管，severless容器网站"
+          "title": " Github Proxy",
+          "url": "https://ghfast.top/",
+          "logo": "https://ghfast.top/favicon.ico",
+          "desc": "github代理加速下载"
         },
         {
-          "url": "https://chatgpt.com/",
-          "logo": "https://chatgpt.com/favicon.ico",
-          "title": "ChatGPT",
-          "desc": "世界上最先进的AI"
+          "title": "Speedtest",
+          "url": "https://www.speedtest.net/",
+          "logo": "https://www.speedtest.net/favicon.ico",
+          "desc": "网络测速"
         },
         {
-          "title": "通义千问",
-          "url": "https://chat.qwen.ai/",
-          "logo": "https://www.google.com/s2/favicons?domain=chat.qwen.ai&sz=64",
-          "desc": "可以文生图的大模型"
+          "title": "it-tools",
+          "url": "https://it-tools.tech/",
+          "logo": "https://it-tools.tech/favicon.ico",
+          "desc": "免费开发工具合集"
         },
         {
-          "url": "https://chat.deepseek.com/",
-          "logo": "https://www.google.com/s2/favicons?domain=chat.deepseek.com&sz=64",
-          "title": "DeepSeek",
-          "desc": "AI界的拼多多，DeepSeek是一个基于GPT-3的搜索引擎，它可以回答您的问题，提供有关任何主题的详细信息，并帮助您发现新的内容。"
+          "title": "Aixdownloader",
+          "url": "https://aixdownloader.com/zh/",
+          "logo": "https://aixdownloader.com/favicon.ico",
+          "desc": "从任何网页获取你想要的内容"
         },
         {
-          "title": "跃问",
-          "url": "https://yuewen.cn/chats/new",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fyuewen.cn%2Fchats%2Fnew",
-          "desc": "又一个可以通过文字生成视频的网站，可以生成长达8s视频，提供deepseek r1分流接口"
+          "title": "图壳",
+          "url": "https://imgkr.com/",
+          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fimgkr.com%2F",
+          "desc": "又一款免费的第三方图床"
+        }
+      ]
+    },
+    {
+      "name": "技术学习",
+      "en_name": "technical learning",
+      "icon": "linecons-doc",
+      "web": [
+        {
+          "title": "菜鸟教程",
+          "url": "https://www.runoob.com/",
+          "logo": "https://www.runoob.com/favicon.ico",
+          "desc": "程序员在线教程"
         },
         {
-          "title": "Autoglm",
-          "url": "https://autoglm-research.zhipuai.cn/",
-          "logo": "https://autoglm-research.zhipuai.cn/favicon.ico",
-          "desc": "AI agent 免费但需要手机号注册"
+          "title": "w3school",
+          "url": "https://www.w3school.com.cn/",
+          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.w3school.com.cn%2F",
+          "desc": "免费在线程序学习"
         },
         {
-          "url": "https://platform.deepseek.com/",
-          "logo": "https://www.google.com/s2/favicons?domain=platform.deepseek.com&sz=64",
-          "title": "DeepSeek API接口",
-          "desc": "API　keys 入口"
+          "title": "技术学习路线",
+          "url": "https://roadmap.sh/",
+          "logo": "https://roadmap.sh/favicon.ico",
+          "desc": "各类技术学习路线图"
         },
         {
-          "title": "OpenRouter",
-          "url": "https://openrouter.ai/",
-          "logo": "https://openrouter.ai/favicon.ico",
-          "desc": "大模型路由，国内可访问，聚合了许多大模型"
+          "title": "Python爬虫案例",
+          "url": "https://scrape.center/",
+          "logo": "https://scrape.center/favicon.ico",
+          "desc": "Python爬虫案例"
         },
         {
-          "title": "CrofAI",
-          "url": "https://ai.nahcrof.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fai.nahcrof.com%2F",
-          "desc": "免费提供 api key"
+          "title": "Vue.js挑战",
+          "url": "https://cn-vuejs-challenges.netlify.app/",
+          "logo": "https://cn-vuejs-challenges.netlify.app/favicon.ico",
+          "desc": "Vue.js在线学习"
         },
+        {
+          "url": "https://www.hello-algo.com/",
+          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.hello-algo.com%2F",
+          "title": "算法笔记",
+          "desc": ""
+        },
+        {
+          "title": "FreeCodeCamp",
+          "url": "https://www.freecodecamp.org/",
+          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.freecodecamp.org%2F",
+          "desc": "免费编程学习网站"
+        }
+      ]
+    },
+    {
+      "name": "技术文档",
+      "en_name": "technical documents",
+      "icon": "linecons-cog",
+      "web": [
         {
           "title": "Vue",
           "url": "https://cn.vuejs.org/",
@@ -191,12 +210,6 @@
           "url": "https://www.webpackjs.com/",
           "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.webpackjs.com%2F",
           "desc": "前端常用打包工具官方文档"
-        },
-        {
-          "title": " Github Proxy",
-          "url": "https://ghfast.top/",
-          "logo": "https://ghfast.top/favicon.ico",
-          "desc": "github代理加速下载"
         },
         {
           "title": "Dribbble",
@@ -223,42 +236,6 @@
           "desc": "在线调整样式生成可复制代码的平台"
         },
         {
-          "title": "US.KG",
-          "url": "https://dash.domain.digitalplat.org/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fdash.domain.digitalplat.org%2F",
-          "desc": "免费域名申请，每半年手动续费一次 => 由于域名滥用，us.kg已经挂了，所有服务转移到新域名dpdns.org下面了"
-        },
-        {
-          "title": "spaceship",
-          "url": "https://www.spaceship.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.spaceship.com%2F",
-          "desc": "支持国内付款方式的域名服务商"
-        },
-        {
-          "title": "x10hosting",
-          "url": "https://x10hosting.com/",
-          "logo": "https://x10hosting.com/favicon.ico",
-          "desc": "一个域名服务商，免费但维护麻烦，需要30天登陆一次并且需要纯净的IP"
-        },
-        {
-          "title": "Speedtest",
-          "url": "https://www.speedtest.net/",
-          "logo": "https://www.speedtest.net/favicon.ico",
-          "desc": "网络测速"
-        },
-        {
-          "title": "Python爬虫案例",
-          "url": "https://scrape.center/",
-          "logo": "https://scrape.center/favicon.ico",
-          "desc": "Python爬虫案例"
-        },
-        {
-          "title": "webhostmost",
-          "url": "https://client.webhostmost.com/",
-          "logo": "https://client.webhostmost.com/favicon.ico",
-          "desc": " 免费主机VPS，125m容量，45天登录一次"
-        },
-        {
           "title": "TypeScript",
           "url": "https://www.typescriptlang.org/",
           "logo": "https://www.typescriptlang.org/favicon.ico",
@@ -269,24 +246,6 @@
           "url": "https://ant.design/index-cn",
           "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fant.design%2Findex-cn",
           "desc": "国内常用的前端React UI组件库"
-        },
-        {
-          "title": "Vue.js挑战",
-          "url": "https://cn-vuejs-challenges.netlify.app/",
-          "logo": "https://cn-vuejs-challenges.netlify.app/favicon.ico",
-          "desc": "Vue.js在线学习"
-        },
-        {
-          "title": "it-tools",
-          "url": "https://it-tools.tech/",
-          "logo": "https://it-tools.tech/favicon.ico",
-          "desc": "免费开发工具合集"
-        },
-        {
-          "title": "Aixdownloader",
-          "url": "https://aixdownloader.com/zh/",
-          "logo": "https://aixdownloader.com/favicon.ico",
-          "desc": "从任何网页获取你想要的内容"
         },
         {
           "title": "free-for-dev",
@@ -305,18 +264,87 @@
           "url": "https://zhuangit.ababtools.com/",
           "logo": "https://zhuangit.ababtools.com/favicon.ico",
           "desc": "系统安装指南"
+        }
+      ]
+    },
+    {
+      "name": "域名服务",
+      "en_name": "domain service",
+      "icon": "linecons-star",
+      "web": [
+        {
+          "title": "US.KG",
+          "url": "https://dash.domain.digitalplat.org/",
+          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fdash.domain.digitalplat.org%2F",
+          "desc": "免费域名申请，每半年手动续费一次 => 由于域名滥用，us.kg已经挂了，所有服务转移到新域名dpdns.org下面了"
         },
         {
-          "title": "技术学习路线",
-          "url": "https://roadmap.sh/",
-          "logo": "https://roadmap.sh/favicon.ico",
-          "desc": "各类技术学习路线图"
+          "title": "gname",
+          "url": "https://www.gname.vip/zhcn/tld-eu-cc.html",
+          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.gname.vip%2F",
+          "desc": "免费域名注册，可绑定cf, 90天到期可免费续"
         },
         {
-          "title": "w3school",
-          "url": "https://www.w3school.com.cn/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.w3school.com.cn%2F",
-          "desc": "免费在线程序学习"
+          "title": "spaceship",
+          "url": "https://www.spaceship.com/",
+          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.spaceship.com%2F",
+          "desc": "支持国内付款方式的域名服务商"
+        },
+        {
+          "title": "x10hosting",
+          "url": "https://x10hosting.com/",
+          "logo": "https://x10hosting.com/favicon.ico",
+          "desc": "一个域名服务商，免费但维护麻烦，需要30天登陆一次并且需要纯净的IP"
+        }
+      ]
+    },
+    {
+      "name": "部署平台",
+      "en_name": "free container",
+      "icon": "linecons-doc",
+      "web": [
+        {
+          "url": "https://dash.cloudflare.com/",
+          "logo": "https://dash.cloudflare.com/favicon.ico",
+          "title": "Cloudflare",
+          "desc": "赛博活佛"
+        },
+        {
+          "title": "Vercel",
+          "url": "https://vercel.com/",
+          "logo": "https://vercel.com/favicon.ico",
+          "desc": "静态资源拖管，severless容器网站"
+        },
+        {
+          "title": "wasmer",
+          "url": "https://wasmer.io/",
+          "logo": "https://wasmer.io/favicon.ico",
+          "desc": "wasmer"
+        }
+      ]
+    },
+    {
+      "name": "云主机",
+      "en_name": "vps",
+      "icon": "linecons-doc",
+      "web": [
+        {
+          "title": "vps小白",
+          "url": "https://vpsxb.net/",
+          "logo": "https://vpsxb.net/favicon.ico",
+          "desc": "vps科谱"
+        },
+        {
+          "title": "搬瓦工vps",
+          "url": "https://www.bandwagonhost.net/",
+          "logo": "https://www.bandwagonhost.net/favicon.ico",
+          "desc": "搬瓦工介绍网站"
+        },
+        {
+          "title": "webhostmost",
+          "url": "https://client.webhostmost.com/",
+          "logo": "https://client.webhostmost.com/favicon.ico",
+          "desc": " 免费主机VPS，125m容量，45天登录一次"
         }
       ]
     },
@@ -348,6 +376,12 @@
           "url": "https://greenvideo.cc/",
           "logo": "https://greenvideo.cc/favicon.ico",
           "desc": "vip视频下载观看，支持腾讯爱奇艺等"
+        },
+        {
+          "title": "巴哈姆特",
+          "url": "https://www.gamer.com.tw",
+          "logo": "https://www.gamer.com.tw/favicon.ico",
+          "desc": "类似B站的台湾版"
         }
       ]
     },
@@ -386,6 +420,31 @@
           "url": "https://mhx12.com/",
           "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fmhx12.com%2F",
           "desc": "漫画网站"
+        }
+      ]
+    },
+    {
+      "name": "摸鱼常备",
+      "en_name": "fishing",
+      "icon": "linecons-star",
+      "web": [
+        {
+          "url": "https://bz.zzzmh.cn/index ",
+          "logo": "https://www.google.com/s2/favicons?domain=bz.zzzmh.cn&sz=64",
+          "title": "极简壁纸",
+          "desc": "极简壁纸，直接下载"
+        },
+        {
+          "title": "谷歌地球",
+          "url": "https://www.google.com/intl/zh-CN/earth/about/",
+          "logo": "https://www.google.com/favicon.ico",
+          "desc": "没事可以看看地球上各地方的风景"
+        },
+        {
+          "url": "http://www.9GAG.com",
+          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=http%3A%2F%2Fwww.9gag.com%2F",
+          "title": "9GAG",
+          "desc": ""
         }
       ]
     },
@@ -457,6 +516,25 @@
       ]
     },
     {
+      "name": "音频处理",
+      "en_name": "audio",
+      "icon": "linecons-star",
+      "web": [
+        {
+          "title": "lalal",
+          "url": "https://www.lalal.ai/",
+          "logo": "https://www.lalal.ai/favicon.ico",
+          "desc": "视频音频提取"
+        },
+        {
+          "title": "tosound",
+          "url": "https://www.tosound.com/",
+          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.tosound.com%2F",
+          "desc": "声音搜索"
+        }
+      ]
+    },
+    {
       "name": " AI 探索",
       "en_name": "AI explore",
       "icon": "linecons-star",
@@ -502,6 +580,78 @@
           "url": "https://latentbox.com/zh",
           "logo": "https://latentbox.com/favicon.ico",
           "desc": ""
+        },
+        {
+          "url": "https://chatgpt.com/",
+          "logo": "https://chatgpt.com/favicon.ico",
+          "title": "ChatGPT",
+          "desc": "世界上最先进的AI"
+        },
+        {
+          "title": "通义千问",
+          "url": "https://chat.qwen.ai/",
+          "logo": "https://www.google.com/s2/favicons?domain=chat.qwen.ai&sz=64",
+          "desc": "可以文生图的大模型"
+        },
+        {
+          "url": "https://chat.deepseek.com/",
+          "logo": "https://www.google.com/s2/favicons?domain=chat.deepseek.com&sz=64",
+          "title": "DeepSeek",
+          "desc": "AI界的拼多多，DeepSeek是一个基于GPT-3的搜索引擎，它可以回答您的问题，提供有关任何主题的详细信息，并帮助您发现新的内容。"
+        },
+        {
+          "title": "跃问",
+          "url": "https://yuewen.cn/chats/new",
+          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fyuewen.cn%2Fchats%2Fnew",
+          "desc": "又一个可以通过文字生成视频的网站，可以生成长达8s视频，提供deepseek r1分流接口"
+        },
+        {
+          "title": "Autoglm",
+          "url": "https://autoglm-research.zhipuai.cn/",
+          "logo": "https://autoglm-research.zhipuai.cn/favicon.ico",
+          "desc": "AI agent 免费但需要手机号注册"
+        },
+        {
+          "url": "https://platform.deepseek.com/",
+          "logo": "https://www.google.com/s2/favicons?domain=platform.deepseek.com&sz=64",
+          "title": "DeepSeek API接口",
+          "desc": "API　keys 入口"
+        },
+        {
+          "title": "OpenRouter",
+          "url": "https://openrouter.ai/",
+          "logo": "https://openrouter.ai/favicon.ico",
+          "desc": "大模型路由，国内可访问，聚合了许多大模型"
+        },
+        {
+          "title": "CrofAI",
+          "url": "https://ai.nahcrof.com/",
+          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fai.nahcrof.com%2F",
+          "desc": "免费提供 api key"
+        },
+        {
+          "title": "Tavily",
+          "url": "https://app.tavily.com/",
+          "logo": "https://app.tavily.com/favicon.ico",
+          "desc": "openclaw搜索技能"
+        },
+        {
+          "title": "Perplexity",
+          "url": "https://www.perplexity.ai/",
+          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.perplexity.ai%2F",
+          "desc": "AI搜索"
+        },
+        {
+          "title": "Flowith.io",
+          "url": "https://flowith.io/blank",
+          "logo": "https://flowith.io/favicon.ico",
+          "desc": "AI知识库，可以构建关系图谱"
+        },
+        {
+          "title": "Morphic",
+          "url": "https://www.morphic.sh/",
+          "logo": "https://www.morphic.sh/favicon.ico",
+          "desc": "Perplexity平替"
         }
       ]
     },
@@ -734,94 +884,10 @@
       ]
     },
     {
-      "name": "实用工具与系统",
-      "en_name": "Practical Tools & Systems",
-      "icon": "linecons-lightbulb",
+      "name": "网盘资源",
+      "en_name": "netdisk",
+      "icon": "linecons-doc",
       "web": [
-        {
-          "url": "https://www.icloud.com.cn/reminders/",
-          "logo": "https://www.icloud.com.cn/favicon.ico",
-          "title": "iCloud",
-          "desc": "待办清单在线"
-        },
-        {
-          "url": "https://fly63.com/tool/home.html",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Ffly63.com%2Ftool%2Fhome.html",
-          "title": "FLY63",
-          "desc": "各种在线实用小工具"
-        },
-        {
-          "title": "极简插件",
-          "url": "https://chrome.zzzmh.cn/index",
-          "logo": "https://chrome.zzzmh.cn/favicon.ico",
-          "desc": "chrome内核浏览器插件网站"
-        },
-        {
-          "url": "https://www.uugai.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.uugai.com%2F",
-          "title": "钙网",
-          "desc": "免费的LOGO在线设计制作工具"
-        },
-        {
-          "url": "https://www.uupoop.com/#/ ",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.uupoop.com%2F%23%2F",
-          "title": "在线PS",
-          "desc": "在线PS工具"
-        },
-        {
-          "title": "图壳",
-          "url": "https://imgkr.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fimgkr.com%2F",
-          "desc": "又一款免费的第三方图床"
-        },
-        {
-          "url": "https://bz.zzzmh.cn/index ",
-          "logo": "https://www.google.com/s2/favicons?domain=bz.zzzmh.cn&sz=64",
-          "title": "极简壁纸",
-          "desc": "极简壁纸，直接下载"
-        },
-        {
-          "url": "https://www.aconvert.com/",
-          "logo": "https://www.aconvert.com/favicon.ico",
-          "title": "文件格式转换工具",
-          "desc": ""
-        },
-        {
-          "title": "一个工具箱",
-          "url": "http://www.atoolbox.net/",
-          "logo": "http://www.atoolbox.net/favicon.ico",
-          "desc": "提供各类在线小工具"
-        },
-        {
-          "title": "lalal",
-          "url": "https://www.lalal.ai/",
-          "logo": "https://www.lalal.ai/favicon.ico",
-          "desc": "视频音频提取"
-        },
-        {
-          "title": "Perplexity",
-          "url": "https://www.perplexity.ai/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.perplexity.ai%2F",
-          "desc": "AI搜索"
-        },
-        {
-          "title": "Flowith.io",
-          "url": "https://flowith.io/blank",
-          "logo": "https://flowith.io/favicon.ico",
-          "desc": "AI知识库，可以构建关系图谱"
-        },
-        {
-          "title": "Morphic",
-          "url": "https://www.morphic.sh/",
-          "logo": "https://www.morphic.sh/favicon.ico",
-          "desc": "Perplexity平替"
-        },
-        {
-          "title": "tosound",
-          "url": "https://www.tosound.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.tosound.com%2F",
-          "desc": "声音搜索"
-        },
         {
           "title": "学 搜搜",
           "url": "https://www.xuesousou.net/",
@@ -853,16 +919,53 @@
           "desc": "提供各种系统镜像"
         },
         {
-          "title": "smallpdf",
-          "url": "https://smallpdf.com",
-          "logo": "https://smallpdf.com/favicon.ico",
-          "desc": "pdf文件在线加密解密"
-        },
-        {
           "title": "盘友圈",
           "url": "https://panyq.com/",
           "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fpanyq.com%2F",
           "desc": "网盘资源搜索"
+        }
+      ]
+    },
+    {
+      "name": "实用工具",
+      "en_name": "Practical Tools",
+      "icon": "linecons-lightbulb",
+      "web": [
+        {
+          "url": "https://www.icloud.com.cn/reminders/",
+          "logo": "https://www.icloud.com.cn/favicon.ico",
+          "title": "iCloud",
+          "desc": "待办清单在线"
+        },
+        {
+          "url": "https://fly63.com/tool/home.html",
+          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Ffly63.com%2Ftool%2Fhome.html",
+          "title": "FLY63",
+          "desc": "各种在线实用小工具"
+        },
+        {
+          "title": "极简插件",
+          "url": "https://chrome.zzzmh.cn/index",
+          "logo": "https://chrome.zzzmh.cn/favicon.ico",
+          "desc": "chrome内核浏览器插件网站"
+        },
+        {
+          "url": "https://www.aconvert.com/",
+          "logo": "https://www.aconvert.com/favicon.ico",
+          "title": "文件格式转换工具",
+          "desc": ""
+        },
+        {
+          "title": "一个工具箱",
+          "url": "http://www.atoolbox.net/",
+          "logo": "http://www.atoolbox.net/favicon.ico",
+          "desc": "提供各类在线小工具"
+        },
+        {
+          "title": "smallpdf",
+          "url": "https://smallpdf.com",
+          "logo": "https://smallpdf.com/favicon.ico",
+          "desc": "pdf文件在线加密解密"
         },
         {
           "title": "freecompress",
@@ -897,21 +1000,27 @@
       ]
     },
     {
-      "name": "设计与创意",
-      "en_name": "Design & Creativity",
+      "name": "UI设计",
+      "en_name": "ui design",
       "icon": "linecons-lightbulb",
       "web": [
+        {
+          "url": "https://www.uupoop.com/#/ ",
+          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.uupoop.com%2F%23%2F",
+          "title": "在线PS",
+          "desc": "在线PS工具"
+        },
+        {
+          "url": "https://www.uugai.com/",
+          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.uugai.com%2F",
+          "title": "钙网",
+          "desc": "免费的LOGO在线设计制作工具"
+        },
         {
           "title": "Magic Eraser",
           "url": "https://magiceraser.org/",
           "logo": "https://magiceraser.org/favicon.ico",
           "desc": "简单的在线图片处理应用"
-        },
-        {
-          "url": "https://www.dbbqb.com/",
-          "logo": "https://img1.tucang.cc/api/image/show/d49b2f40283fd12731be9e18b707d48a",
-          "title": "逗比拯救世界--专业的表情包搜索网站",
-          "desc": ""
         },
         {
           "url": "https://www.qiuziti.com/",
@@ -924,12 +1033,6 @@
           "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.hippter.com%2F",
           "title": "HiPPTER | PPT资源导航",
           "desc": ""
-        },
-        {
-          "title": "谷歌地球",
-          "url": "https://www.google.com/intl/zh-CN/earth/about/",
-          "logo": "https://www.google.com/favicon.ico",
-          "desc": "没事可以看看地球上各地方的风景"
         },
         {
           "title": "Canva",
@@ -948,12 +1051,18 @@
           "url": "https://docsmall.com/",
           "logo": "https://www.google.com/s2/favicons?domain=docsmall.com&sz=64",
           "desc": "在线图片处理"
+        },
+        {
+          "title": "图片分割",
+          "url": "https://imagesplitter.vip/zh",
+          "logo": "https://imagesplitter.vip/favicon.ico",
+          "desc": "ai短剧图片分割"
         }
       ]
     },
     {
-      "name": "教育与学习",
-      "en_name": "Education & Learning",
+      "name": "电子书资源",
+      "en_name": "ebook",
       "icon": "linecons-doc",
       "web": [
         {
@@ -975,23 +1084,18 @@
           "desc": ""
         },
         {
-          "url": "https://www.hello-algo.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.hello-algo.com%2F",
-          "title": "算法笔记",
-          "desc": ""
-        },
-        {
           "title": "熊猫搜书",
           "url": "https://xmsoushu.com/#/",
           "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fxmsoushu.com%2F%23%2F",
           "desc": "聚合了各种电子书网站，可以查找各类电子书"
-        },
-        {
-          "title": "FreeCodeCamp",
-          "url": "https://www.freecodecamp.org/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.freecodecamp.org%2F",
-          "desc": "免费编程学习网站"
-        },
+        }
+      ]
+    },
+    {
+      "name": "教育与学习",
+      "en_name": "Education",
+      "icon": "linecons-doc",
+      "web": [
         {
           "title": "可汗学院",
           "url": "https://zh.khanacademy.org/",
@@ -1003,12 +1107,6 @@
           "url": "https://phet.colorado.edu/zh_CN/",
           "logo": "https://phet.colorado.edu/favicon.ico",
           "desc": "通过互动游戏学习知识的网站"
-        },
-        {
-          "title": "SaltyLeo",
-          "url": "https://tstrs.me/",
-          "logo": "https://tstrs.me/favicon.ico",
-          "desc": "免费电子书资源"
         },
         {
           "title": "Anki",
@@ -1133,18 +1231,6 @@
           "desc": ", 尝试整合一些项目搭建，打包，部署的资源操作"
         },
         {
-          "url": "https://img.liyifei.us.kg/",
-          "logo": "https://img1.tucang.cc/api/image/show/77451257254f3851ce36fc23f98c8c70",
-          "title": "图床",
-          "desc": "个人图床，图片上传，数据库搭建中。。。"
-        },
-        {
-          "url": "https://img.tramppoet.us.kg/",
-          "logo": "https://img1.tucang.cc/api/image/show/77451257254f3851ce36fc23f98c8c70",
-          "title": "图床2",
-          "desc": "个人图床，图片上传，电报接口已失效"
-        },
-        {
           "title": "个人导航",
           "url": "https://navigation.narcissus2ma.dpdns.org/",
           "logo": "https://img1.tucang.cc/api/image/show/77451257254f3851ce36fc23f98c8c70",
@@ -1210,6 +1296,23 @@
           "url": "https://apkpure.com/cn/",
           "logo": "https://apkpure.com/favicon.ico",
           "desc": "海外安桌应用下载"
+        },
+        {
+          "title": "挂梯子",
+          "url": "https://guatizi.com/",
+          "logo": "https://guatizi.com/favicon.ico",
+          "desc": "机场合集"
+        },
+        {
+          "title": "帐号星球",
+          "url": "https://www.accountboy.com",
+          "logo": "https://www.accountboy.com/favicon.ico",
+          "desc": "海外平台帐号购买"
+        },
+        {
+          "title": "币安",
+          "url": "https://www.binance.com/",
+          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.binance.com%2F"
         }
       ]
     }
@@ -1221,24 +1324,24 @@
       "url": "https://www.bing.com/search?q="
     },
     {
-      "name": "DuckGo",
-      "icon": "https://img1.tucang.cc/api/image/show/e1306a391e2a2a324370bfee481f497b",
-      "url": "https://duckduckgo.com/"
-    },
-    {
       "name": "Google",
       "icon": "https://www.google.com/favicon.ico",
       "url": "https://www.google.com/search?q="
     },
     {
-      "name": "Baidu",
-      "icon": "https://www.baidu.com/favicon.ico",
-      "url": "https://www.baidu.com/s?wd="
+      "name": "DuckGo",
+      "icon": "https://img1.tucang.cc/api/image/show/e1306a391e2a2a324370bfee481f497b",
+      "url": "https://duckduckgo.com/"
     },
     {
       "name": "yandex",
       "icon": "https://img1.tucang.cc/api/image/show/77451257254f3851ce36fc23f98c8c70",
       "url": "https://yandex.eu/search?text="
+    },
+    {
+      "name": "Baidu",
+      "icon": "https://www.baidu.com/favicon.ico",
+      "url": "https://www.baidu.com/s?wd="
     }
   ]
 }
