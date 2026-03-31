@@ -25,7 +25,7 @@
 .sider {
   background: var(--app-surface);
   border-right: 1px solid var(--app-border);
-  overflow: auto;
+  overflow: hidden;
   height: 100vh;
   position: fixed;
   left: 0;
@@ -36,6 +36,8 @@
   :global(.ant-layout-sider-children) {
     display: flex;
     flex-direction: column;
+    height: 100%;
+    overflow: hidden;
   }
 }
 
@@ -58,7 +60,6 @@
 }
 
 .menu {
-  flex: 1;
   border-right: 0 !important;
 
   :global(.ant-menu-item) {
@@ -78,6 +79,14 @@
       }
     }
   }
+}
+
+.siderMenu {
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .header {

@@ -93,13 +93,15 @@ const AppLayout: React.FC<LayoutProps> = ({ children }) => {
               <img alt="Logo" src={expandedLogo} />
             )}
           </div>
-          <Menu
-            className={styles.menu}
-            items={menuItems}
-            mode="inline"
-            selectedKeys={[selectedKey]}
-            theme={theme === 'dark' ? 'dark' : 'light'}
-          />
+          <div className={styles.siderMenu}>
+            <Menu
+              className={styles.menu}
+              items={menuItems}
+              mode="inline"
+              selectedKeys={[selectedKey]}
+              theme={theme === 'dark' ? 'dark' : 'light'}
+            />
+          </div>
         </Sider>
       )}
       <Layout>
