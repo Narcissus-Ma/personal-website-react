@@ -28,7 +28,19 @@ const HomePage: React.FC = () => {
       setTimeout(() => {
         const element = document.getElementById(pathname.slice(1));
         if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // 计算 header 高度，避免滚动时被 header 遮挡
+          const header = document.querySelector(
+            '.ant-layout-header'
+          ) as HTMLElement | null;
+          const headerHeight = header ? header.offsetHeight : 64; // 64 是默认高度
+
+          const elementTop = element.getBoundingClientRect().top;
+          const scrollY = window.pageYOffset + elementTop - headerHeight - 20; // 20 是额外的间距
+
+          window.scrollTo({
+            top: scrollY,
+            behavior: 'smooth',
+          });
         }
       }, 100);
     }

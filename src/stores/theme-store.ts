@@ -17,14 +17,14 @@ const applyThemeToDocument = (theme: ThemeMode) => {
 };
 
 const getInitialTheme = (): ThemeMode => {
-  if (typeof window === 'undefined') return 'light';
+  if (typeof window === 'undefined') return 'dark';
   try {
     const stored = window.localStorage.getItem(STORAGE_KEY);
     if (stored === 'light' || stored === 'dark') return stored;
   } catch {
     // ignore
   }
-  return 'light';
+  return 'dark';
 };
 
 export const useThemeStore = create<ThemeState>((set, get) => {

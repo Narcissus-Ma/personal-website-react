@@ -14,6 +14,7 @@ import {
   AppstoreOutlined,
 } from '@ant-design/icons';
 import { useCategories, useIsMobile, useLanguage, useTheme } from '../../hooks';
+import { UniverseEffect } from '../universe-effect';
 import styles from './layout.module.less';
 import collapsedLogo from '../../assets/images/user-logo.jpg';
 import expandedLogo from '../../assets/images/personal-general-logo.png';
@@ -68,82 +69,85 @@ const AppLayout: React.FC<LayoutProps> = ({ children }) => {
   };
 
   return (
-    <Layout
-      className={[
-        styles.layout,
-        collapsed ? styles.layoutCollapsed : '',
-        isMobile ? styles.layoutMobile : '',
-      ]
-        .filter(Boolean)
-        .join(' ')}
-    >
-      {!isMobile && (
-        <Sider
-          collapsible
-          className={styles.sider}
-          collapsed={collapsed}
-          collapsedWidth={80}
-          trigger={null}
+    <>
+      <UniverseEffect isDarkMode={theme === 'dark'} />
+      <Layout
+        className={[
+          styles.layout,
+          collapsed ? styles.layoutCollapsed : '',
+          isMobile ? styles.layoutMobile : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
+      >
+        {!isMobile && (
+          <Sider
+            collapsible
+            className={styles.sider}
+            collapsed={collapsed}
+            collapsedWidth={80}
+            trigger={null}
+            width={260}
+          >
+            <div className={styles.logo}>
+              {collapsed ? (
+                <img alt="Logo" src={collapsedLogo} />
+              ) : (
+                <img alt="Logo" src={expandedLogo} />
+              )}
+            </div>
+            <div className={styles.siderMenu}>
+              <Menu
+                className={styles.menu}
+                items={menuItems}
+                mode="inline"
+                selectedKeys={[selectedKey]}
+                theme={theme === 'dark' ? 'dark' : 'light'}
+              />
+            </div>
+          </Sider>
+        )}
+        <Layout>
+          <Header className={styles.header}>
+            <div className={styles.trigger}>
+              {React.createElement(
+                isMobile
+                  ? MenuOutlined
+                  : collapsed
+                    ? MenuUnfoldOutlined
+                    : MenuFoldOutlined,
+                {
+                  onClick: handleToggleMenu,
+                  className: styles.triggerIcon,
+                }
+              )}
+            </div>
+          </Header>
+          <Content className={styles.content}>{children}</Content>
+        </Layout>
+
+        <Drawer
+          className={styles.mobileDrawer}
+          open={mobileMenuOpen}
+          placement="left"
+          title={null}
           width={260}
+          onClose={() => setMobileMenuOpen(false)}
         >
           <div className={styles.logo}>
-            {collapsed ? (
-              <img alt="Logo" src={collapsedLogo} />
-            ) : (
-              <img alt="Logo" src={expandedLogo} />
-            )}
+            <img alt="Logo" src={expandedLogo} />
           </div>
-          <div className={styles.siderMenu}>
-            <Menu
-              className={styles.menu}
-              items={menuItems}
-              mode="inline"
-              selectedKeys={[selectedKey]}
-              theme={theme === 'dark' ? 'dark' : 'light'}
-            />
-          </div>
-        </Sider>
-      )}
-      <Layout>
-        <Header className={styles.header}>
-          <div className={styles.trigger}>
-            {React.createElement(
-              isMobile
-                ? MenuOutlined
-                : collapsed
-                  ? MenuUnfoldOutlined
-                  : MenuFoldOutlined,
-              {
-                onClick: handleToggleMenu,
-                className: styles.triggerIcon,
-              }
-            )}
-          </div>
-        </Header>
-        <Content className={styles.content}>{children}</Content>
+          <Menu
+            className={styles.menu}
+            items={menuItems}
+            mode="inline"
+            selectedKeys={[selectedKey]}
+            theme={theme === 'dark' ? 'dark' : 'light'}
+            onClick={() => setMobileMenuOpen(false)}
+          />
+        </Drawer>
       </Layout>
-
-      <Drawer
-        className={styles.mobileDrawer}
-        open={mobileMenuOpen}
-        placement="left"
-        title={null}
-        width={260}
-        onClose={() => setMobileMenuOpen(false)}
-      >
-        <div className={styles.logo}>
-          <img alt="Logo" src={expandedLogo} />
-        </div>
-        <Menu
-          className={styles.menu}
-          items={menuItems}
-          mode="inline"
-          selectedKeys={[selectedKey]}
-          theme={theme === 'dark' ? 'dark' : 'light'}
-          onClick={() => setMobileMenuOpen(false)}
-        />
-      </Drawer>
-    </Layout>
+    </>
   );
 };
 
