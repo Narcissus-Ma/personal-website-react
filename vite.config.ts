@@ -20,5 +20,17 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // 将大型依赖库单独打包
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          antd: ['antd', '@ant-design/icons'],
+          zustand: ['zustand'],
+        },
+      },
+    },
+  },
   base: './',
 });
