@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useSiteStore } from '../stores';
+import { Category } from '@/types';
 
 export const useCategories = () => {
   const { categories, setCategories, setSearchEngines, loadFromServer } =
@@ -17,7 +18,7 @@ export const useCategories = () => {
         );
         import('../data/data.json').then(data => {
           const siteData = data.default || data;
-          setCategories(siteData.categories || siteData);
+          setCategories((siteData.categories || siteData) as Category[]);
           if (siteData.searchEngines) {
             setSearchEngines(siteData.searchEngines);
           }

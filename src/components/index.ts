@@ -4,5 +4,16 @@ import SearchBox from './search-box/search-box';
 import Footer from './footer/footer';
 import AuthModal from './auth-modal';
 import { ClickEffect } from './click-effect';
+import { Loading } from './loading';
+import { ProgressBar } from './progress-bar';
 
-export { Layout, WebItem, SearchBox, Footer, AuthModal, ClickEffect };
+export {
+  Layout,
+  WebItem,
+  SearchBox,
+  Footer,
+  AuthModal,
+  ClickEffect,
+  Loading,
+  ProgressBar,
+};

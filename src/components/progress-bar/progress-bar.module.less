@@ -1,0 +1,20 @@
+.progressParent {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  z-index: 1000;
+  transition: opacity 0.3s ease;
+}
+
+.progress {
+  height: 100%;
+  background: linear-gradient(90deg, #6bdf8f, #4facfe);
+  width: 0%;
+  transition: width 0.1s ease;
+}
+
+.loaded {
+  opacity: 0;
+}

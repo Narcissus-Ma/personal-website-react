@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
 import { ConfigProvider, theme as antdTheme } from 'antd';
@@ -6,10 +6,12 @@ import { router } from './router';
 import 'antd/dist/reset.css';
 import './assets/styles/global.less';
 import { useTheme } from '@/hooks';
-import { ClickEffect } from './components';
+import { ClickEffect, Loading } from './components';
+import { useSiteStore } from './stores/site-store';
 
 const AppRoot: React.FC = () => {
   const { theme } = useTheme();
+  const { isLoading } = useSiteStore();
 
   return (
     <ConfigProvider
@@ -20,6 +22,7 @@ const AppRoot: React.FC = () => {
             : antdTheme.defaultAlgorithm,
       }}
     >
+      <Loading isLoading={isLoading} />
       <RouterProvider router={router} />
       <ClickEffect type="fireworks" />
     </ConfigProvider>

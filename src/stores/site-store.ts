@@ -33,11 +33,15 @@ interface SiteStore extends SiteData {
   setDefaultEngine: (index: number) => void;
   saveToServer: () => Promise<void>;
   loadFromServer: () => Promise<void>;
+  isLoading: boolean;
+  setIsLoading: (isLoading: boolean) => void;
 }
 
 export const useSiteStore = create<SiteStore>((set, get) => ({
   categories: [],
   searchEngines: [],
+  isLoading: true,
+  setIsLoading: isLoading => set({ isLoading }),
   setCategories: categories => set({ categories }),
   setSearchEngines: searchEngines => set({ searchEngines }),
   addCategory: category =>
@@ -158,6 +162,7 @@ export const useSiteStore = create<SiteStore>((set, get) => ({
   setDefaultEngine: index => {},
   loadFromServer: async () => {
     try {
+      set({ isLoading: true });
       const response = await fetch(`${API_BASE}/data`);
       if (!response.ok) {
         throw new Error('Failed to load data');
@@ -166,9 +171,11 @@ export const useSiteStore = create<SiteStore>((set, get) => ({
       set({
         categories: data.categories || [],
         searchEngines: data.searchEngines || [],
+        isLoading: false,
       });
     } catch (error) {
       console.error('Error loading data:', error);
+      set({ isLoading: false });
       throw error;
     }
   },
