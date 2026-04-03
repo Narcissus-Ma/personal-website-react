@@ -6,6 +6,7 @@ import { router } from './router';
 import 'antd/dist/reset.css';
 import './assets/styles/global.less';
 import { useTheme } from '@/hooks';
+import { ClickEffect } from './components';
 
 const AppRoot: React.FC = () => {
   const { theme } = useTheme();
@@ -20,6 +21,7 @@ const AppRoot: React.FC = () => {
       }}
     >
       <RouterProvider router={router} />
+      <ClickEffect type="fireworks" />
     </ConfigProvider>
   );
 };
