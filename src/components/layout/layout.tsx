@@ -102,6 +102,9 @@ const AppLayout: React.FC<LayoutProps> = ({ children }) => {
                 items={menuItems}
                 mode="inline"
                 selectedKeys={[selectedKey]}
+                style={{
+                  background: 'var(--app-bg)',
+                }}
                 theme={theme === 'dark' ? 'dark' : 'light'}
               />
             </div>

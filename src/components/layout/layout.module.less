@@ -6,7 +6,9 @@
   .header {
     margin-left: 0;
     padding-left: calc(var(--app-content-padding) + var(--app-safe-area-left));
-    padding-right: calc(var(--app-content-padding) + var(--app-safe-area-right));
+    padding-right: calc(
+      var(--app-content-padding) + var(--app-safe-area-right)
+    );
   }
 
   .content {
@@ -23,7 +25,7 @@
 }
 
 .sider {
-  background: var(--app-surface);
+  background: var(--app-bg);
   border-right: 1px solid var(--app-border);
   overflow: hidden;
   height: 100vh;
@@ -90,7 +92,7 @@
 }
 
 .header {
-  background: var(--app-surface);
+  background: var(--app-bg);
   padding: 0 var(--app-content-padding);
   padding-top: var(--app-safe-area-top);
   border-bottom: 1px solid var(--app-border);
