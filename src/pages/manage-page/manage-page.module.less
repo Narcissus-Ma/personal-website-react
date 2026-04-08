@@ -13,7 +13,7 @@
   h1 {
     margin: 0;
     font-size: 24px;
-    color: #262626;
+    color: var(--app-text);
   }
 }
 
@@ -22,16 +22,16 @@
   align-items: center;
   gap: 4px;
   padding: 8px 16px;
-  background: #fff;
-  border: 1px solid #d9d9d9;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
   border-radius: 6px;
-  color: #262626;
+  color: var(--app-text);
   font-size: 14px;
   transition: all 0.3s;
 
   &:hover {
-    border-color: #1677ff;
-    color: #1677ff;
+    border-color: var(--app-primary);
+    color: var(--app-primary);
   }
 }
 
@@ -39,15 +39,15 @@
   margin-bottom: 24px;
   border-radius: 8px;
 
-  :global(.ant-card-head) {
-    border-bottom: 1px solid #f0f0f0;
-  }
+  // :global(.ant-card-head) {
+  //   border-bottom: 1px solid #f0f0f0;
+  // }
 }
 
 .categoryForm {
   margin-bottom: 16px;
   padding: 16px;
-  background: #fafafa;
+  background: var(--app-surface);
   border-radius: 8px;
 }
 
@@ -66,7 +66,7 @@
   margin-bottom: 30px;
 
   small {
-    color: #666;
+    color: var(--app-text-secondary);
     margin-bottom: 5px;
     display: block;
   }
@@ -89,8 +89,8 @@
 }
 
 .defaultLogoItemSelected {
-  border-color: #3498db !important;
-  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+  border-color: var(--app-primary) !important;
+  box-shadow: 0 0 5px var(--app-selected-bg);
 }
 
 .favicon32 {
@@ -127,7 +127,7 @@
   object-fit: contain;
   border-radius: 4px;
   margin-top: 5px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--app-border);
 }
 
 .authContainer {
@@ -135,7 +135,7 @@
 }
 
 .emptyHint {
-  color: #8c8c8c;
+  color: var(--app-text-secondary);
   padding: 8px 0;
 }
 
@@ -184,7 +184,7 @@
 }
 
 .websiteDesc {
-  color: #262626;
+  color: var(--app-text);
   font-size: 14px;
   margin-bottom: 6px;
   word-break: break-word;
@@ -192,7 +192,7 @@
 }
 
 .websiteDescMuted {
-  color: #8c8c8c;
+  color: var(--app-text-secondary);
   font-size: 14px;
   margin-bottom: 6px;
 }
