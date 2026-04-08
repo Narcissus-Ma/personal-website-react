@@ -1,5 +1,9 @@
 import readline from 'readline';
-import { execSync } from 'child_process';
+import {
+  createKVKeyPutArgs,
+  ensureWranglerLogDir,
+  runWrangler,
+} from './wrangler-cli.mjs';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -34,14 +38,17 @@ const main = async () => {
     }
 
     console.log('\n正在设置密码...');
+    await ensureWranglerLogDir();
 
-    const command = `wrangler kv key put --binding=SITE_DATA "admin_password" "${password}" --config cloudflare/wrangler.toml --remote --preview false`;
-
-    execSync(command, { stdio: 'inherit' });
+    runWrangler(createKVKeyPutArgs('admin_password', [password]), {
+      logFileName: 'set-password.log',
+      stdio: 'inherit',
+    });
 
     console.log('\n密码设置成功!');
   } catch (error) {
-    console.error('设置密码失败:', error.message);
+    const detail = error.stderr?.toString().trim() || error.message;
+    console.error('设置密码失败:', detail);
     process.exit(1);
   } finally {
     rl.close();

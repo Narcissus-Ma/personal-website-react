@@ -13,14 +13,14 @@
     "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
     "predeploy": "pnpm run build",
     "deploy": "gh-pages -d dist",
-    "cf:dev": "wrangler dev --config cloudflare/wrangler.toml",
-    "cf:deploy": "wrangler deploy --config cloudflare/wrangler.toml",
+    "cf:dev": "node cloudflare/run-wrangler.mjs dev --config cloudflare/wrangler.toml",
+    "cf:deploy": "node cloudflare/run-wrangler.mjs deploy --config cloudflare/wrangler.toml",
     "cf:init": "node cloudflare/init-kv-data.mjs",
     "cf:backup": "node cloudflare/backup-kv-data.mjs",
-    "cf:get": "wrangler kv key get --binding=SITE_DATA \"data\" --config cloudflare/wrangler.toml --remote --preview false",
-    "cf:put": "wrangler kv key put --binding=SITE_DATA \"data\" --path=./src/data/data.json --config cloudflare/wrangler.toml --remote --preview false",
+    "cf:get": "node cloudflare/run-wrangler.mjs kv key get data --binding=SITE_DATA --config cloudflare/wrangler.toml --remote --preview false --text",
+    "cf:put": "node cloudflare/run-wrangler.mjs kv key put data --binding=SITE_DATA --path=./src/data/data.json --config cloudflare/wrangler.toml --remote --preview false",
     "cf:set-password": "node cloudflare/set-password.mjs",
-    "cf:get-password": "wrangler kv key get --binding=SITE_DATA \"admin_password\" --config cloudflare/wrangler.toml --remote --preview false"
+    "cf:get-password": "node cloudflare/run-wrangler.mjs kv key get admin_password --binding=SITE_DATA --config cloudflare/wrangler.toml --remote --preview false --text"
   },
   "devDependencies": {
     "@eslint/compat": "^2.0.2",
@@ -44,7 +44,7 @@
     "prettier": "^3.8.1",
     "typescript": "~5.9.3",
     "vite": "^7.3.1",
-    "wrangler": "^3.0.0"
+    "wrangler": "^4.81.0"
   },
   "dependencies": {
     "@ant-design/icons": "^6.1.0",
