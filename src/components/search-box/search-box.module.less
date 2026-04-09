@@ -6,6 +6,8 @@
   display: flex;
   gap: 12px;
   background: var(--app-surface);
+  backdrop-filter: var(--app-surface-backdrop-filter);
+  -webkit-backdrop-filter: var(--app-surface-backdrop-filter);
   padding: 16px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
@@ -13,6 +15,7 @@
 
 .engineSelect {
   width: 140px !important;
+  background: transparent;
 
   :global(.ant-select-selector) {
     border-radius: 8px 0 0 8px !important;
@@ -23,6 +26,7 @@
 .searchInput {
   flex: 1;
   border-radius: 0 !important;
+  background: transparent;
 
   :global(.ant-input) {
     border-radius: 0 !important;

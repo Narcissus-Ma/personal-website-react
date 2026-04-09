@@ -110,7 +110,7 @@ const AppLayout: React.FC<LayoutProps> = ({ children }) => {
             </div>
           </Sider>
         )}
-        <Layout>
+        <Layout className={styles.layoutContent}>
           <Header className={styles.header}>
             <div className={styles.trigger}>
               {React.createElement(
