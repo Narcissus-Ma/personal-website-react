@@ -1,5 +1,48 @@
 .layout {
   min-height: 100vh;
+  position: relative;
+  isolation: isolate;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+  }
+
+  &::before {
+    background-image: var(--home-bg-image);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  &::after {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(248, 251, 255, 0.82),
+        rgba(248, 251, 255, 0.9)
+      ),
+      radial-gradient(
+        circle at top right,
+        rgba(255, 255, 255, 0.4),
+        transparent 40%
+      );
+  }
+}
+
+:global(:root[data-home-background='active'][data-theme='light']) {
+  .layout {
+    &::before,
+    &::after {
+      opacity: 1;
+    }
+  }
 }
 
 .layoutMobile {
@@ -34,6 +77,11 @@
   top: 0;
   bottom: 0;
   z-index: 10;
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    backdrop-filter 0.3s ease;
 
   :global(.ant-layout-sider-children) {
     display: flex;
@@ -100,7 +148,12 @@
   align-items: center;
   height: calc(64px + var(--app-safe-area-top));
   margin-left: 260px;
-  transition: margin-left 0.2s;
+  transition:
+    margin-left 0.2s,
+    background 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    backdrop-filter 0.3s ease;
   position: sticky;
   top: 0;
   z-index: 9;
@@ -128,7 +181,9 @@
     var(--app-content-padding) + var(--app-safe-area-bottom)
   );
   min-height: calc(100vh - 64px - var(--app-safe-area-top));
-  transition: margin-left 0.2s;
+  transition:
+    margin-left 0.2s,
+    background 0.3s ease;
   background: var(--app-bg);
 }
 
@@ -140,5 +195,39 @@
 
   .logo {
     border-bottom: 1px solid var(--app-border);
+  }
+}
+
+:global(:root[data-home-background='active'][data-theme='light']) {
+  .sider {
+    background: var(--home-surface);
+    border-right-color: var(--home-surface-border);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: var(--home-shadow);
+  }
+
+  .header {
+    background: var(--home-surface-strong);
+    border-bottom-color: var(--home-surface-border);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: var(--home-shadow);
+  }
+
+  .content {
+    background: transparent;
+  }
+
+  .menu {
+    background: transparent !important;
+  }
+
+  .mobileDrawer {
+    :global(.ant-drawer-body) {
+      background: var(--home-surface-strong);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
   }
 }

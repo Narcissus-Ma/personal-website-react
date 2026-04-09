@@ -36,7 +36,12 @@ import {
 import { API_BASE } from '@/config/api-base';
 import { useIsMobile } from '@/hooks';
 import { useSiteStore, useAuthStore } from '../../stores';
-import { Website, Category, SearchEngine } from '../../types';
+import type {
+  BackgroundImage,
+  Category,
+  SearchEngine,
+  Website,
+} from '../../types';
 import styles from './manage-page.module.less';
 
 const { Option } = Select;
@@ -58,6 +63,7 @@ const ManagePage: React.FC = () => {
   const {
     categories,
     searchEngines,
+    backgrounds,
     addWebsite,
     addCategory,
     deleteCategory,
@@ -70,6 +76,9 @@ const ManagePage: React.FC = () => {
     addSearchEngine,
     deleteSearchEngine,
     reorderSearchEngines,
+    addBackground,
+    updateBackground,
+    deleteBackground,
     saveToServer,
     loadFromServer,
   } = useSiteStore();
@@ -80,12 +89,18 @@ const ManagePage: React.FC = () => {
   const [websiteForm] = Form.useForm();
   const [categoryForm] = Form.useForm();
   const [searchEngineForm] = Form.useForm();
+  const [backgroundForm] = Form.useForm();
 
   const FAVICON_DEBOUNCE_MS = 500;
 
   const [editingCategory, setEditingCategory] = useState<number | null>(null);
   const [editingCategoryData, setEditingCategoryData] =
     useState<Category | null>(null);
+  const [editingBackground, setEditingBackground] = useState<number | null>(
+    null
+  );
+  const [editingBackgroundData, setEditingBackgroundData] =
+    useState<BackgroundImage | null>(null);
   const [editingWebsite, setEditingWebsite] = useState<{
     categoryIndex: number;
     siteIndex: number;
@@ -396,6 +411,68 @@ const ManagePage: React.FC = () => {
     message.success('删除成功');
   };
 
+  const handleAddBackground = async (values: BackgroundImage) => {
+    try {
+      addBackground({
+        name: values.name.trim(),
+        url: values.url?.trim() || null,
+      });
+      await saveToServer();
+      message.success('添加成功');
+      backgroundForm.resetFields();
+    } catch {
+      message.error('保存失败');
+    }
+  };
+
+  const handleEditBackground = (index: number) => {
+    setEditingBackground(index);
+    setEditingBackgroundData({ ...backgrounds[index] });
+  };
+
+  const handleCancelEditBackground = () => {
+    setEditingBackground(null);
+    setEditingBackgroundData(null);
+  };
+
+  const handleUpdateBackgroundField = (
+    field: keyof BackgroundImage,
+    value: string
+  ) => {
+    setEditingBackgroundData(prev =>
+      prev
+        ? {
+            ...prev,
+            [field]: field === 'url' ? value || null : value,
+          }
+        : null
+    );
+  };
+
+  const handleSaveBackground = async () => {
+    if (editingBackground === null || !editingBackgroundData) return;
+
+    updateBackground(editingBackground, {
+      name: editingBackgroundData.name.trim(),
+      url: editingBackgroundData.url?.trim() || null,
+    });
+    await saveToServer();
+    message.success('保存成功');
+    handleCancelEditBackground();
+  };
+
+  const handleDeleteBackground = async (index: number) => {
+    const target = backgrounds[index];
+    if (!target || target.url === null) {
+      message.warning('默认背景不可删除');
+      return;
+    }
+
+    deleteBackground(index);
+    await saveToServer();
+    message.success('删除成功');
+  };
+
   const categoryColumns = [
     {
       title: '图标',
@@ -540,6 +617,106 @@ const ManagePage: React.FC = () => {
               删除
             </Button>
           </Popconfirm>
+        </Space>
+      ),
+    },
+  ];
+
+  const backgroundColumns = [
+    {
+      title: '名称',
+      dataIndex: 'name',
+      key: 'name',
+      render: (_: string, record: BackgroundImage, index: number) => {
+        if (editingBackground === index && editingBackgroundData) {
+          return (
+            <Input
+              size="small"
+              value={editingBackgroundData.name}
+              onChange={e =>
+                handleUpdateBackgroundField('name', e.target.value)
+              }
+            />
+          );
+        }
+
+        return record.name;
+      },
+    },
+    {
+      title: '图片链接',
+      dataIndex: 'url',
+      key: 'url',
+      render: (_: string | null, record: BackgroundImage, index: number) => {
+        if (editingBackground === index && editingBackgroundData) {
+          return (
+            <Input
+              size="small"
+              value={editingBackgroundData.url || ''}
+              onChange={e => handleUpdateBackgroundField('url', e.target.value)}
+            />
+          );
+        }
+
+        return record.url || '默认背景';
+      },
+    },
+    {
+      title: '预览',
+      key: 'preview',
+      render: (_: string, record: BackgroundImage) => {
+        if (!record.url) {
+          return <Text type="secondary">默认</Text>;
+        }
+
+        return (
+          <Image
+            className={styles.backgroundPreview}
+            fallback="https://via.placeholder.com/96x54?text=BG"
+            height={54}
+            preview={false}
+            src={record.url}
+            width={96}
+          />
+        );
+      },
+    },
+    {
+      title: '操作',
+      key: 'action',
+      render: (_: string, record: BackgroundImage, index: number) => (
+        <Space>
+          {editingBackground === index ? (
+            <>
+              <Button type="link" onClick={handleSaveBackground}>
+                保存
+              </Button>
+              <Button type="link" onClick={handleCancelEditBackground}>
+                取消
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button type="link" onClick={() => handleEditBackground(index)}>
+                编辑
+              </Button>
+              <Popconfirm
+                cancelText="取消"
+                disabled={record.url === null}
+                okText="确定"
+                title={
+                  record.url === null
+                    ? '默认背景不可删除'
+                    : '确定删除这张背景图吗？'
+                }
+                onConfirm={() => handleDeleteBackground(index)}
+              >
+                <Button danger disabled={record.url === null} type="link">
+                  删除
+                </Button>
+              </Popconfirm>
+            </>
+          )}
         </Space>
       ),
     },
@@ -1575,6 +1752,185 @@ const ManagePage: React.FC = () => {
                           },
                         };
                       }}
+                    />
+                  )}
+                </Card>
+              ),
+            },
+            {
+              label: '背景图片管理',
+              key: '5',
+              children: (
+                <Card className={styles.card} title="背景图片管理">
+                  <Form
+                    form={backgroundForm}
+                    layout="vertical"
+                    onFinish={handleAddBackground}
+                  >
+                    <Row gutter={16}>
+                      <Col md={12} sm={12} xs={24}>
+                        <Form.Item
+                          label="背景名称"
+                          name="name"
+                          rules={[
+                            { required: true, message: '请输入背景名称' },
+                          ]}
+                        >
+                          <Input placeholder="请输入背景名称" />
+                        </Form.Item>
+                      </Col>
+                      <Col md={12} sm={12} xs={24}>
+                        <Form.Item label="背景图片链接" name="url">
+                          <Input placeholder="https://example.com/background.jpg" />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+
+                    <Form.Item>
+                      <Button
+                        htmlType="submit"
+                        icon={<PlusOutlined />}
+                        type="primary"
+                      >
+                        添加背景图片
+                      </Button>
+                    </Form.Item>
+                  </Form>
+
+                  <Divider />
+
+                  {isMobile ? (
+                    <div className={styles.mobileSearchEngineList}>
+                      {backgrounds.map((record, index) => {
+                        const isEditing =
+                          editingBackground === index &&
+                          !!editingBackgroundData;
+
+                        return (
+                          <Card
+                            key={index}
+                            className={styles.mobileSearchEngineCard}
+                            size="small"
+                            title={
+                              <div className={styles.mobileSearchEngineTitle}>
+                                <span
+                                  className={styles.mobileSearchEngineTitleText}
+                                >
+                                  {record.name}
+                                </span>
+                              </div>
+                            }
+                          >
+                            <div className={styles.mobileSearchEngineBody}>
+                              {isEditing ? (
+                                <Space
+                                  direction="vertical"
+                                  style={{ width: '100%' }}
+                                >
+                                  <Input
+                                    placeholder="背景名称"
+                                    value={editingBackgroundData?.name}
+                                    onChange={e =>
+                                      handleUpdateBackgroundField(
+                                        'name',
+                                        e.target.value
+                                      )
+                                    }
+                                  />
+                                  <Input
+                                    placeholder="背景图片链接"
+                                    value={editingBackgroundData?.url || ''}
+                                    onChange={e =>
+                                      handleUpdateBackgroundField(
+                                        'url',
+                                        e.target.value
+                                      )
+                                    }
+                                  />
+                                </Space>
+                              ) : (
+                                <Space
+                                  direction="vertical"
+                                  style={{ width: '100%' }}
+                                >
+                                  <Text>{record.url || '默认背景'}</Text>
+                                  {record.url ? (
+                                    <Image
+                                      className={styles.backgroundPreview}
+                                      fallback="https://via.placeholder.com/96x54?text=BG"
+                                      height={54}
+                                      preview={false}
+                                      src={record.url}
+                                      width={96}
+                                    />
+                                  ) : (
+                                    <Text type="secondary">不使用图片</Text>
+                                  )}
+                                </Space>
+                              )}
+                            </div>
+                            <div className={styles.mobileSearchEngineActions}>
+                              {isEditing ? (
+                                <Space>
+                                  <Button
+                                    size="small"
+                                    type="primary"
+                                    onClick={handleSaveBackground}
+                                  >
+                                    保存
+                                  </Button>
+                                  <Button
+                                    size="small"
+                                    onClick={handleCancelEditBackground}
+                                  >
+                                    取消
+                                  </Button>
+                                </Space>
+                              ) : (
+                                <Space wrap>
+                                  <Button
+                                    size="small"
+                                    type="default"
+                                    onClick={() => handleEditBackground(index)}
+                                  >
+                                    编辑
+                                  </Button>
+                                  <Popconfirm
+                                    cancelText="取消"
+                                    disabled={record.url === null}
+                                    okText="确定"
+                                    title={
+                                      record.url === null
+                                        ? '默认背景不可删除'
+                                        : '确定删除这张背景图吗？'
+                                    }
+                                    onConfirm={() =>
+                                      handleDeleteBackground(index)
+                                    }
+                                  >
+                                    <Button
+                                      danger
+                                      disabled={record.url === null}
+                                      size="small"
+                                    >
+                                      删除
+                                    </Button>
+                                  </Popconfirm>
+                                </Space>
+                              )}
+                            </div>
+                          </Card>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <Table
+                      columns={backgroundColumns}
+                      dataSource={backgrounds}
+                      pagination={false}
+                      rowKey={(_, index) => `background-${index}`}
+                      scroll={{ x: 'max-content' }}
+                      size="small"
                     />
                   )}
                 </Card>

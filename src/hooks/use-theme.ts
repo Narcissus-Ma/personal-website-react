@@ -13,7 +13,15 @@ const themeOptions: ThemeOption[] = [
 ];
 
 export const useTheme = () => {
-  const { theme, setTheme, toggleTheme } = useThemeStore();
+  const {
+    theme,
+    setTheme,
+    toggleTheme,
+    selectedHomeBackground,
+    selectHomeBackground,
+    syncHomeBackground,
+    clearHomeBackground,
+  } = useThemeStore();
 
   const currentThemeName = useMemo(() => {
     return themeOptions.find(opt => opt.key === theme)?.name || '日间模式';
@@ -25,5 +33,9 @@ export const useTheme = () => {
     toggleTheme,
     themeOptions,
     currentThemeName,
+    selectedHomeBackground,
+    selectHomeBackground,
+    syncHomeBackground,
+    clearHomeBackground,
   };
 };

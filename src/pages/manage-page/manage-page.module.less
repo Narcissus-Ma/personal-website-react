@@ -121,6 +121,16 @@
   }
 }
 
+.backgroundPreview {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--app-border);
+
+  :global(.ant-image-img) {
+    object-fit: cover;
+  }
+}
+
 .logo-preview {
   width: 32px;
   height: 32px;

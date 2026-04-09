@@ -1,10 +1,24 @@
 import { create } from 'zustand';
 import { API_BASE } from '@/config/api-base';
-import { SiteData, Category, SearchEngine, Website } from '../types';
+import type {
+  BackgroundImage,
+  Category,
+  SearchEngine,
+  SiteData,
+  Website,
+} from '../types';
+
+const DEFAULT_BACKGROUNDS: BackgroundImage[] = [
+  {
+    name: '默认背景',
+    url: null,
+  },
+];
 
 interface SiteStore extends SiteData {
   setCategories: (categories: Category[]) => void;
   setSearchEngines: (engines: SearchEngine[]) => void;
+  setBackgrounds: (backgrounds: BackgroundImage[]) => void;
   addCategory: (category: Category) => void;
   updateCategory: (index: number, category: Category) => void;
   deleteCategory: (index: number) => void;
@@ -31,19 +45,40 @@ interface SiteStore extends SiteData {
   deleteSearchEngine: (index: number) => void;
   reorderSearchEngines: (oldIndex: number, newIndex: number) => void;
   setDefaultEngine: (index: number) => void;
+  addBackground: (background: BackgroundImage) => void;
+  updateBackground: (index: number, background: BackgroundImage) => void;
+  deleteBackground: (index: number) => void;
   saveToServer: () => Promise<void>;
   loadFromServer: () => Promise<void>;
   isLoading: boolean;
   setIsLoading: (isLoading: boolean) => void;
 }
 
+const normalizeBackgrounds = (
+  backgrounds: BackgroundImage[] | undefined
+): BackgroundImage[] => {
+  if (!backgrounds || backgrounds.length === 0) {
+    return DEFAULT_BACKGROUNDS;
+  }
+
+  const hasDefaultBackground = backgrounds.some(item => item.url === null);
+  if (hasDefaultBackground) {
+    return backgrounds;
+  }
+
+  return [...DEFAULT_BACKGROUNDS, ...backgrounds];
+};
+
 export const useSiteStore = create<SiteStore>((set, get) => ({
   categories: [],
   searchEngines: [],
+  backgrounds: DEFAULT_BACKGROUNDS,
   isLoading: true,
   setIsLoading: isLoading => set({ isLoading }),
   setCategories: categories => set({ categories }),
   setSearchEngines: searchEngines => set({ searchEngines }),
+  setBackgrounds: backgrounds =>
+    set({ backgrounds: normalizeBackgrounds(backgrounds) }),
   addCategory: category =>
     set(state => ({ categories: [...state.categories, category] })),
   updateCategory: (index, category) =>
@@ -159,7 +194,25 @@ export const useSiteStore = create<SiteStore>((set, get) => ({
       newEngines.splice(newIndex, 0, movedItem);
       return { searchEngines: newEngines };
     }),
-  setDefaultEngine: index => {},
+  setDefaultEngine: () => {},
+  addBackground: background =>
+    set(state => ({ backgrounds: [...state.backgrounds, background] })),
+  updateBackground: (index, background) =>
+    set(state => {
+      const newBackgrounds = [...state.backgrounds];
+      newBackgrounds[index] = background;
+      return { backgrounds: normalizeBackgrounds(newBackgrounds) };
+    }),
+  deleteBackground: index =>
+    set(state => {
+      const target = state.backgrounds[index];
+      if (!target || target.url === null) {
+        return state;
+      }
+      const newBackgrounds = [...state.backgrounds];
+      newBackgrounds.splice(index, 1);
+      return { backgrounds: normalizeBackgrounds(newBackgrounds) };
+    }),
   loadFromServer: async () => {
     try {
       set({ isLoading: true });
@@ -171,6 +224,7 @@ export const useSiteStore = create<SiteStore>((set, get) => ({
       set({
         categories: data.categories || [],
         searchEngines: data.searchEngines || [],
+        backgrounds: normalizeBackgrounds(data.backgrounds),
         isLoading: false,
       });
     } catch (error) {
@@ -180,11 +234,11 @@ export const useSiteStore = create<SiteStore>((set, get) => ({
     }
   },
   saveToServer: async () => {
-    const { categories, searchEngines } = get();
+    const { categories, searchEngines, backgrounds } = get();
     const response = await fetch(`${API_BASE}/save`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ categories, searchEngines }),
+      body: JSON.stringify({ categories, searchEngines, backgrounds }),
     });
     if (!response.ok) {
       throw new Error('Failed to save data');

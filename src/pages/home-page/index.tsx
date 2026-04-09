@@ -1,26 +1,60 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Select, Button, Space, Tooltip } from 'antd';
+import { Button, Select, Space, Tooltip } from 'antd';
 import {
   GithubOutlined,
-  SettingOutlined,
   MoonOutlined,
+  SettingOutlined,
   SunOutlined,
 } from '@ant-design/icons';
 import AppLayout from '@/components/layout';
+import { useAuthStore, useSiteStore } from '@/stores';
 import { WebItem, SearchBox, Footer, AuthModal } from '../../components';
 import { useLanguage, useTheme } from '../../hooks';
 import styles from './home-page.module.less';
-import { useSiteStore, useAuthStore } from '@/stores';
+
+const DEFAULT_BACKGROUND_VALUE = '__default_background__';
 
 const HomePage: React.FC = () => {
-  const { categories } = useSiteStore();
+  const { categories, backgrounds } = useSiteStore();
   const { language, setLanguage, transName, languageOptions } = useLanguage();
-  const { theme, toggleTheme } = useTheme();
+  const {
+    theme,
+    toggleTheme,
+    selectedHomeBackground,
+    selectHomeBackground,
+    syncHomeBackground,
+    clearHomeBackground,
+  } = useTheme();
   const { isAuthenticated } = useAuthStore();
   const location = useLocation();
   const navigate = useNavigate();
   const [authModalVisible, setAuthModalVisible] = useState(false);
+
+  const selectedBackgroundValue = useMemo(() => {
+    const exists = backgrounds.some(bg => bg.url === selectedHomeBackground);
+    return exists ? selectedHomeBackground : null;
+  }, [backgrounds, selectedHomeBackground]);
+
+  useEffect(() => {
+    if (
+      selectedHomeBackground !== null &&
+      !backgrounds.some(bg => bg.url === selectedHomeBackground)
+    ) {
+      selectHomeBackground(null);
+    }
+  }, [backgrounds, selectHomeBackground, selectedHomeBackground]);
+
+  useEffect(() => {
+    syncHomeBackground({
+      isHomePage: true,
+      backgroundUrl: selectedBackgroundValue,
+    });
+
+    return () => {
+      clearHomeBackground();
+    };
+  }, [clearHomeBackground, selectedBackgroundValue, syncHomeBackground, theme]);
 
   useEffect(() => {
     const pathname = location.pathname;
@@ -32,10 +66,10 @@ const HomePage: React.FC = () => {
           const header = document.querySelector(
             '.ant-layout-header'
           ) as HTMLElement | null;
-          const headerHeight = header ? header.offsetHeight : 64; // 64 是默认高度
+          const headerHeight = header ? header.offsetHeight : 64;
 
           const elementTop = element.getBoundingClientRect().top;
-          const scrollY = window.pageYOffset + elementTop - headerHeight - 20; // 20 是额外的间距
+          const scrollY = window.pageYOffset + elementTop - headerHeight - 20;
 
           window.scrollTo({
             top: scrollY,
@@ -82,6 +116,25 @@ const HomePage: React.FC = () => {
                 </Select.Option>
               ))}
             </Select>
+
+            {theme === 'light' && (
+              <Select
+                className={styles.backgroundSelect}
+                options={backgrounds.map(background => ({
+                  label: background.name,
+                  value: background.url ?? DEFAULT_BACKGROUND_VALUE,
+                }))}
+                placeholder="选择背景"
+                size="large"
+                value={selectedBackgroundValue ?? DEFAULT_BACKGROUND_VALUE}
+                onChange={value =>
+                  selectHomeBackground(
+                    value === DEFAULT_BACKGROUND_VALUE ? null : value
+                  )
+                }
+              />
+            )}
+
             <Tooltip
               title={theme === 'dark' ? '切换到日间模式' : '切换到夜间模式'}
             >

@@ -345,7 +345,16 @@ export default {
         const data = await env.SITE_DATA.get('data');
         if (!data) {
           return new Response(
-            JSON.stringify({ categories: [], searchEngines: [] }),
+            JSON.stringify({
+              categories: [],
+              searchEngines: [],
+              backgrounds: [
+                {
+                  name: '默认背景',
+                  url: null,
+                },
+              ],
+            }),
             {
               headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             }

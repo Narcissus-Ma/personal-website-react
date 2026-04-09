@@ -1,809 +1,61 @@
-# 背景图片管理功能实施文档
+# 首页背景图片功能实施方案
 
-## 功能需求分析
+## 目标
 
-### 1. 核心功能
+为首页增加“仅在日间模式下生效”的背景图片能力，并让首页的侧边栏、顶部栏、内容区域可以透出背景图；管理页与关于页保持现状，不受影响。
 
-- **日间主题背景定制**：允许用户为日间主题选择自定义背景图片
-- **背景图片管理**：在管理页面添加背景图片的增删改查功能
-- **背景选择下拉框**：在语言选择栏旁边添加背景图片选择下拉框，仅在日间主题时显示
-- **数据持久化**：保存用户的背景选择偏好
+## 最终实现原则
 
-### 2. 数据结构
+1. **背景图只作用于首页主视图**
+   - 仅首页路由启用背景图能力。
+   - 管理页、关于页、其他页面不显示背景图。
 
-- **背景图片数据**：包含两个字段
-  - `name`：图片名称（用于显示）
-  - `url`：图片链接（用于加载背景）
+2. **背景列表走服务端站点配置**
+   - 背景图片列表属于站点内容配置，和分类、搜索引擎一样统一由服务端保存。
+   - 数据统一放在 `site-store`，避免多份状态源造成同步问题。
 
-## 技术实现方案
+3. **当前选中的背景走本地持久化**
+   - “当前设备选中了哪张首页背景”属于本地显示偏好，不写回服务端。
+   - 该偏好存放在 `theme-store` 的 `localStorage` 中。
 
-### 1. 状态管理
+4. **背景图通过首页激活态 + CSS 变量驱动**
+   - 不直接把背景图挂到全站 `body` 做全局背景。
+   - 通过给文档节点写入首页激活态和背景图片变量，让布局组件在首页亮色模式下变透明或半透明，从而透出背景图。
 
-- 扩展 `theme-store.ts`，添加背景图片相关状态
-- 新增 `background-store.ts` 用于管理背景图片数据
+## 为什么不采用独立 `background-store`
 
-### 2. 组件修改
+原方案中将背景列表放进单独的 `background-store`，同时又在 `site-store` 中保存站点数据，这会形成双数据源，容易出现以下问题：
 
-- 修改 `home-page/index.tsx`，添加背景选择下拉框
-- 修改 `manage-page/index.tsx`，添加背景图片管理标签页
+- 管理页改的是一份状态，保存时读的是另一份状态。
+- 页面刷新后两份状态互相覆盖。
+- 选中背景、背景列表、服务端持久化之间缺乏统一边界。
 
-### 3. 样式实现
+因此最终方案中：
 
-- 使用 CSS 变量和条件样式实现背景图片切换
-- 确保下拉框样式与语言选择下拉框一致
+- `site-store` 负责背景列表的增删改查与服务端持久化。
+- `theme-store` 只负责主题模式和当前首页背景偏好。
 
-### 4. 数据持久化
+## 数据结构设计
 
-- 使用 localStorage 存储用户的背景选择
-- 管理页面的数据通过现有 API 保存到服务器
+### 1. 背景图片类型
 
-## 代码修改步骤
-
-### 服务端实现
-
-#### 步骤 1：修改 Cloudflare Worker 代码
-
-```javascript
-// cloudflare/worker.mjs
-// 修改 /api/data 端点，确保返回的数据包含 backgrounds 字段
-
-if (pathname === '/api/data' && request.method === 'GET') {
-  try {
-    const data = await env.SITE_DATA.get('data');
-    if (!data) {
-      return new Response(
-        JSON.stringify({
-          categories: [],
-          searchEngines: [],
-          backgrounds: [
-            {
-              name: '默认背景',
-              url: null,
-            },
-          ],
-        }),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
-    }
-    return new Response(data, {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  } catch (err) {
-    console.error(err);
-    return new Response(JSON.stringify({ error: '读取失败' }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  }
-}
-```
-
-#### 步骤 2：更新初始数据文件
-
-确保 `src/data/data.json` 文件包含 `backgrounds` 字段：
-
-```json
-{
-  "categories": [...],
-  "searchEngines": [...],
-  "backgrounds": [
-    {
-      "name": "默认背景",
-      "url": null
-    },
-    {
-      "name": "简约白色",
-      "url": "https://example.com/background1.jpg"
-    },
-    {
-      "name": "渐变蓝色",
-      "url": "https://example.com/background2.jpg"
-    }
-  ]
-}
-```
-
-#### 步骤 3：重新上传数据
-
-运行初始化脚本，将包含背景图片数据的文件上传到 Cloudflare KV：
-
-```bash
-cd /Users/mapengfei/personal-website-react/cloudflare
-node init-kv-data.mjs
-```
-
-### 客户端实现
-
-#### 步骤 1：创建背景图片类型定义
-
-```typescript
-// src/types/background.ts
+```ts
 export interface BackgroundImage {
   name: string;
-  url: string;
+  url: string | null;
 }
 ```
 
-#### 步骤 2：创建背景图片存储
+说明：
 
-```typescript
-// src/stores/background-store.ts
-import { create } from 'zustand';
-import { BackgroundImage } from '../types/background';
+- `name` 用于下拉框和管理页显示。
+- `url` 为 `null` 时表示“默认背景”，即不使用图片，只使用当前主题的默认背景色。
 
-interface BackgroundState {
-  backgrounds: BackgroundImage[];
-  selectedBackground: string | null;
-  setBackgrounds: (backgrounds: BackgroundImage[]) => void;
-  addBackground: (background: BackgroundImage) => void;
-  updateBackground: (index: number, background: BackgroundImage) => void;
-  deleteBackground: (index: number) => void;
-  selectBackground: (url: string | null) => void;
-  loadFromStorage: () => void;
-  saveToStorage: () => void;
-}
+### 2. 站点数据结构
 
-const STORAGE_KEY = 'background_settings';
+`SiteData` 新增 `backgrounds` 字段：
 
-export const useBackgroundStore = create<BackgroundState>((set, get) => ({
-  backgrounds: [
-    {
-      name: '默认背景',
-      url: null,
-    },
-    {
-      name: '简约白色',
-      url: 'https://example.com/background1.jpg',
-    },
-    {
-      name: '渐变蓝色',
-      url: 'https://example.com/background2.jpg',
-    },
-  ],
-  selectedBackground: null,
-
-  setBackgrounds: backgrounds => set({ backgrounds }),
-
-  addBackground: background =>
-    set(state => ({ backgrounds: [...state.backgrounds, background] })),
-
-  updateBackground: (index, background) =>
-    set(state => {
-      const newBackgrounds = [...state.backgrounds];
-      newBackgrounds[index] = background;
-      return { backgrounds: newBackgrounds };
-    }),
-
-  deleteBackground: index =>
-    set(state => {
-      const newBackgrounds = [...state.backgrounds];
-      newBackgrounds.splice(index, 1);
-      return { backgrounds: newBackgrounds };
-    }),
-
-  selectBackground: url => {
-    set({ selectedBackground: url });
-    get().saveToStorage();
-  },
-
-  loadFromStorage: () => {
-    if (typeof window === 'undefined') return;
-    try {
-      const stored = window.localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const data = JSON.parse(stored);
-        set({ selectedBackground: data.selectedBackground });
-      }
-    } catch {
-      // ignore
-    }
-  },
-
-  saveToStorage: () => {
-    if (typeof window === 'undefined') return;
-    try {
-      const { selectedBackground } = get();
-      window.localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify({ selectedBackground })
-      );
-    } catch {
-      // ignore
-    }
-  },
-}));
-```
-
-#### 步骤 3：修改主题存储，集成背景管理
-
-```typescript
-// src/stores/theme-store.ts
-import { create } from 'zustand';
-import { useBackgroundStore } from './background-store';
-
-export type ThemeMode = 'light' | 'dark';
-
-interface ThemeState {
-  theme: ThemeMode;
-  setTheme: (theme: ThemeMode) => void;
-  toggleTheme: () => void;
-  applyThemeWithBackground: () => void;
-}
-
-const STORAGE_KEY = 'theme_mode';
-
-const applyThemeToDocument = (theme: ThemeMode) => {
-  if (typeof document === 'undefined') return;
-  document.documentElement.dataset.theme = theme;
-  document.documentElement.style.colorScheme = theme;
-};
-
-const applyBackgroundToDocument = (url: string | null) => {
-  if (typeof document === 'undefined') return;
-  if (url) {
-    document.body.style.backgroundImage = `url(${url})`;
-    document.body.style.backgroundSize = 'cover';
-    document.body.style.backgroundPosition = 'center';
-    document.body.style.backgroundRepeat = 'no-repeat';
-  } else {
-    document.body.style.backgroundImage = 'none';
-    document.body.style.backgroundColor = '#ffffff';
-  }
-};
-
-const getInitialTheme = (): ThemeMode => {
-  if (typeof window === 'undefined') return 'dark';
-  try {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored === 'light' || stored === 'dark') return stored;
-  } catch {
-    // ignore
-  }
-  return 'dark';
-};
-
-export const useThemeStore = create<ThemeState>((set, get) => {
-  const initialTheme = getInitialTheme();
-  applyThemeToDocument(initialTheme);
-
-  // 加载背景设置
-  const backgroundStore = useBackgroundStore.getState();
-  backgroundStore.loadFromStorage();
-
-  if (initialTheme === 'light') {
-    applyBackgroundToDocument(backgroundStore.selectedBackground);
-  }
-
-  return {
-    theme: initialTheme,
-
-    setTheme: (theme: ThemeMode) => {
-      set({ theme });
-      applyThemeToDocument(theme);
-
-      // 应用背景
-      if (theme === 'light') {
-        applyBackgroundToDocument(backgroundStore.selectedBackground);
-      } else {
-        applyBackgroundToDocument(null);
-      }
-
-      try {
-        window.localStorage.setItem(STORAGE_KEY, theme);
-      } catch {
-        // ignore
-      }
-    },
-
-    toggleTheme: () => {
-      const nextTheme: ThemeMode = get().theme === 'dark' ? 'light' : 'dark';
-      get().setTheme(nextTheme);
-    },
-
-    applyThemeWithBackground: () => {
-      const { theme } = get();
-      applyThemeToDocument(theme);
-
-      if (theme === 'light') {
-        applyBackgroundToDocument(backgroundStore.selectedBackground);
-      } else {
-        applyBackgroundToDocument(null);
-      }
-    },
-  };
-});
-```
-
-#### 步骤 4：修改主页面，添加背景选择下拉框
-
-```typescript
-// src/pages/home-page/index.tsx
-import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Select, Button, Space, Tooltip } from 'antd';
-import {
-  GithubOutlined,
-  SettingOutlined,
-  MoonOutlined,
-  SunOutlined,
-} from '@ant-design/icons';
-import AppLayout from '@/components/layout';
-import { WebItem, SearchBox, Footer, AuthModal } from '../../components';
-import { useLanguage, useTheme } from '../../hooks';
-import styles from './home-page.module.less';
-import { useSiteStore, useAuthStore, useBackgroundStore } from '@/stores';
-
-const HomePage: React.FC = () => {
-  const { categories } = useSiteStore();
-  const { language, setLanguage, transName, languageOptions } = useLanguage();
-  const { theme, toggleTheme, applyThemeWithBackground } = useTheme();
-  const { backgrounds, selectedBackground, selectBackground } = useBackgroundStore();
-  const { isAuthenticated } = useAuthStore();
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [authModalVisible, setAuthModalVisible] = useState(false);
-
-  useEffect(() => {
-    // 页面加载时应用主题和背景
-    applyThemeWithBackground();
-  }, [theme, selectedBackground]);
-
-  useEffect(() => {
-    const pathname = location.pathname;
-    if (pathname && pathname.startsWith('/category-')) {
-      setTimeout(() => {
-        const element = document.getElementById(pathname.slice(1));
-        if (element) {
-          // 计算 header 高度，避免滚动时被 header 遮挡
-          const header = document.querySelector(
-            '.ant-layout-header'
-          ) as HTMLElement | null;
-          const headerHeight = header ? header.offsetHeight : 64; // 64 是默认高度
-
-          const elementTop = element.getBoundingClientRect().top;
-          const scrollY = window.pageYOffset + elementTop - headerHeight - 20; // 20 是额外的间距
-
-          window.scrollTo({
-            top: scrollY,
-            behavior: 'smooth',
-          });
-        }
-      }, 100);
-    }
-  }, [location]);
-
-  const handleManageClick = () => {
-    if (isAuthenticated) {
-      navigate('/manage');
-    } else {
-      setAuthModalVisible(true);
-    }
-  };
-
-  const handleAuthSuccess = () => {
-    navigate('/manage');
-  };
-
-  return (
-    <AppLayout>
-      <div className={styles.home}>
-        <div className={styles.toolbar}>
-          <div className={styles.left}>
-            <Select
-              className={styles.languageSelect}
-              size="large"
-              value={language}
-              onChange={value => setLanguage(value as 'zh' | 'en')}
-            >
-              {languageOptions.map(opt => (
-                <Select.Option key={opt.key} value={opt.key}>
-                  <Space>
-                    <img
-                      alt={opt.name}
-                      src={opt.flag}
-                      style={{ width: 16, height: 16 }}
-                    />
-                    {opt.name}
-                  </Space>
-                </Select.Option>
-              ))}
-            </Select>
-
-            {/* 背景选择下拉框，仅在日间主题时显示 */}
-            {theme === 'light' && (
-              <Select
-                className={styles.languageSelect}
-                size="large"
-                value={selectedBackground || ''}
-                onChange={value => selectBackground(value || null)}
-                placeholder="选择背景"
-              >
-                {backgrounds.map((bg, index) => (
-                  <Select.Option key={index} value={bg.url || ''}>
-                    {bg.name}
-                  </Select.Option>
-                ))}
-              </Select>
-            )}
-
-            <Tooltip
-              title={theme === 'dark' ? '切换到日间模式' : '切换到夜间模式'}
-            >
-              <Button
-                aria-label="切换主题"
-                icon={theme === 'dark' ? <SunOutlined /> : <MoonOutlined />}
-                size="large"
-                type="text"
-                onClick={toggleTheme}
-              />
-            </Tooltip>
-          </div>
-          <div className={styles.right}>
-            <Space>
-              <Tooltip title="管理入口">
-                <Button
-                  icon={<SettingOutlined />}
-                  size="large"
-                  type="text"
-                  onClick={handleManageClick}
-                />
-              </Tooltip>
-              <Tooltip title="GitHub">
-                <Button
-                  href="https://github.com/Narcissus-Ma"
-                  icon={<GithubOutlined />}
-                  size="large"
-                  target="_blank"
-                  type="text"
-                >
-                  GitHub
-                </Button>
-              </Tooltip>
-            </Space>
-          </div>
-        </div>
-
-        <SearchBox />
-
-        <div className={styles.content}>
-          {categories.map((item, idx) => (
-            <div key={idx}>
-              {item.web && (
-                <WebItem
-                  id={`category-${idx}`}
-                  item={item}
-                  transName={transName}
-                />
-              )}
-              {item.children?.map((subItem, subIdx) => (
-                <WebItem key={subIdx} item={subItem} transName={transName} />
-              ))}
-            </div>
-          ))}
-        </div>
-
-        <Footer />
-
-        <AuthModal
-          visible={authModalVisible}
-          onClose={() => setAuthModalVisible(false)}
-          onSuccess={handleAuthSuccess}
-        />
-      </div>
-    </AppLayout>
-  );
-};
-
-export default HomePage;
-```
-
-#### 步骤 5：修改管理页面，添加背景图片管理标签页
-
-```typescript
-// src/pages/manage-page/index.tsx
-// 在现有代码的 Tabs 组件中添加新的标签页
-
-// 导入必要的类型和存储
-import { BackgroundImage } from '../../types/background';
-import { useBackgroundStore } from '../../stores';
-
-// 在组件中添加背景图片相关状态和方法
-const { backgrounds, addBackground, updateBackground, deleteBackground } = useBackgroundStore();
-const [backgroundForm] = Form.useForm();
-const [editingBackground, setEditingBackground] = useState<number | null>(null);
-const [editingBackgroundData, setEditingBackgroundData] = useState<BackgroundImage | null>(null);
-
-// 处理添加背景图片
-const handleAddBackground = async (values: BackgroundImage) => {
-  try {
-    addBackground(values);
-    await saveToServer();
-    message.success('添加成功');
-    backgroundForm.resetFields();
-  } catch {
-    message.error('保存失败');
-  }
-};
-
-// 处理编辑背景图片
-const handleEditBackground = (index: number) => {
-  setEditingBackground(index);
-  setEditingBackgroundData({ ...backgrounds[index] });
-};
-
-const handleSaveBackground = async () => {
-  if (editingBackground !== null && editingBackgroundData) {
-    updateBackground(editingBackground, editingBackgroundData);
-    await saveToServer();
-    message.success('保存成功');
-    setEditingBackground(null);
-    setEditingBackgroundData(null);
-  }
-};
-
-const handleCancelEditBackground = () => {
-  setEditingBackground(null);
-  setEditingBackgroundData(null);
-};
-
-const handleUpdateBackgroundField = (field: keyof BackgroundImage, value: any) => {
-  if (editingBackgroundData) {
-    setEditingBackgroundData({
-      ...editingBackgroundData,
-      [field]: value,
-    });
-  }
-};
-
-const handleDeleteBackground = async (index: number) => {
-  deleteBackground(index);
-  await saveToServer();
-  message.success('删除成功');
-};
-
-// 背景图片表格列定义
-const backgroundColumns = [
-  {
-    title: '图片名称',
-    dataIndex: 'name',
-    key: 'name',
-    render: (_: string, record: BackgroundImage, index: number) => {
-      if (editingBackground === index && editingBackgroundData) {
-        return (
-          <Input
-            size="small"
-            value={editingBackgroundData.name}
-            onChange={e => handleUpdateBackgroundField('name', e.target.value)}
-          />
-        );
-      }
-      return record.name;
-    },
-  },
-  {
-    title: '图片链接',
-    dataIndex: 'url',
-    key: 'url',
-    render: (_: string, record: BackgroundImage, index: number) => {
-      if (editingBackground === index && editingBackgroundData) {
-        return (
-          <Input
-            size="small"
-            value={editingBackgroundData.url || ''}
-            onChange={e => handleUpdateBackgroundField('url', e.target.value)}
-          />
-        );
-      }
-      return record.url || '默认背景';
-    },
-  },
-  {
-    title: '预览',
-    key: 'preview',
-    render: (_: string, record: BackgroundImage) => {
-      if (record.url) {
-        return (
-          <Image
-            className={styles.favicon32}
-            fallback="https://via.placeholder.com/32"
-            height={32}
-            src={record.url}
-            width={32}
-          />
-        );
-      }
-      return <span>无</span>;
-    },
-  },
-  {
-    title: '操作',
-    key: 'action',
-    render: (_: string, record: BackgroundImage, index: number) => (
-      <Space>
-        {editingBackground === index ? (
-          <>
-            <Button
-              icon={<EditOutlined />}
-              type="link"
-              onClick={handleSaveBackground}
-            >
-              保存
-            </Button>
-            <Button type="link" onClick={handleCancelEditBackground}>
-              取消
-            </Button>
-          </>
-        ) : (
-          <>
-            <Button
-              icon={<EditOutlined />}
-              type="link"
-              onClick={() => handleEditBackground(index)}
-            >
-              编辑
-            </Button>
-            <Popconfirm
-              cancelText="取消"
-              okText="确定"
-              title="确定删除?"
-              onConfirm={() => handleDeleteBackground(index)}
-            >
-              <Button danger icon={<DeleteOutlined />} type="link">
-                删除
-              </Button>
-            </Popconfirm>
-          </>
-        )}
-      </Space>
-    ),
-  },
-];
-
-// 在 Tabs 组件中添加新的标签页
-{
-  label: '背景图片管理',
-  key: '5',
-  children: (
-    <Card className={styles.card} title="背景图片管理">
-      <Form
-        form={backgroundForm}
-        layout="vertical"
-        onFinish={handleAddBackground}
-      >
-        <Row gutter={16}>
-          <Col sm={12} xs={24}>
-            <Form.Item
-              label="图片名称"
-              name="name"
-              rules={[{ required: true, message: '请输入图片名称' }]}
-            >
-              <Input placeholder="请输入图片名称" />
-            </Form.Item>
-          </Col>
-          <Col sm={12} xs={24}>
-            <Form.Item label="图片链接" name="url">
-              <Input placeholder="https://example.com/background.jpg" />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Form.Item>
-          <Button
-            htmlType="submit"
-            icon={<PlusOutlined />}
-            type="primary"
-          >
-            添加背景图片
-          </Button>
-        </Form.Item>
-      </Form>
-
-      <Divider />
-
-      <Table
-        columns={backgroundColumns}
-        dataSource={backgrounds}
-        pagination={false}
-        rowKey={(_, index) => `background-${index}`}
-        size="small"
-      />
-    </Card>
-  ),
-}
-```
-
-#### 步骤 6：更新 site-store.ts，添加背景图片数据的保存和加载
-
-```typescript
-// src/stores/site-store.ts
-import { create } from 'zustand';
-import { SiteData, Category, SearchEngine } from '../types';
-import { BackgroundImage } from '../types/background';
-
-interface SiteStore extends SiteData {
-  backgrounds: BackgroundImage[];
-  setCategories: (categories: Category[]) => void;
-  addCategory: (category: Category) => void;
-  // 其他现有方法...
-  setBackgrounds: (backgrounds: BackgroundImage[]) => void;
-  addBackground: (background: BackgroundImage) => void;
-}
-
-const API_BASE = 'http://localhost:3000/api';
-
-export const useSiteStore = create<SiteStore>((set, get) => ({
-  categories: [],
-  searchEngines: [],
-  backgrounds: [
-    {
-      name: '默认背景',
-      url: null,
-    },
-  ],
-
-  // 其他现有方法...
-
-  setBackgrounds: backgrounds => set({ backgrounds }),
-
-  addBackground: background =>
-    set(state => ({ backgrounds: [...state.backgrounds, background] })),
-
-  saveToServer: async () => {
-    const { categories, searchEngines, backgrounds } = get();
-    const response = await fetch(`${API_BASE}/save`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ categories, searchEngines, backgrounds }),
-    });
-    if (!response.ok) {
-      throw new Error('Failed to save data');
-    }
-  },
-
-  loadFromServer: async () => {
-    try {
-      const response = await fetch(`${API_BASE}/data`);
-      if (!response.ok) {
-        throw new Error('Failed to load data');
-      }
-      const data = await response.json();
-      set({
-        categories: data.categories || [],
-        searchEngines: data.searchEngines || [],
-        backgrounds: data.backgrounds || [
-          {
-            name: '默认背景',
-            url: null,
-          },
-        ],
-      });
-
-      // 同步到 background-store
-      const { setBackgrounds } = useBackgroundStore.getState();
-      setBackgrounds(
-        data.backgrounds || [
-          {
-            name: '默认背景',
-            url: null,
-          },
-        ]
-      );
-    } catch (error) {
-      console.error('Failed to load data:', error);
-    }
-  },
-}));
-```
-
-#### 步骤 7：更新类型定义
-
-```typescript
-// src/types/data.ts
-import { Category } from './category';
-import { SearchEngine } from './search-engine';
-import { BackgroundImage } from './background';
-
+```ts
 export interface SiteData {
   categories: Category[];
   searchEngines: SearchEngine[];
@@ -811,49 +63,263 @@ export interface SiteData {
 }
 ```
 
-## 测试方案
+### 3. 默认数据要求
 
-### 1. 功能测试
+无论本地初始数据还是服务端空数据兜底，都必须至少包含一条默认背景：
 
-- **背景选择功能**：
-  - 切换到日间主题，确认背景选择下拉框显示
-  - 选择不同背景图片，确认背景变化
-  - 切换到夜间主题，确认背景恢复为默认状态
-  - 刷新页面，确认背景选择保持
+```json
+{
+  "name": "默认背景",
+  "url": null
+}
+```
 
-- **背景管理功能**：
-  - 登录管理页面，进入背景图片管理标签页
-  - 添加新的背景图片，确认显示在列表中
-  - 编辑现有背景图片，确认修改生效
-  - 删除背景图片，确认从列表中移除
-  - 保存更改，刷新页面，确认数据持久化
+该项用于：
 
-### 2. 兼容性测试
+- 作为用户回退选项。
+- 保障即使没有图片资源，首页也能正常显示。
+- 在删除自定义背景后提供稳定兜底。
 
-- 测试不同浏览器下的显示效果
-- 测试响应式布局，确保在移动设备上正常显示
-- 测试背景图片加载失败的处理
+## 状态管理方案
 
-### 3. 性能测试
+### 1. `site-store` 的职责
 
-- 测试背景图片切换的流畅度
-- 测试管理页面加载大量背景图片时的性能
+新增背景列表相关字段与方法：
 
-## 注意事项
+- `backgrounds`
+- `setBackgrounds`
+- `addBackground`
+- `updateBackground`
+- `deleteBackground`
 
-1. **图片资源**：确保背景图片链接有效，建议使用 CDN 或可靠的图片托管服务
-2. **性能优化**：对于较大的背景图片，考虑使用适当的压缩和缓存策略
-3. **用户体验**：提供默认背景选项，确保即使没有网络连接也能正常显示
-4. **安全考虑**：验证用户输入的图片链接，防止恶意URL
+同时：
 
-## 总结
+- `loadFromServer` 需要读取 `backgrounds`
+- `saveToServer` 需要提交 `backgrounds`
 
-通过以上步骤，我们实现了以下功能：
+### 2. `theme-store` 的职责
 
-1. **日间主题背景定制**：用户可以为日间主题选择自定义背景图片
-2. **背景图片管理**：在管理页面添加、编辑、删除背景图片
-3. **智能显示**：背景选择下拉框仅在日间主题时显示
-4. **数据持久化**：用户的背景选择会被保存，刷新页面后保持不变
-5. **样式一致性**：背景选择下拉框的样式与语言选择下拉框保持一致
+新增本地偏好字段：
 
-这些功能将为用户提供更加个性化的体验，使网站在保持简洁的同时，增加了一定的定制性。
+- `selectedHomeBackground: string | null`
+- `selectHomeBackground`
+
+新增行为方法：
+
+- 将当前首页背景同步到 `document.documentElement`
+- 在首页亮色模式下启用背景
+- 在暗色模式或离开首页时清理背景激活态
+
+### 3. 回退策略
+
+如果本地保存的 `selectedHomeBackground` 已不在 `site-store.backgrounds` 中：
+
+- 自动回退到默认背景（`null`）
+- 更新本地存储
+- 避免页面残留不可用图片地址
+
+## 页面行为设计
+
+### 1. 首页展示规则
+
+首页仅在以下条件同时满足时显示背景图：
+
+- 当前路由为首页
+- 当前主题为日间模式
+- 当前选中的背景有有效 `url`
+
+否则：
+
+- 清空首页背景图变量
+- 恢复默认主题背景表现
+
+### 2. 首页工具栏交互
+
+在语言选择框旁新增背景图片选择下拉框：
+
+- 仅在日间模式显示
+- 数据来源于 `site-store.backgrounds`
+- 切换选项时调用 `theme-store.selectHomeBackground`
+
+### 3. 首页视觉表现
+
+首页容器新增两层：
+
+- **背景图层**：承载实际背景图
+- **浅色遮罩层**：保证文字与卡片可读性
+
+在首页亮色模式下：
+
+- 侧边栏：改为透明或半透明面板
+- 顶部栏：改为透明或半透明面板
+- 内容容器：去掉实色底，让背景透出
+- 卡片、搜索框、页脚等信息载体继续保留面板感，防止内容淹没在背景图中
+
+在暗色模式下：
+
+- 不显示首页背景图
+- 保持现有夜间主题表现
+- 不影响星空动效等现有夜间视觉元素
+
+## 样式实现方案
+
+### 1. 全局 CSS 变量
+
+新增类似以下变量：
+
+- `--home-bg-image`
+- `--home-bg-overlay`
+- `--home-surface`
+- `--home-surface-border`
+
+用于控制：
+
+- 首页背景图地址
+- 首页亮色模式遮罩
+- 首页透背景时的半透明面板样式
+
+### 2. 首页激活态
+
+通过 `document.documentElement.dataset` 写入类似状态：
+
+- `data-theme="light" | "dark"`
+- `data-home-background="active" | "inactive"`
+
+布局样式根据 `data-home-background="active"` 决定是否透明化。
+
+### 3. 透明化范围
+
+仅在首页背景激活时调整以下布局区域：
+
+- 侧边栏 `.sider`
+- 顶部栏 `.header`
+- 内容区域 `.content`
+
+其他页面不读取该激活态，保持原样。
+
+## 管理页设计
+
+### 1. 新增“背景图片管理”标签页
+
+在管理页 Tabs 中增加一个新的标签页，用于背景列表维护。
+
+### 2. 支持的操作
+
+- 添加背景图片
+- 编辑背景名称
+- 编辑背景链接
+- 删除背景图片
+- 保存到服务端
+
+### 3. 管理约束
+
+- “默认背景”不可删除
+- 背景名称必填
+- 背景链接可为空；为空表示默认背景
+- 添加/编辑成功后统一调用现有 `saveToServer`
+
+### 4. 兼容移动端
+
+管理页已有移动端和桌面端差异布局，新标签页需要保证：
+
+- 表单在移动端可正常换行
+- 列表在移动端仍可操作
+- 不破坏现有 Tabs 结构
+
+## 服务端改造
+
+### 1. `/api/data` 返回值兜底
+
+当 Cloudflare KV 中没有 `data` 时，返回：
+
+```json
+{
+  "categories": [],
+  "searchEngines": [],
+  "backgrounds": [
+    {
+      "name": "默认背景",
+      "url": null
+    }
+  ]
+}
+```
+
+### 2. `/api/save` 无需新增接口
+
+现有保存接口已经是整包写入，只需要保证提交内容里包含 `backgrounds` 字段即可。
+
+## 文件改动范围
+
+### 新增文件
+
+- `src/types/background.ts`
+
+### 需要修改的文件
+
+- `docs/background.md`
+- `src/types/data.ts`
+- `src/types/index.ts`
+- `src/stores/site-store.ts`
+- `src/stores/theme-store.ts`
+- `src/stores/index.ts`
+- `src/hooks/use-theme.ts`
+- `src/pages/home-page/index.tsx`
+- `src/pages/home-page/home-page.module.less`
+- `src/pages/manage-page/index.tsx`
+- `src/components/layout/layout.module.less`
+- `src/assets/styles/global.less`
+- `src/data/data.json`
+- `cloudflare/worker.mjs`
+
+## 实施顺序
+
+1. 增加 `BackgroundImage` 类型与 `SiteData.backgrounds`
+2. 扩展 `site-store` 的背景列表读写能力
+3. 修改 Worker 与初始数据，补齐服务端返回结构
+4. 扩展 `theme-store`，加入首页背景本地偏好与激活态同步
+5. 修改首页，添加背景选择下拉框和背景图层
+6. 修改布局样式，实现首页亮色模式下的透明透背景效果
+7. 修改管理页，增加背景图片管理标签页
+8. 完成 lint/build 验证并手动回归
+
+## 验收标准
+
+### 功能验收
+
+- 首页在日间模式下显示背景图片选择下拉框
+- 选择背景后，首页侧边栏、顶部栏、内容区可透出背景
+- 切换到夜间模式后，背景图消失
+- 进入管理页和关于页后，背景图不生效
+- 刷新页面后，当前设备仍记住所选背景
+- 删除当前已选背景后，自动回退到默认背景
+
+### 数据验收
+
+- 背景列表可通过管理页新增、编辑、删除
+- 背景列表保存后刷新仍存在
+- 服务端数据中包含 `backgrounds`
+
+### 工程验收
+
+- `npm run lint` 通过
+- `npm run build` 通过
+- 不引入新的全局双数据源
+- 不破坏现有亮暗主题切换
+
+## 风险与注意事项
+
+1. **图片可读性**
+   - 背景图不能直接裸露在内容后方，必须保留遮罩和面板层次。
+
+2. **图片资源稳定性**
+   - 建议使用稳定图床或 CDN；若背景图失效，应能自动回退默认背景。
+
+3. **性能控制**
+   - 背景图建议使用压缩后的图片资源，避免首页首次渲染过慢。
+
+4. **状态边界**
+   - 背景列表和背景选择必须分开存储，前者服务端持久化，后者本地持久化。
+
+5. **样式作用域**
+   - 所有透明透背景能力都必须受首页激活态控制，不能污染其他页面。
