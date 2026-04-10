@@ -367,6 +367,19 @@
       ]
     },
     {
+      "name": "博客教程",
+      "en_name": "blog",
+      "icon": "linecons-star",
+      "web": [
+        {
+          "title": "cm",
+          "url": "https://blog.cmliussss.com/",
+          "logo": "https://blog.cmliussss.com/favicon.ico",
+          "desc": "cm大佬的技术博客，提供科学上网相关技术教程"
+        }
+      ]
+    },
+    {
       "name": "在线视频",
       "en_name": "video online",
       "icon": "linecons-star",
@@ -1360,6 +1373,20 @@
       "name": "Baidu",
       "icon": "https://www.baidu.com/favicon.ico",
       "url": "https://www.baidu.com/s?wd="
+    }
+  ],
+  "backgrounds": [
+    {
+      "name": "默认背景",
+      "url": null
+    },
+    {
+      "name": "深海月影",
+      "url": "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201600%20900%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22sea%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220.9%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23020617%22%2F%3E%3Cstop%20offset%3D%2255%25%22%20stop-color%3D%22%23082032%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23114b5f%22%2F%3E%3C%2FlinearGradient%3E%3CradialGradient%20id%3D%22moonGlow%22%20cx%3D%2273%25%22%20cy%3D%2222%25%22%20r%3D%2228%25%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23f8fafc%22%20stop-opacity%3D%220.55%22%2F%3E%3Cstop%20offset%3D%2245%25%22%20stop-color%3D%22%23bae6fd%22%20stop-opacity%3D%220.2%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%230ea5e9%22%20stop-opacity%3D%220%22%2F%3E%3C%2FradialGradient%3E%3ClinearGradient%20id%3D%22water%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%2338bdf8%22%20stop-opacity%3D%220.18%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%2338bdf8%22%20stop-opacity%3D%220%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%221600%22%20height%3D%22900%22%20fill%3D%22url%28%23sea%29%22%2F%3E%3Crect%20width%3D%221600%22%20height%3D%22900%22%20fill%3D%22url%28%23moonGlow%29%22%2F%3E%3Ccircle%20cx%3D%221180%22%20cy%3D%22180%22%20r%3D%2282%22%20fill%3D%22%23f8fafc%22%20opacity%3D%220.88%22%2F%3E%3Ccircle%20cx%3D%221154%22%20cy%3D%22158%22%20r%3D%2216%22%20fill%3D%22%23dbeafe%22%20opacity%3D%220.35%22%2F%3E%3Cg%20opacity%3D%220.75%22%3E%3Ccircle%20cx%3D%22160%22%20cy%3D%22140%22%20r%3D%222%22%20fill%3D%22%23fff%22%2F%3E%3Ccircle%20cx%3D%22280%22%20cy%3D%2282%22%20r%3D%221.7%22%20fill%3D%22%23fff%22%2F%3E%3Ccircle%20cx%3D%22408%22%20cy%3D%22148%22%20r%3D%221.9%22%20fill%3D%22%23fff%22%2F%3E%3Ccircle%20cx%3D%22612%22%20cy%3D%2290%22%20r%3D%221.5%22%20fill%3D%22%23fff%22%2F%3E%3Ccircle%20cx%3D%22816%22%20cy%3D%22152%22%20r%3D%222.1%22%20fill%3D%22%23fff%22%2F%3E%3Ccircle%20cx%3D%22978%22%20cy%3D%22110%22%20r%3D%221.7%22%20fill%3D%22%23fff%22%2F%3E%3Ccircle%20cx%3D%221348%22%20cy%3D%22110%22%20r%3D%221.8%22%20fill%3D%22%23fff%22%2F%3E%3Ccircle%20cx%3D%221480%22%20cy%3D%22182%22%20r%3D%222%22%20fill%3D%22%23fff%22%2F%3E%3C%2Fg%3E%3Cpath%20d%3D%22M0%20610C130%20596%20270%20636%20396%20666C528%20698%20650%20706%20780%20664C934%20614%201042%20572%201184%20600C1320%20628%201454%20716%201600%20686V900H0Z%22%20fill%3D%22%2307152c%22%2F%3E%3Cpath%20d%3D%22M0%20694C122%20680%20244%20724%20360%20744C510%20770%20644%20770%20782%20734C896%20704%20996%20682%201108%20694C1264%20710%201396%20778%201600%20768V900H0Z%22%20fill%3D%22%230b2742%22%2F%3E%3Crect%20x%3D%220%22%20y%3D%22540%22%20width%3D%221600%22%20height%3D%22220%22%20fill%3D%22url%28%23water%29%22%2F%3E%3C%2Fsvg%3E"
+    },
+    {
+      "name": "山水",
+      "url": "https://api.dujin.org/bing/1920.php"
     }
   ]
 }
