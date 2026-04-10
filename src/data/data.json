@@ -313,7 +313,7 @@
           "url": "https://dash.cloudflare.com/",
           "logo": "https://dash.cloudflare.com/favicon.ico",
           "title": "Cloudflare",
-          "desc": "赛博活佛"
+          "desc": "免费功能非常多"
         },
         {
           "title": "Vercel",
@@ -1203,67 +1203,6 @@
       ]
     },
     {
-      "name": "自建网站",
-      "en_name": "Self-built website",
-      "icon": "linecons-star",
-      "web": [
-        {
-          "url": "https://resume.narcissus2ma.dpdns.org",
-          "logo": "https://img1.tucang.cc/api/image/show/77451257254f3851ce36fc23f98c8c70",
-          "title": "个人简历网站",
-          "desc": "关于我，个人简历，技能，项目经验，提供下载简历功能 备用链接：https://resume.384385.xyz/"
-        },
-        {
-          "title": "代码笔记",
-          "url": "https://codenotes.narcissus2ma.dpdns.org/programer-language-learn/",
-          "logo": "https://img1.tucang.cc/api/image/show/77451257254f3851ce36fc23f98c8c70",
-          "desc": "代码笔记"
-        },
-        {
-          "url": "https://blog.384385.xyz/",
-          "logo": "https://img1.tucang.cc/api/image/show/77451257254f3851ce36fc23f98c8c70",
-          "title": "个人博客",
-          "desc": "技术博客，个人生活，随笔，学习笔记"
-        },
-        {
-          "title": "Narcissus-Chat",
-          "url": "https://narcissus-chat.vercel.app/",
-          "logo": "https://img1.tucang.cc/api/image/show/77451257254f3851ce36fc23f98c8c70",
-          "desc": "私人部署的AI聊天助手，域名和功能还在调整中。。。"
-        },
-        {
-          "url": "https://narcissus-ma.github.io/low-code-platform/#/",
-          "logo": "https://img1.tucang.cc/api/image/show/77451257254f3851ce36fc23f98c8c70",
-          "title": "低代码平台",
-          "desc": "服务器开发中。。。"
-        },
-        {
-          "url": "https://narcissus-ma.github.io/narcissus-hooks/",
-          "logo": "https://img1.tucang.cc/api/image/show/77451257254f3851ce36fc23f98c8c70",
-          "title": "自定义Hooks",
-          "desc": "收集工作中遇到或其它项目中好用的自定义hooks"
-        },
-        {
-          "url": "https://narcissus-ma.github.io/nm-spec/",
-          "logo": "https://img1.tucang.cc/api/image/show/77451257254f3851ce36fc23f98c8c70",
-          "title": "前端编码规范工程化",
-          "desc": ", 尝试整合一些项目搭建，打包，部署的资源操作"
-        },
-        {
-          "title": "个人导航",
-          "url": "https://navigation.narcissus2ma.dpdns.org/",
-          "logo": "https://img1.tucang.cc/api/image/show/77451257254f3851ce36fc23f98c8c70",
-          "desc": "vue搭建的旧版导航网站"
-        },
-        {
-          "title": "mycat",
-          "url": "https://cat.blueheart.eu.cc/",
-          "logo": "https://www.google.com/s2/favicons?domain=cat.blueheart.eu.cc&sz=64",
-          "desc": ""
-        }
-      ]
-    },
-    {
       "name": "其他",
       "en_name": "Others",
       "icon": "linecons-heart",
@@ -1392,7 +1331,7 @@
   "headerTagLinks": [
     {
       "id": "about",
-      "name": "关于我",
+      "name": "站长信息",
       "en_name": "About",
       "url": "/about",
       "isExternal": false,
@@ -1404,14 +1343,113 @@
   ],
   "footerTagLinks": [
     {
+      "id": "resume",
+      "name": "个人简历",
+      "en_name": "resume",
+      "url": "https://resume.narcissus2ma.dpdns.org",
+      "isExternal": true,
+      "position": "footer",
+      "target": "_blank",
+      "order": 1,
+      "enabled": true
+    },
+    {
       "id": "friend-github",
-      "name": "GitHub",
+      "name": "站长的GitHub",
       "en_name": "GitHub",
       "url": "https://github.com/Narcissus-Ma",
       "isExternal": true,
       "position": "footer",
       "target": "_blank",
-      "order": 1,
+      "order": 2,
+      "enabled": true
+    },
+    {
+      "id": "codenotes",
+      "name": "代码笔记",
+      "en_name": "codenotes",
+      "url": "https://codenotes.narcissus2ma.dpdns.org",
+      "isExternal": true,
+      "position": "footer",
+      "target": "_blank",
+      "order": 3,
+      "enabled": true
+    },
+    {
+      "id": "narcissus-blog",
+      "name": "站长的博客",
+      "en_name": "narcissus-blog",
+      "url": "https://blog.384385.xyz/",
+      "isExternal": true,
+      "position": "footer",
+      "target": "_blank",
+      "order": 4,
+      "enabled": true
+    },
+    {
+      "id": "narcissus-chat",
+      "name": "ai 聊天助手",
+      "en_name": "narcissus-chat",
+      "url": "https://narcissus-chat.vercel.app/",
+      "isExternal": true,
+      "position": "footer",
+      "target": "_blank",
+      "order": 5,
+      "enabled": true
+    },
+    {
+      "id": "low-code-platfrom",
+      "name": "低代码demo",
+      "en_name": "low-code-platfrom",
+      "url": "https://narcissus-ma.github.io/low-code-platform/#/",
+      "isExternal": true,
+      "position": "footer",
+      "target": "_blank",
+      "order": 6,
+      "enabled": true
+    },
+    {
+      "id": "narcissus-hooks",
+      "name": "自定义hooks",
+      "en_name": "narcissus-hooks",
+      "url": "https://narcissus-ma.github.io/narcissus-hooks/",
+      "isExternal": true,
+      "position": "footer",
+      "target": "_blank",
+      "order": 7,
+      "enabled": true
+    },
+    {
+      "id": "nm-spec",
+      "name": "前端编码规范",
+      "en_name": "nm-spec",
+      "url": "https://narcissus-ma.github.io/nm-spec/",
+      "isExternal": true,
+      "position": "footer",
+      "target": "_blank",
+      "order": 8,
+      "enabled": true
+    },
+    {
+      "id": "vue-navigation",
+      "name": "旧导航站",
+      "en_name": "vue-navigation",
+      "url": "https://navigation.narcissus2ma.dpdns.org/",
+      "isExternal": true,
+      "position": "footer",
+      "target": "_blank",
+      "order": 9,
+      "enabled": true
+    },
+    {
+      "id": "my-cat",
+      "name": "我的猫",
+      "en_name": "my-cat",
+      "url": "https://cat.blueheart.eu.cc/",
+      "isExternal": true,
+      "position": "footer",
+      "target": "_blank",
+      "order": 10,
       "enabled": true
     }
   ]

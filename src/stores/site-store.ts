@@ -25,6 +25,8 @@ const DEFAULT_HEADER_TAG_LINKS: TagLinkItem[] = [
     isExternal: false,
     position: 'header',
     target: '_self',
+    iconType: 'antd',
+    iconName: 'InfoCircleOutlined',
     order: 1,
     enabled: true,
   },
@@ -39,6 +41,8 @@ const DEFAULT_FOOTER_TAG_LINKS: TagLinkItem[] = [
     isExternal: true,
     position: 'footer',
     target: '_blank',
+    iconType: 'antd',
+    iconName: 'GithubOutlined',
     order: 1,
     enabled: true,
   },
@@ -130,6 +134,9 @@ const normalizeTagLinks = (
     .map((item, index) => ({
       ...item,
       target: item.target || (item.isExternal ? '_blank' : '_self'),
+      iconType: item.iconType || 'none',
+      iconName: item.iconName || '',
+      iconUrl: item.iconUrl || '',
       order: typeof item.order === 'number' ? item.order : index + 1,
       enabled: typeof item.enabled === 'boolean' ? item.enabled : true,
     }))

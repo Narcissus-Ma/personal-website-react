@@ -7,12 +7,25 @@ import {
   Input,
   Popconfirm,
   Row,
+  Select,
   Space,
   Switch,
   Table,
   message,
 } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import {
+  BookOutlined,
+  CoffeeOutlined,
+  GithubOutlined,
+  GlobalOutlined,
+  HeartOutlined,
+  HomeOutlined,
+  InfoCircleOutlined,
+  LinkOutlined,
+  StarOutlined,
+  ToolOutlined,
+} from '@ant-design/icons';
 import { useSiteStore } from '@/stores';
 import type { TagLinkItem, TagLinkPosition } from '@/types';
 
@@ -22,6 +35,9 @@ interface TagLinkFormValues {
   url: string;
   isExternal: boolean;
   enabled: boolean;
+  iconType: 'none' | 'antd' | 'image';
+  iconName: string;
+  iconUrl: string;
 }
 
 const getDefaultFormValues = (): TagLinkFormValues => ({
@@ -30,7 +46,43 @@ const getDefaultFormValues = (): TagLinkFormValues => ({
   url: '',
   isExternal: false,
   enabled: true,
+  iconType: 'none',
+  iconName: '',
+  iconUrl: '',
 });
+
+const antdIconOptions = [
+  'HomeOutlined',
+  'InfoCircleOutlined',
+  'LinkOutlined',
+  'GlobalOutlined',
+  'GithubOutlined',
+  'StarOutlined',
+  'HeartOutlined',
+  'ToolOutlined',
+  'BookOutlined',
+  'CoffeeOutlined',
+];
+
+const antdIconNodeMap: Record<string, React.ReactNode> = {
+  HomeOutlined: <HomeOutlined />,
+  InfoCircleOutlined: <InfoCircleOutlined />,
+  LinkOutlined: <LinkOutlined />,
+  GlobalOutlined: <GlobalOutlined />,
+  GithubOutlined: <GithubOutlined />,
+  StarOutlined: <StarOutlined />,
+  HeartOutlined: <HeartOutlined />,
+  ToolOutlined: <ToolOutlined />,
+  BookOutlined: <BookOutlined />,
+  CoffeeOutlined: <CoffeeOutlined />,
+};
+
+const renderIconOptionLabel = (iconName: string): React.ReactNode => (
+  <Space>
+    <span>{antdIconNodeMap[iconName] || <LinkOutlined />}</span>
+    <span>{iconName}</span>
+  </Space>
+);
 
 const slugify = (value: string): string =>
   value
@@ -89,6 +141,9 @@ const TagLinkManage: React.FC = () => {
     const list = linksByPosition[position];
     const fallbackId = `${position}-${Date.now()}`;
     const id = slugify(values.en_name || values.name) || fallbackId;
+    const nextIconName = values.iconType === 'antd' ? values.iconName : '';
+    const nextIconUrl =
+      values.iconType === 'image' ? values.iconUrl.trim() : '';
 
     addTagLink(position, {
       id,
@@ -98,6 +153,9 @@ const TagLinkManage: React.FC = () => {
       isExternal: values.isExternal,
       position,
       target: values.isExternal ? '_blank' : '_self',
+      iconType: values.iconType,
+      iconName: nextIconName,
+      iconUrl: nextIconUrl,
       order: list.length + 1,
       enabled: values.enabled,
     });
@@ -203,6 +261,90 @@ const TagLinkManage: React.FC = () => {
           ),
       },
       {
+        title: '图标',
+        key: 'icon',
+        width: 280,
+        render: (_: string, record: TagLinkItem) =>
+          editingItem?.id === record.id ? (
+            <Space wrap>
+              <Select
+                style={{ width: 110 }}
+                value={editingItem.iconType || 'none'}
+                onChange={value =>
+                  setEditingItemMap(prev => ({
+                    ...prev,
+                    [position]: {
+                      ...editingItem,
+                      iconType: value,
+                      iconName:
+                        value === 'antd' ? editingItem.iconName || '' : '',
+                      iconUrl:
+                        value === 'image' ? editingItem.iconUrl || '' : '',
+                    } as TagLinkItem,
+                  }))
+                }
+              >
+                <Select.Option value="none">无图标</Select.Option>
+                <Select.Option value="antd">Antd</Select.Option>
+                <Select.Option value="image">自定义</Select.Option>
+              </Select>
+
+              {editingItem.iconType === 'antd' ? (
+                <Select
+                  showSearch
+                  optionFilterProp="children"
+                  style={{ width: 140 }}
+                  value={editingItem.iconName || undefined}
+                  onChange={value =>
+                    setEditingItemMap(prev => ({
+                      ...prev,
+                      [position]: {
+                        ...editingItem,
+                        iconName: value,
+                        iconUrl: '',
+                      } as TagLinkItem,
+                    }))
+                  }
+                >
+                  {antdIconOptions.map(iconName => (
+                    <Select.Option key={iconName} value={iconName}>
+                      {renderIconOptionLabel(iconName)}
+                    </Select.Option>
+                  ))}
+                </Select>
+              ) : null}
+
+              {editingItem.iconType === 'image' ? (
+                <Input
+                  placeholder="https://example.com/icon.png"
+                  style={{ width: 220 }}
+                  value={editingItem.iconUrl || ''}
+                  onChange={event =>
+                    setEditingItemMap(prev => ({
+                      ...prev,
+                      [position]: {
+                        ...editingItem,
+                        iconUrl: event.target.value,
+                        iconName: '',
+                      } as TagLinkItem,
+                    }))
+                  }
+                />
+              ) : null}
+            </Space>
+          ) : (
+            <span>
+              {record.iconType === 'antd' && record.iconName
+                ? `Antd: ${record.iconName}`
+                : null}
+              {record.iconType === 'image' && record.iconUrl
+                ? '自定义图标'
+                : null}
+              {(!record.iconType || record.iconType === 'none') && '无'}
+            </span>
+          ),
+      },
+      {
         title: '站外',
         key: 'isExternal',
         render: (_: string, record: TagLinkItem) => (
@@ -268,6 +410,15 @@ const TagLinkManage: React.FC = () => {
                             editingItem.en_name.trim() ||
                             editingItem.name.trim(),
                           url: editingItem.url.trim(),
+                          iconType: editingItem.iconType || 'none',
+                          iconName:
+                            editingItem.iconType === 'antd'
+                              ? editingItem.iconName || ''
+                              : '',
+                          iconUrl:
+                            editingItem.iconType === 'image'
+                              ? editingItem.iconUrl || ''
+                              : '',
                         },
                         '标签链接已更新'
                       );
@@ -383,6 +534,83 @@ const TagLinkManage: React.FC = () => {
               </Form.Item>
             </Col>
             <Col md={4} sm={24} xs={24}>
+              <Form.Item label="图标类型" name="iconType">
+                <Select>
+                  <Select.Option value="none">无图标</Select.Option>
+                  <Select.Option value="antd">Antd 图标</Select.Option>
+                  <Select.Option value="image">自定义图标</Select.Option>
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Row gutter={16}>
+            <Col md={8} sm={24} xs={24}>
+              <Form.Item
+                shouldUpdate={(prev, next) => prev.iconType !== next.iconType}
+              >
+                {({ getFieldValue }) =>
+                  getFieldValue('iconType') === 'antd' ? (
+                    <Form.Item
+                      label="Antd 图标"
+                      name="iconName"
+                      rules={[{ required: true, message: '请选择 Antd 图标' }]}
+                    >
+                      <Select placeholder="请选择图标">
+                        {antdIconOptions.map(iconName => (
+                          <Select.Option key={iconName} value={iconName}>
+                            {renderIconOptionLabel(iconName)}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  ) : null
+                }
+              </Form.Item>
+            </Col>
+            <Col md={8} sm={24} xs={24}>
+              <Form.Item
+                shouldUpdate={(prev, next) => prev.iconType !== next.iconType}
+              >
+                {({ getFieldValue }) =>
+                  getFieldValue('iconType') === 'image' ? (
+                    <Form.Item
+                      label="自定义图标 URL"
+                      name="iconUrl"
+                      rules={[
+                        { required: true, message: '请输入图标 URL' },
+                        {
+                          validator: (_, value: string) => {
+                            if (!value) {
+                              return Promise.resolve();
+                            }
+                            try {
+                              const parsed = new URL(value);
+                              if (
+                                parsed.protocol === 'http:' ||
+                                parsed.protocol === 'https:'
+                              ) {
+                                return Promise.resolve();
+                              }
+                              return Promise.reject(
+                                new Error('仅支持 http/https 地址')
+                              );
+                            } catch {
+                              return Promise.reject(
+                                new Error('请输入有效的 URL')
+                              );
+                            }
+                          },
+                        },
+                      ]}
+                    >
+                      <Input placeholder="https://example.com/icon.png" />
+                    </Form.Item>
+                  ) : null
+                }
+              </Form.Item>
+            </Col>
+            <Col md={8} sm={24} xs={24}>
               <Space wrap style={{ marginTop: 30 }}>
                 <Form.Item name="isExternal" valuePropName="checked">
                   <Switch checkedChildren="站外" unCheckedChildren="站内" />
