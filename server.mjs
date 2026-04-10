@@ -6,6 +6,96 @@ import path from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const DEFAULT_SITE_DATA = {
+  categories: [],
+  searchEngines: [],
+  backgrounds: [
+    {
+      name: '默认背景',
+      url: null,
+    },
+  ],
+  headerTagLinks: [
+    {
+      id: 'about',
+      name: '关于我',
+      en_name: 'About',
+      url: '/about',
+      isExternal: false,
+      position: 'header',
+      target: '_self',
+      order: 1,
+      enabled: true,
+    },
+  ],
+  footerTagLinks: [
+    {
+      id: 'friend-github',
+      name: 'GitHub',
+      en_name: 'GitHub',
+      url: 'https://github.com/Narcissus-Ma',
+      isExternal: true,
+      position: 'footer',
+      target: '_blank',
+      order: 1,
+      enabled: true,
+    },
+  ],
+};
+
+const normalizeTagLinks = (tagLinks, position, fallback) => {
+  if (tagLinks === undefined) {
+    return fallback;
+  }
+
+  if (!Array.isArray(tagLinks)) {
+    return [];
+  }
+  if (tagLinks.length === 0) {
+    return [];
+  }
+
+  const nextLinks = tagLinks
+    .filter(item => item && item.position === position && item.url)
+    .map((item, index) => ({
+      id: item.id || `${position}-${index + 1}`,
+      name: item.name || '未命名',
+      en_name: item.en_name || item.name || 'Untitled',
+      url: item.url,
+      isExternal: !!item.isExternal,
+      position,
+      target: item.target || (item.isExternal ? '_blank' : '_self'),
+      order: typeof item.order === 'number' ? item.order : index + 1,
+      enabled: typeof item.enabled === 'boolean' ? item.enabled : true,
+    }))
+    .sort((a, b) => a.order - b.order);
+
+  return nextLinks.length > 0 ? nextLinks : fallback;
+};
+
+const normalizeSiteData = rawData => {
+  const data = rawData && typeof rawData === 'object' ? rawData : {};
+
+  return {
+    categories: Array.isArray(data.categories) ? data.categories : [],
+    searchEngines: Array.isArray(data.searchEngines) ? data.searchEngines : [],
+    backgrounds:
+      Array.isArray(data.backgrounds) && data.backgrounds.length > 0
+        ? data.backgrounds
+        : DEFAULT_SITE_DATA.backgrounds,
+    headerTagLinks: normalizeTagLinks(
+      data.headerTagLinks,
+      'header',
+      DEFAULT_SITE_DATA.headerTagLinks
+    ),
+    footerTagLinks: normalizeTagLinks(
+      data.footerTagLinks,
+      'footer',
+      DEFAULT_SITE_DATA.footerTagLinks
+    ),
+  };
+};
+
 const server = createServer(async (req, res) => {
   // 使用 WHATWG URL API 替代 url.parse()
   const parsedUrl = new URL(`http://localhost:3000${req.url}`);
@@ -35,7 +125,7 @@ const server = createServer(async (req, res) => {
 
     req.on('end', async () => {
       try {
-        const data = JSON.parse(body);
+        const data = normalizeSiteData(JSON.parse(body));
         const filePath = path.join(__dirname, 'src/data/data.json');
 
         await writeFile(filePath, JSON.stringify(data, null, 2));
@@ -51,7 +141,7 @@ const server = createServer(async (req, res) => {
     try {
       const filePath = path.join(__dirname, 'src/data/data.json');
       const fileContent = await readFile(filePath, 'utf8');
-      const data = JSON.parse(fileContent);
+      const data = normalizeSiteData(JSON.parse(fileContent));
 
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify(data));

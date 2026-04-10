@@ -10,6 +10,97 @@ export default {
   <rect x="6" y="6" width="52" height="52" rx="10" fill="#f0f2f5"/>
   <path d="M20 22h24v6H20zm0 12h18v6H20zm0 12h24v6H20z" fill="#8c8c8c"/>
 </svg>`;
+    const DEFAULT_SITE_DATA = {
+      categories: [],
+      searchEngines: [],
+      backgrounds: [
+        {
+          name: '默认背景',
+          url: null,
+        },
+      ],
+      headerTagLinks: [
+        {
+          id: 'about',
+          name: '关于我',
+          en_name: 'About',
+          url: '/about',
+          isExternal: false,
+          position: 'header',
+          target: '_self',
+          order: 1,
+          enabled: true,
+        },
+      ],
+      footerTagLinks: [
+        {
+          id: 'friend-github',
+          name: 'GitHub',
+          en_name: 'GitHub',
+          url: 'https://github.com/Narcissus-Ma',
+          isExternal: true,
+          position: 'footer',
+          target: '_blank',
+          order: 1,
+          enabled: true,
+        },
+      ],
+    };
+
+    const normalizeTagLinks = (tagLinks, position, fallback) => {
+      if (tagLinks === undefined) {
+        return fallback;
+      }
+
+      if (!Array.isArray(tagLinks)) {
+        return [];
+      }
+      if (tagLinks.length === 0) {
+        return [];
+      }
+
+      const nextLinks = tagLinks
+        .filter(item => item && item.position === position && item.url)
+        .map((item, index) => ({
+          id: item.id || `${position}-${index + 1}`,
+          name: item.name || '未命名',
+          en_name: item.en_name || item.name || 'Untitled',
+          url: item.url,
+          isExternal: !!item.isExternal,
+          position,
+          target: item.target || (item.isExternal ? '_blank' : '_self'),
+          order: typeof item.order === 'number' ? item.order : index + 1,
+          enabled: typeof item.enabled === 'boolean' ? item.enabled : true,
+        }))
+        .sort((a, b) => a.order - b.order);
+
+      return nextLinks.length > 0 ? nextLinks : fallback;
+    };
+
+    const normalizeSiteData = rawData => {
+      const data = rawData && typeof rawData === 'object' ? rawData : {};
+
+      return {
+        categories: Array.isArray(data.categories) ? data.categories : [],
+        searchEngines: Array.isArray(data.searchEngines)
+          ? data.searchEngines
+          : [],
+        backgrounds:
+          Array.isArray(data.backgrounds) && data.backgrounds.length > 0
+            ? data.backgrounds
+            : DEFAULT_SITE_DATA.backgrounds,
+        headerTagLinks: normalizeTagLinks(
+          data.headerTagLinks,
+          'header',
+          DEFAULT_SITE_DATA.headerTagLinks
+        ),
+        footerTagLinks: normalizeTagLinks(
+          data.footerTagLinks,
+          'footer',
+          DEFAULT_SITE_DATA.footerTagLinks
+        ),
+      };
+    };
 
     const normalizeHttpUrl = raw => {
       const input = (raw || '').trim();
@@ -326,7 +417,8 @@ export default {
 
     if (pathname === '/api/save' && request.method === 'POST') {
       try {
-        const data = await request.json();
+        const rawData = await request.json();
+        const data = normalizeSiteData(rawData);
         await env.SITE_DATA.put('data', JSON.stringify(data, null, 2));
         return new Response(JSON.stringify({ message: '保存成功' }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -344,23 +436,12 @@ export default {
       try {
         const data = await env.SITE_DATA.get('data');
         if (!data) {
-          return new Response(
-            JSON.stringify({
-              categories: [],
-              searchEngines: [],
-              backgrounds: [
-                {
-                  name: '默认背景',
-                  url: null,
-                },
-              ],
-            }),
-            {
-              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            }
-          );
+          return new Response(JSON.stringify(DEFAULT_SITE_DATA), {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
         }
-        return new Response(data, {
+        const normalizedData = normalizeSiteData(JSON.parse(data));
+        return new Response(JSON.stringify(normalizedData), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       } catch (err) {

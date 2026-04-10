@@ -43,6 +43,7 @@ import type {
   Website,
 } from '../../types';
 import styles from './manage-page.module.less';
+import TagLinkManage from './tag-link-manage';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -1756,6 +1757,11 @@ const ManagePage: React.FC = () => {
                   )}
                 </Card>
               ),
+            },
+            {
+              label: '标签链接管理',
+              key: '6',
+              children: <TagLinkManage />,
             },
             {
               label: '背景图片管理',

@@ -6,6 +6,7 @@ import AuthModal from './auth-modal';
 import { ClickEffect } from './click-effect';
 import { Loading } from './loading';
 import { ProgressBar } from './progress-bar';
+import TagLinkList from './tag-link-list';
 
 export {
   Layout,
@@ -16,4 +17,5 @@ export {
   ClickEffect,
   Loading,
   ProgressBar,
+  TagLinkList,
 };

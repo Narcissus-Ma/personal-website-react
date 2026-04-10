@@ -1388,5 +1388,31 @@
       "name": "山水",
       "url": "https://api.dujin.org/bing/1920.php"
     }
+  ],
+  "headerTagLinks": [
+    {
+      "id": "about",
+      "name": "关于我",
+      "en_name": "About",
+      "url": "/about",
+      "isExternal": false,
+      "position": "header",
+      "target": "_self",
+      "order": 1,
+      "enabled": true
+    }
+  ],
+  "footerTagLinks": [
+    {
+      "id": "friend-github",
+      "name": "GitHub",
+      "en_name": "GitHub",
+      "url": "https://github.com/Narcissus-Ma",
+      "isExternal": true,
+      "position": "footer",
+      "target": "_blank",
+      "order": 1,
+      "enabled": true
+    }
   ]
 }

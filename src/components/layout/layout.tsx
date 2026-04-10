@@ -14,6 +14,8 @@ import {
   AppstoreOutlined,
 } from '@ant-design/icons';
 import { useCategories, useIsMobile, useLanguage, useTheme } from '../../hooks';
+import { useSiteStore } from '@/stores';
+import TagLinkList from '../tag-link-list';
 import { UniverseEffect } from '../universe-effect';
 import styles from './layout.module.less';
 import collapsedLogo from '../../assets/images/user-logo.jpg';
@@ -39,6 +41,7 @@ const AppLayout: React.FC<LayoutProps> = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { categories } = useCategories();
+  const { headerTagLinks } = useSiteStore();
   const { language, transName } = useLanguage();
   const { theme } = useTheme();
   const isMobile = useIsMobile();
@@ -112,18 +115,28 @@ const AppLayout: React.FC<LayoutProps> = ({ children }) => {
         )}
         <Layout className={styles.layoutContent}>
           <Header className={styles.header}>
-            <div className={styles.trigger}>
-              {React.createElement(
-                isMobile
-                  ? MenuOutlined
-                  : collapsed
-                    ? MenuUnfoldOutlined
-                    : MenuFoldOutlined,
-                {
-                  onClick: handleToggleMenu,
-                  className: styles.triggerIcon,
-                }
-              )}
+            <div className={styles.headerInner}>
+              <div className={styles.trigger}>
+                {React.createElement(
+                  isMobile
+                    ? MenuOutlined
+                    : collapsed
+                      ? MenuUnfoldOutlined
+                      : MenuFoldOutlined,
+                  {
+                    onClick: handleToggleMenu,
+                    className: styles.triggerIcon,
+                  }
+                )}
+              </div>
+              <div className={styles.headerTagLinks}>
+                <TagLinkList
+                  currentPath={location.pathname}
+                  items={headerTagLinks}
+                  language={language}
+                  location="header"
+                />
+              </div>
             </div>
           </Header>
           <Content className={styles.content}>{children}</Content>
