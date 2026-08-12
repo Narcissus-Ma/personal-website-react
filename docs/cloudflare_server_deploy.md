@@ -2,7 +2,7 @@
 
 本指南是本项目 Cloudflare Worker 的唯一完整部署说明。请在项目根目录执行下列命令。
 
-> **安全警告：请勿部署到公开、不受信任的环境。** 当前 Worker 的 `POST /api/save` 未鉴权，任何能够访问 Worker 的来源都可写入数据；`npm run cf:set-password` 只设置管理页面密码，**不能**保护该写接口；Worker 默认 CORS 为 `Access-Control-Allow-Origin: *`。在加入服务端访问控制、密码哈希和受限 CORS 前，仅限可信私有环境使用，或自行实现这些安全措施。
+> **安全警告：请勿部署到公开、不受信任的环境。** 当前 Worker 的 `POST /api/save` 未鉴权，任何能够访问 Worker 的来源都可写入数据；`pnpm run cf:set-password` 只设置管理页面密码，**不能**保护该写接口；Worker 默认 CORS 为 `Access-Control-Allow-Origin: *`。在加入服务端访问控制、密码哈希和受限 CORS 前，仅限可信私有环境使用，或自行实现这些安全措施。
 
 ## 前提条件
 
