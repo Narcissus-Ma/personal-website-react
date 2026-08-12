@@ -31,7 +31,7 @@
         },
         {
           "url": "https://mail.google.com/mail/u/0/#inbox",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fmail.google.com%2Fmail%2Fu%2F0%2F%23inbox",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fmail.google.com%2Fmail%2Fu%2F0%2F%23inbox",
           "title": "Gmail",
           "desc": "谷歌邮箱"
         },
@@ -56,13 +56,13 @@
         {
           "title": "搜码",
           "url": "https://hantang.github.io/search-wubi/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fhantang.github.io%2Fsearch-wubi%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fhantang.github.io%2Fsearch-wubi%2F",
           "desc": "五笔查询"
         },
         {
           "title": "linux do",
           "url": "https://linux.do/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Flinux.do%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Flinux.do%2F",
           "desc": "一个程序员的开源讨论社区"
         },
         {
@@ -128,7 +128,7 @@
         {
           "title": "图壳",
           "url": "https://imgkr.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fimgkr.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fimgkr.com%2F",
           "desc": "又一款免费的第三方图床"
         }
       ]
@@ -147,7 +147,7 @@
         {
           "title": "w3school",
           "url": "https://www.w3school.com.cn/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.w3school.com.cn%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fwww.w3school.com.cn%2F",
           "desc": "免费在线程序学习"
         },
         {
@@ -170,14 +170,14 @@
         },
         {
           "url": "https://www.hello-algo.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.hello-algo.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fwww.hello-algo.com%2F",
           "title": "算法笔记",
           "desc": ""
         },
         {
           "title": "FreeCodeCamp",
           "url": "https://www.freecodecamp.org/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.freecodecamp.org%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fwww.freecodecamp.org%2F",
           "desc": "免费编程学习网站"
         }
       ]
@@ -190,13 +190,13 @@
         {
           "title": "Vue",
           "url": "https://cn.vuejs.org/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fcn.vuejs.org%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fcn.vuejs.org%2F",
           "desc": "Vue官方文档"
         },
         {
           "title": "Vite",
           "url": "https://cn.vitejs.dev/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fcn.vitejs.dev%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fcn.vitejs.dev%2F",
           "desc": "新一代前端构建打包工具"
         },
         {
@@ -208,13 +208,13 @@
         {
           "title": "Webpack",
           "url": "https://www.webpackjs.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.webpackjs.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fwww.webpackjs.com%2F",
           "desc": "前端常用打包工具官方文档"
         },
         {
           "title": "Dribbble",
           "url": "https://dribbble.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fdribbble.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fdribbble.com%2F",
           "desc": "网页设计素材网站"
         },
         {
@@ -232,7 +232,7 @@
         {
           "title": "CSS可视化",
           "url": "https://css.bqrdh.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fcss.bqrdh.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fcss.bqrdh.com%2F",
           "desc": "在线调整样式生成可复制代码的平台"
         },
         {
@@ -244,13 +244,13 @@
         {
           "title": "Ant Design",
           "url": "https://ant.design/index-cn",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fant.design%2Findex-cn",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fant.design%2Findex-cn",
           "desc": "国内常用的前端React UI组件库"
         },
         {
           "title": "free-for-dev",
           "url": "https://free-for.dev/#/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Ffree-for.dev%2F%23%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Ffree-for.dev%2F%23%2F",
           "desc": "免费开发者资源"
         },
         {
@@ -275,19 +275,19 @@
         {
           "title": "US.KG",
           "url": "https://dash.domain.digitalplat.org/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fdash.domain.digitalplat.org%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fdash.domain.digitalplat.org%2F",
           "desc": "免费域名申请，每半年手动续费一次 => 由于域名滥用，us.kg已经挂了，所有服务转移到新域名dpdns.org下面了"
         },
         {
           "title": "gname",
           "url": "https://www.gname.vip/zhcn/tld-eu-cc.html",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.gname.vip%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fwww.gname.vip%2F",
           "desc": "免费域名注册，可绑定cf, 90天到期可免费续"
         },
         {
           "title": "spaceship",
           "url": "https://www.spaceship.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.spaceship.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fwww.spaceship.com%2F",
           "desc": "支持国内付款方式的域名服务商"
         },
         {
@@ -336,7 +336,7 @@
         {
           "title": "Render",
           "url": "https://render.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Frender.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Frender.com%2F",
           "desc": "750小时免费实例，支持后端+数据库"
         }
       ]
@@ -393,13 +393,13 @@
         {
           "title": "韩剧看看",
           "url": "https://www.hanjukankan.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.hanjukankan.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fwww.hanjukankan.com%2F",
           "desc": "韩剧在线网站"
         },
         {
           "title": "片库网",
           "url": "https://piankw.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fpiankw.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fpiankw.com%2F",
           "desc": "在线影视"
         },
         {
@@ -424,7 +424,7 @@
         {
           "title": "听歌房",
           "url": "https://music.alang.run/#/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fmusic.alang.run%2F%23%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fmusic.alang.run%2F%23%2F",
           "desc": "在线听歌"
         },
         {
@@ -449,7 +449,7 @@
         {
           "title": "漫自由",
           "url": "https://mhx12.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fmhx12.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fmhx12.com%2F",
           "desc": "漫画网站"
         }
       ]
@@ -473,7 +473,7 @@
         },
         {
           "url": "http://www.9GAG.com",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=http%3A%2F%2Fwww.9gag.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=http%3A%2F%2Fwww.9gag.com%2F",
           "title": "9GAG",
           "desc": ""
         }
@@ -535,13 +535,13 @@
         {
           "title": "Newcger",
           "url": "https://www.newcger.com/aechajian/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.newcger.com%2Faechajian%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fwww.newcger.com%2Faechajian%2F",
           "desc": "AE插件下载网"
         },
         {
           "title": "爱给网",
           "url": "https://www.aigei.com/video/index/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.aigei.com%2Fvideo%2Findex%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fwww.aigei.com%2Fvideo%2Findex%2F",
           "desc": "寻找音效素材"
         }
       ]
@@ -560,7 +560,7 @@
         {
           "title": "tosound",
           "url": "https://www.tosound.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.tosound.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fwww.tosound.com%2F",
           "desc": "声音搜索"
         }
       ]
@@ -603,7 +603,7 @@
         {
           "title": "果汁AI导航",
           "url": "http://guozhivip.com/ai/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=http%3A%2F%2Fguozhivip.com%2Fai%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=http%3A%2F%2Fguozhivip.com%2Fai%2F",
           "desc": ""
         },
         {
@@ -621,7 +621,7 @@
         {
           "title": "跃问",
           "url": "https://yuewen.cn/chats/new",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fyuewen.cn%2Fchats%2Fnew",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fyuewen.cn%2Fchats%2Fnew",
           "desc": "又一个可以通过文字生成视频的网站，可以生成长达8s视频，提供deepseek r1分流接口"
         },
         {
@@ -645,7 +645,7 @@
         {
           "title": "CrofAI",
           "url": "https://ai.nahcrof.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fai.nahcrof.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fai.nahcrof.com%2F",
           "desc": "免费提供 api key"
         },
         {
@@ -657,7 +657,7 @@
         {
           "title": "Perplexity",
           "url": "https://www.perplexity.ai/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.perplexity.ai%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fwww.perplexity.ai%2F",
           "desc": "AI搜索"
         },
         {
@@ -688,13 +688,13 @@
         {
           "title": "FMHY",
           "url": "https://fmhy.net/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Ffmhy.net%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Ffmhy.net%2F",
           "desc": "免费资源聚合网站"
         },
         {
           "title": "硬核指南",
           "url": "https://yinghezhinan.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fyinghezhinan.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fyinghezhinan.com%2F",
           "desc": "一个影视资源导航网站"
         },
         {
@@ -724,7 +724,7 @@
         {
           "title": "资源网",
           "url": "https://heeee.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fheeee.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fheeee.com%2F",
           "desc": "资源导航网站"
         },
         {
@@ -748,7 +748,7 @@
         {
           "title": "果汁AI导航",
           "url": "http://guozhivip.com/ai/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=http%3A%2F%2Fguozhivip.com%2Fai%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=http%3A%2F%2Fguozhivip.com%2Fai%2F",
           "desc": "又一个AI类的导航网站"
         },
         {
@@ -760,7 +760,7 @@
         {
           "title": "Similarsites",
           "url": "https://www.similarsites.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.similarsites.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fwww.similarsites.com%2F",
           "desc": "通过该网站可以查询相似的网站"
         },
         {
@@ -784,7 +784,7 @@
         {
           "title": " 搜图导航",
           "url": "https://www.91sotu.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.91sotu.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fwww.91sotu.com%2F",
           "desc": "各类图片网站"
         },
         {
@@ -796,25 +796,25 @@
         {
           "title": "产品经理导航",
           "url": "https://www.pmbaobao.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.pmbaobao.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fwww.pmbaobao.com%2F",
           "desc": "产品经理导航"
         },
         {
           "title": "创造狮",
           "url": "https://chuangzaoshi.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fchuangzaoshi.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fchuangzaoshi.com%2F",
           "desc": "创造狮导航"
         },
         {
           "title": "Hippter",
           "url": "https://www.hippter.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.hippter.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fwww.hippter.com%2F",
           "desc": "PPT导航网站"
         },
         {
           "title": "AboutPPT",
           "url": "https://www.aboutppt.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.aboutppt.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fwww.aboutppt.com%2F",
           "desc": "PPT导航网站"
         },
         {
@@ -856,13 +856,13 @@
         {
           "title": "书签地球",
           "url": "https://www.bookmarkearth.cn/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.bookmarkearth.cn%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fwww.bookmarkearth.cn%2F",
           "desc": "也算是一类导航网站吧"
         },
         {
           "title": "果汁导航",
           "url": "http://guozhivip.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=http%3A%2F%2Fguozhivip.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=http%3A%2F%2Fguozhivip.com%2F",
           "desc": "聚合导航网站"
         },
         {
@@ -874,13 +874,13 @@
         {
           "title": "笔点资源",
           "url": "https://www.bidianer.com/site/index",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.bidianer.com%2Fsite%2Findex",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fwww.bidianer.com%2Fsite%2Findex",
           "desc": "聚合类导航网站"
         },
         {
           "title": " Noise导航",
           "url": "https://www.noisedh.cn/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.noisedh.cn%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fwww.noisedh.cn%2F",
           "desc": "聚合类导航"
         },
         {
@@ -892,7 +892,7 @@
         {
           "title": "数字生活指南",
           "url": "https://szsyw.cn/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fszsyw.cn%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fszsyw.cn%2F",
           "desc": "聚合类导航"
         },
         {
@@ -910,7 +910,7 @@
         {
           "title": "学 搜搜",
           "url": "https://www.xuesousou.net/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.xuesousou.net%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fwww.xuesousou.net%2F",
           "desc": "百度网盘资源搜索"
         },
         {
@@ -922,13 +922,13 @@
         {
           "title": "0daydown",
           "url": "https://www.0daydown.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.0daydown.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fwww.0daydown.com%2F",
           "desc": "各类软件资源下载"
         },
         {
           "title": "果壳剥壳",
           "url": "https://www.ghxi.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.ghxi.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fwww.ghxi.com%2F",
           "desc": "各类软件资源"
         },
         {
@@ -940,7 +940,7 @@
         {
           "title": "盘友圈",
           "url": "https://panyq.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fpanyq.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fpanyq.com%2F",
           "desc": "网盘资源搜索"
         }
       ]
@@ -958,7 +958,7 @@
         },
         {
           "url": "https://fly63.com/tool/home.html",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Ffly63.com%2Ftool%2Fhome.html",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Ffly63.com%2Ftool%2Fhome.html",
           "title": "FLY63",
           "desc": "各种在线实用小工具"
         },
@@ -989,7 +989,7 @@
         {
           "title": "freecompress",
           "url": "https://freecompress.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Ffreecompress.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Ffreecompress.com%2F",
           "desc": "无需登陆，在线压缩各类资源"
         },
         {
@@ -1001,7 +1001,7 @@
         {
           "title": "MikuTools",
           "url": "https://okmiku.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fokmiku.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fokmiku.com%2F",
           "desc": "又一款工具箱"
         },
         {
@@ -1013,7 +1013,7 @@
         {
           "title": "Tinywow",
           "url": "https://tinywow.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Ftinywow.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Ftinywow.com%2F",
           "desc": "工具箱"
         }
       ]
@@ -1025,13 +1025,13 @@
       "web": [
         {
           "url": "https://www.uupoop.com/#/ ",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.uupoop.com%2F%23%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fwww.uupoop.com%2F%23%2F",
           "title": "在线PS",
           "desc": "在线PS工具"
         },
         {
           "url": "https://www.uugai.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.uugai.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fwww.uugai.com%2F",
           "title": "钙网",
           "desc": "免费的LOGO在线设计制作工具"
         },
@@ -1043,13 +1043,13 @@
         },
         {
           "url": "https://www.qiuziti.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.qiuziti.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fwww.qiuziti.com%2F",
           "title": "字体下载-求字体网",
           "desc": ""
         },
         {
           "url": "https://www.hippter.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.hippter.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fwww.hippter.com%2F",
           "title": "HiPPTER | PPT资源导航",
           "desc": ""
         },
@@ -1105,7 +1105,7 @@
         {
           "title": "熊猫搜书",
           "url": "https://xmsoushu.com/#/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fxmsoushu.com%2F%23%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fxmsoushu.com%2F%23%2F",
           "desc": "聚合了各种电子书网站，可以查找各类电子书"
         }
       ]
@@ -1130,7 +1130,7 @@
         {
           "title": "Anki",
           "url": "https://ankiweb.net",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fankiweb.net%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fankiweb.net%2F",
           "desc": "自定义程度很高的记忆卡片"
         }
       ]
@@ -1143,7 +1143,7 @@
         {
           "title": "91玩家",
           "url": "https://www.tekqart.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.tekqart.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fwww.tekqart.com%2F",
           "desc": "主机游戏论坛"
         },
         {
@@ -1155,13 +1155,13 @@
         {
           "title": "围炉",
           "url": "https://www.wlgooo.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.wlgooo.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fwww.wlgooo.com%2F",
           "desc": "主机怀旧"
         },
         {
           "title": "奥德彪计划",
           "url": "https://2468c.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2F2468c.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2F2468c.com%2F",
           "desc": "游戏资源网站"
         },
         {
@@ -1185,7 +1185,7 @@
         {
           "title": "GameFree资源网",
           "url": "https://www.gamefreer.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.gamefreer.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fwww.gamefreer.com%2F",
           "desc": "免费游戏资源"
         },
         {
@@ -1215,13 +1215,13 @@
         },
         {
           "url": "https://thepornbest.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fthepornbest.com%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fthepornbest.com%2F",
           "title": "porn best",
           "desc": "18+导航网站"
         },
         {
           "url": "https://xslist.org/zh",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fxslist.org%2Fzh",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fxslist.org%2Fzh",
           "title": "xslist",
           "desc": "可以搜索各个老师的信息"
         },
@@ -1234,7 +1234,7 @@
         {
           "title": "Trace",
           "url": "https://trace.moe/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Ftrace.moe%2F",
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Ftrace.moe%2F",
           "desc": "又一个以图搜图的网站"
         },
         {
@@ -1276,7 +1276,7 @@
         {
           "title": "币安",
           "url": "https://www.binance.com/",
-          "logo": "https://website.liyifei.dpdns.org/api/favicon?url=https%3A%2F%2Fwww.binance.com%2F"
+          "logo": "https://www.google.com/s2/favicons?domain_url=https%3A%2F%2Fwww.binance.com%2F"
         },
         {
           "title": "mitce",
