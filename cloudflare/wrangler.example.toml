@@ -1,0 +1,11 @@
+name = "personal-website-api"
+main = "worker.mjs"
+compatibility_date = "2024-01-01"
+
+[[kv_namespaces]]
+binding = "SITE_DATA"
+id = "YOUR_PRODUCTION_KV_NAMESPACE_ID"
+preview_id = "YOUR_PREVIEW_KV_NAMESPACE_ID"
+
+[vars]
+ENVIRONMENT = "production"

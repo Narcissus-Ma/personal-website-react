@@ -25,6 +25,14 @@ export const wranglerCommand = existsSync(localWranglerPath)
 
 export { projectRoot, wranglerConfigPath, wranglerLogDir };
 
+function ensurePrivateWranglerConfig() {
+  if (!existsSync(wranglerConfigPath)) {
+    throw new Error(
+      '未找到 cloudflare/wrangler.toml。请复制 wrangler.example.toml 并填写 namespace ID。'
+    );
+  }
+}
+
 function createWranglerEnv(logFileName) {
   return {
     ...process.env,
@@ -54,6 +62,8 @@ export function supportsRemoteFlag() {
 
 export function runWrangler(args, options = {}) {
   const { logFileName = 'wrangler.log', stdio = 'pipe' } = options;
+
+  ensurePrivateWranglerConfig();
 
   return execFileSync(wranglerCommand, args, {
     cwd: projectRoot,
