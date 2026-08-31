@@ -25,7 +25,7 @@
 
 ```bash
 pnpm install
-cp .env.example .env.local
+cp .env.example .env.development.local
 ```
 
 随后分别打开两个终端：
@@ -40,7 +40,7 @@ pnpm server
 pnpm dev
 ```
 
-`.env.example` 默认将前端连接到本地 API。仓库中的 `src/data/data.json` 是演示数据；首次部署后请替换为自己的姓名、简介、链接和图片，避免误将示例内容当作真实信息。
+`.env.example` 是开发环境模板，默认将前端连接到本地 API。生产构建时，请在部署平台配置 `VITE_API_BASE`，或在本地使用仅被 Git 忽略的 `.env.production.local`。不要把开发地址写入根目录 `.env`，因为 Vite 会在所有构建模式加载该文件。仓库中的 `src/data/data.json` 是演示数据；首次部署后请替换为自己的姓名、简介、链接和图片，避免误将示例内容当作真实信息。
 
 ## Cloudflare 部署
 

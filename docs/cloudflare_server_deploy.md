@@ -10,11 +10,19 @@
 - Cloudflare 账号，且已通过 `wrangler login` 登录。
 - 已安装项目依赖：`pnpm install`。
 
-本地前端默认访问 `http://localhost:3000/api`。如需指向已部署的 Worker，在项目根目录的 `.env.local` 中设置：
+本地开发前端默认访问 `http://localhost:3000/api`。如需在开发环境使用本地 Wrangler Worker，请将配置写入项目根目录的 `.env.development.local`：
+
+```env
+VITE_API_BASE=http://localhost:8787/api
+```
+
+生产构建请将已部署的 Worker 地址写入 `.env.production.local`，或配置到部署平台的构建环境变量中：
 
 ```env
 VITE_API_BASE=https://你的-worker.workers.dev/api
 ```
+
+不要将开发地址放在根目录 `.env` 或通用的 `.env.local` 中；Vite 会在生产构建时加载这些文件，可能导致本地地址被打包进前端资源。
 
 `VITE_API_BASE` 是构建时公开给浏览器的变量，不能存放密钥。Worker 的 `[vars]` 同样不应用于密钥；敏感配置应使用 Cloudflare 的 secrets 机制并在 Worker 代码中显式读取。
 
