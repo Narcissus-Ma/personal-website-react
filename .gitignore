@@ -14,6 +14,7 @@ lerna-debug.log*
 cloudflare/wrangler.toml
 
 node_modules
+.pnpm-store/
 .worktrees/
 dist
 dist-ssr

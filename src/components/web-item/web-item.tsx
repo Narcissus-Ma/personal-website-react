@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Card, Tag } from 'antd';
 import {
+  ClockCircleOutlined,
   StarOutlined,
   DesktopOutlined,
   PlayCircleOutlined,
@@ -9,11 +10,12 @@ import {
   HeartOutlined,
   AppstoreOutlined,
 } from '@ant-design/icons';
-import { Category, Website } from '../../types';
+import type { Category, Website } from '../../types';
 import styles from './web-item.module.less';
 
 const iconMap: Record<string, React.ReactNode> = {
   'linecons-star': <StarOutlined />,
+  'linecons-clock': <ClockCircleOutlined />,
   'linecons-cog': <DesktopOutlined />,
   'linecons-video': <PlayCircleOutlined />,
   'linecons-doc': <BookOutlined />,
@@ -25,9 +27,28 @@ interface WebItemProps {
   item: Category | Website;
   transName: (item: { name: string; en_name: string }) => string;
   id?: string;
+  onWebsiteClick?: (website: Website) => void;
 }
 
-const WebItem: React.FC<WebItemProps> = ({ item, transName, id }) => {
+const WebItem: React.FC<WebItemProps> = ({
+  item,
+  transName,
+  id,
+  onWebsiteClick,
+}) => {
+  const handleWebsiteClick = useCallback(
+    (website: Website) => {
+      try {
+        onWebsiteClick?.(website);
+      } catch {
+        console.warn('最近打开记录失败，将继续打开网站。');
+      }
+
+      window.open(website.url, '_blank');
+    },
+    [onWebsiteClick]
+  );
+
   if ('web' in item && item.web) {
     return (
       <div className={styles.categorySection} id={id}>
@@ -47,7 +68,7 @@ const WebItem: React.FC<WebItemProps> = ({ item, transName, id }) => {
               key={idx}
               hoverable
               className={styles.webCard}
-              onClick={() => window.open(web.url, '_blank')}
+              onClick={() => handleWebsiteClick(web)}
             >
               <div className={styles.cardHeader}>
                 <div className={styles.logoWrapper}>

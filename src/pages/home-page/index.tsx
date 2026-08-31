@@ -8,7 +8,8 @@ import {
   SunOutlined,
 } from '@ant-design/icons';
 import AppLayout from '@/components/layout';
-import { useAuthStore, useSiteStore } from '@/stores';
+import { useAuthStore, useRecentSitesStore, useSiteStore } from '@/stores';
+import type { Category } from '@/types';
 import { WebItem, SearchBox, Footer, AuthModal } from '../../components';
 import { useLanguage, useTheme } from '../../hooks';
 import styles from './home-page.module.less';
@@ -17,6 +18,8 @@ const DEFAULT_BACKGROUND_VALUE = '__default_background__';
 
 const HomePage: React.FC = () => {
   const { categories, backgrounds } = useSiteStore();
+  const recentWebsites = useRecentSitesStore(state => state.recentWebsites);
+  const addRecentWebsite = useRecentSitesStore(state => state.addRecentWebsite);
   const { language, setLanguage, transName, languageOptions } = useLanguage();
   const {
     theme,
@@ -35,6 +38,16 @@ const HomePage: React.FC = () => {
     const exists = backgrounds.some(bg => bg.url === selectedHomeBackground);
     return exists ? selectedHomeBackground : null;
   }, [backgrounds, selectedHomeBackground]);
+
+  const recentCategory = useMemo<Category>(
+    () => ({
+      name: '最近打开',
+      en_name: 'Recently Opened',
+      icon: 'linecons-clock',
+      web: recentWebsites,
+    }),
+    [recentWebsites]
+  );
 
   useEffect(() => {
     if (
@@ -175,6 +188,14 @@ const HomePage: React.FC = () => {
         <SearchBox />
 
         <div className={styles.content}>
+          {recentWebsites.length > 0 && (
+            <WebItem
+              id="recently-opened"
+              item={recentCategory}
+              transName={transName}
+              onWebsiteClick={addRecentWebsite}
+            />
+          )}
           {categories.map((item, idx) => (
             <div key={idx}>
               {item.web && (
@@ -182,10 +203,16 @@ const HomePage: React.FC = () => {
                   id={`category-${idx}`}
                   item={item}
                   transName={transName}
+                  onWebsiteClick={addRecentWebsite}
                 />
               )}
               {item.children?.map((subItem, subIdx) => (
-                <WebItem key={subIdx} item={subItem} transName={transName} />
+                <WebItem
+                  key={subIdx}
+                  item={subItem}
+                  transName={transName}
+                  onWebsiteClick={addRecentWebsite}
+                />
               ))}
             </div>
           ))}
